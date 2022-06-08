@@ -5,6 +5,9 @@
 
 # Now, whitelist the needed directories. Every file in those will be whitelisted.
 
+!/video/
+!/video/**
+
 !/project/
 !/project/src/
 !/project/assets/
