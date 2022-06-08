@@ -16,3 +16,5 @@
 
 !/project/build.gradle
 !.gitignore
+!README.md
+!LICENSE
