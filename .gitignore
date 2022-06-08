@@ -6,6 +6,8 @@
 # Now, whitelist the needed directories. Every file in those will be whitelisted.
 
 !/project/
+!/project/src/
+!/project/assets/
 !/project/assets/**
 !/project/src/**
 
