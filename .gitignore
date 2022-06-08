@@ -1,30 +1,8 @@
-#General
-## MacOS
-.DS_Store
-### Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-
-## Windows
-Thumbs.db
-Thumbs.db:encryptable
-Desktop.ini
-
-#Dev specific
-## Compiled class file
-*.class
-
-## Log file
-*.log
-
-## Package Files
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+# First, ignore everything in the root folder.
+/*
+# Now, whitelist the needed directories. Every file in those will be whitelisted.
+!/project/assets/
+!/project/src/
+# And all the files you're interested in.
+!/project/build.gradle
+!.gitignore
