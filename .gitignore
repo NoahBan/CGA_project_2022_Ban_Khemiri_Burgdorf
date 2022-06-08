@@ -5,10 +5,9 @@
 
 # Now, whitelist the needed directories. Every file in those will be whitelisted.
 
-!/project/assets/*
-!/project/src/*
+!/project/assets/
+!/project/src/
 
-!/project/
 
 # And all the files you're interested in.
 
