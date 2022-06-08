@@ -1,13 +1,13 @@
 # First, ignore everything in the root folder.
 
-#*
+*
 
 
 # Now, whitelist the needed directories. Every file in those will be whitelisted.
 
 !/project/
-!/project/assets/*
-!/project/src/*
+!/project/assets/**
+!/project/src/**
 
 
 # And all the files you're interested in.
