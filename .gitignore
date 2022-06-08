@@ -8,6 +8,7 @@
 !/project/assets/*
 !/project/src/*
 
+!/project/
 
 # And all the files you're interested in.
 
