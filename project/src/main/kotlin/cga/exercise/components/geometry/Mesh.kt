@@ -33,7 +33,6 @@ class Mesh(
         // todo: place your code here
 
         // todo: generate IDs
-
         vao = GL30.glGenVertexArrays()
         vbo = GL30.glGenBuffers()
         ibo = GL30.glGenBuffers()
