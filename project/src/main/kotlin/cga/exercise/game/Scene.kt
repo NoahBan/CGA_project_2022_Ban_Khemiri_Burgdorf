@@ -1,18 +1,20 @@
 package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
-import cga.exercise.components.geometry.Mesh
-import cga.exercise.components.geometry.Renderable
-import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.geometry.VertexAttribute
+import cga.exercise.components.geometry.*
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.OBJLoader
 import org.joml.*
+import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
+import org.lwjgl.stb.STBImage
+import java.awt.Image
+import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import kotlin.math.PI
 
@@ -27,6 +29,8 @@ class Scene(private val window: GameWindow) {
     private val importedGround : Renderable
 
     private val sceneCam : TronCamera
+
+    private val groundEmissionTex : Texture2D
 
     //scene setup
     init {
@@ -57,7 +61,24 @@ class Scene(private val window: GameWindow) {
         val posAndTexcAndNormAttrArray = arrayOf(posAndTexcAndNormPos, posAndTexcAndNormTexc, posAndTexcAndNormNorm)
 
 
+//MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATS
 
+        val buffy = BufferUtils.createIntBuffer(1)
+        val bufferding = STBImage.stbi_load("assets/textures/ground_emit.png" , buffy, buffy, buffy, 4)
+
+        groundEmissionTex = Texture2D(bufferding!!,512, 512, false)
+        groundEmissionTex.setTexParams(1,1,1,1)
+
+        val mat = Material(groundEmissionTex,
+            groundEmissionTex,
+            groundEmissionTex,
+            60.0f,
+            Vector2f(64.0f,64.0f))
+
+
+
+
+//GEEEEEEEEOOOOOOOOOO
 //        val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
         val importObjSphere = OBJLoader.loadOBJ("assets/models/LAAT_gunship.obj", false, true)
         val importedSphereData  = importObjSphere.objects[0].meshes[0]
@@ -66,7 +87,7 @@ class Scene(private val window: GameWindow) {
 
         val importObjGround = OBJLoader.loadOBJ("assets/models/ground.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
-        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray)
+        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, mat)
 
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
@@ -80,9 +101,7 @@ class Scene(private val window: GameWindow) {
         sceneCam = TronCamera(90F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedSphere)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,0F,4.0F))
-
-
-    }
+        }
 
     fun render(dt: Float, t: Float) {
         staticShader.use()

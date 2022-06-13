@@ -20,7 +20,9 @@ out struct VertexData
 {
     vec3 position;
     vec3 normal;
+    vec2 textureC;
     sampler2D texEmit;
+    vec2 tcMultiplier;
 } vertexData;
 
 void main(){
@@ -31,8 +33,13 @@ void main(){
 
     vertexData.position = pos.xyz;
 
+
+
     vec4 norm = transpose(inverse(view_matrix * model_matrix)) * vec4(normal, 0.0f);
 
     vertexData.normal = norm.xyz;
+
+
+    vec2 tcMultiplier = vec2(tcMultiplier1,tcMultiplier2);
 
 }
