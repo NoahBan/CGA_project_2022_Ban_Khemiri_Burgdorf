@@ -13,10 +13,6 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
 import org.lwjgl.stb.STBImage
-import java.awt.Image
-import java.nio.ByteBuffer
-import java.nio.FloatBuffer
-import kotlin.math.PI
 
 
 /**
@@ -29,8 +25,6 @@ class Scene(private val window: GameWindow) {
     private val importedGround : Renderable
 
     private val sceneCam : TronCamera
-
-    private val groundEmissionTex : Texture2D
 
     //scene setup
     init {
@@ -63,13 +57,18 @@ class Scene(private val window: GameWindow) {
 
 //MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATS
 
-        val buffy = BufferUtils.createIntBuffer(1)
-        val bufferding = STBImage.stbi_load("assets/textures/ground_emit.png" , buffy, buffy, buffy, 4)
+//        val buffyX = BufferUtils.createIntBuffer(512)
+//        val buffyY = BufferUtils.createIntBuffer(512)
+//        val buffy3 = BufferUtils.createIntBuffer(3)
+//        val bufferding = STBImage.stbi_load("assets/textures/ground_emit.png" , buffyX, buffyY, buffy3, 3)
+//
+//        println(bufferding)
 
-        groundEmissionTex = Texture2D(bufferding!!,512, 512, false)
-        groundEmissionTex.setTexParams(1,1,1,1)
+        val groundEmissionTex = Texture2D.invoke("assets/textures/ground_emit.png", false)
+        groundEmissionTex.setTexParams(GL30.GL_LINEAR,GL30.GL_LINEAR,GL30.GL_LINEAR,GL30.GL_LINEAR)
 
-        val mat = Material(groundEmissionTex,
+        val matGround = Material(
+            groundEmissionTex,
             groundEmissionTex,
             groundEmissionTex,
             60.0f,
@@ -87,8 +86,8 @@ class Scene(private val window: GameWindow) {
 
         val importObjGround = OBJLoader.loadOBJ("assets/models/ground.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
-        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, mat)
-
+        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
+//        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray)
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
         importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
