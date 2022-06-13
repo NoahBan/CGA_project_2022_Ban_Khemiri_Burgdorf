@@ -11,8 +11,6 @@ uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 
-uniform sampler2D texEmit;
-
 uniform float tcMultiplier1;
 uniform float tcMultiplier2;
 
@@ -21,7 +19,6 @@ out struct VertexData
     vec3 position;
     vec3 normal;
     vec2 textureC;
-    sampler2D texEmit;
     vec2 tcMultiplier;
 } vertexData;
 
