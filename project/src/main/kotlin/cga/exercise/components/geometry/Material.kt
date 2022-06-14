@@ -22,8 +22,9 @@ class Material(var diff: Texture2D,
 //        diff.bind(0)
 //        shaderProgram.setUniform("texdDiff", 1)
 
-        shaderProgram.setUniform("texEmit", GL30.GL_TEXTURE1)
         emit.bind(GL30.GL_TEXTURE1)
+        shaderProgram.setUniform("texEmit", GL30.GL_TEXTURE1)
+
 
 
 //        specular.bind(0)

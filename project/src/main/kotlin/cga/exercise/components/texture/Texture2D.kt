@@ -57,8 +57,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA, width, height, 0, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, imageData)
 
         if (genMipMaps) GL30.glGenerateMipmap(GL30.GL_TEXTURE_2D)
-
-//        GL30.glBindTexture(0, GL30.GL_TEXTURE_2D)
+        
     }
 
     override fun setTexParams(wrapS: Int, wrapT: Int, minFilter: Int, magFilter: Int) {
@@ -69,8 +68,8 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         GL30.glTexParameteri(GL30.GL_TEXTURE_2D,GL30.GL_TEXTURE_WRAP_T, wrapT)
         GL30.glTexParameteri(GL30.GL_TEXTURE_2D,GL30.GL_TEXTURE_MIN_FILTER, minFilter)
         GL30.glTexParameteri(GL30.GL_TEXTURE_2D,GL30.GL_TEXTURE_MAG_FILTER, magFilter)
+        GL11.glTexParameterf(GL30.GL_TEXTURE_2D,EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f) //?
 
-//        GL30.glBindTexture(GL30.GL_TEXTURE_2D, 0)
     }
 
     override fun bind(textureUnit: Int) {

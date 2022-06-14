@@ -33,7 +33,7 @@ class Scene(private val window: GameWindow) {
         //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
 
         //initial opengl state
-        glClearColor(0.4f, 0.4f, 0.4f, 1.0f); GLError.checkThrow()
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
         glDisable(GL_CULL_FACE); GLError.checkThrow()
         //glFrontFace(GL_CCW); GLError.checkThrow()
         //glCullFace(GL_BACK); GLError.checkThrow()

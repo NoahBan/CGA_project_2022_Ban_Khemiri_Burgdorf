@@ -42,6 +42,6 @@ void main(){
 
     vertexData.shininess = shininess;
 
-    vec2 tcMultiplier = vec2(tcMultiplier1,tcMultiplier2);
+    vertexData.tcMultiplier = vec2(tcMultiplier1,tcMultiplier2);
 
 }

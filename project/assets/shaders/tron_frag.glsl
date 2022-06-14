@@ -18,9 +18,9 @@ out vec4 color;
 
 void main(){
 
-  //    color = vec4(vertexData.textureC[0],vertexData.textureC[1],1,1);
 
-    color = texture2D(texEmit,vertexData.texCoord);
+
+    color = texture2D(texEmit,vertexData.texCoord * vertexData.tcMultiplier);
 
 //      color = normalize(vec4(abs(vertexData.normal), 1.0f));
 
