@@ -64,8 +64,8 @@ class Scene(private val window: GameWindow) {
 
 
         //Ground Texture
-        val groundEmissionTex = Texture2D.invoke("assets/textures/ground_emit.png", false)
-        groundEmissionTex.setTexParams(1,1,GL30.GL_LINEAR,GL30.GL_LINEAR)
+        val groundEmissionTex = Texture2D.invoke("assets/textures/ground_emit.png", true)
+        groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         val matGround = Material(
             groundEmissionTex,

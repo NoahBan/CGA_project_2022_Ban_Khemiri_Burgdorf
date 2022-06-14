@@ -13,18 +13,22 @@ class Material(var diff: Texture2D,
 
     fun bind(shaderProgram: ShaderProgram) {
         // todo 3.2
+
+
+        diff.bind(GL30.GL_TEXTURE0)
+        shaderProgram.setUniform("texdDiff", 0)
+
+
+        emit.bind(GL30.GL_TEXTURE1)
+        shaderProgram.setUniform("texEmit", 1)
+
+
+        specular.bind(GL30.GL_TEXTURE2)
+        shaderProgram.setUniform("texSpec", 2)
+
         shaderProgram.setUniform("tcMultiplier1", tcMultiplier[0])
         shaderProgram.setUniform("tcMultiplier2", tcMultiplier[1])
         shaderProgram.setUniform("shininess", shininess)
-
-        diff.bind(GL30.GL_TEXTURE0)
-        shaderProgram.setUniform("texdDiff", GL30.GL_TEXTURE0)
-
-        emit.bind(GL30.GL_TEXTURE1)
-        shaderProgram.setUniform("texEmit", GL30.GL_TEXTURE1)
-
-        specular.bind(GL30.GL_TEXTURE2)
-        shaderProgram.setUniform("texSpec", GL30.GL_TEXTURE2)
 
     }
 }
