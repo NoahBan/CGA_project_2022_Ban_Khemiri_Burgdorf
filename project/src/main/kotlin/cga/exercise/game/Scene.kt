@@ -7,12 +7,14 @@ import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.OBJLoader
+import cga.framework.ModelLoader
 import org.joml.*
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
 import org.lwjgl.stb.STBImage
+import org.joml.Math
 
 
 /**
@@ -22,8 +24,9 @@ class Scene(private val window: GameWindow) {
 
     private val staticShader : ShaderProgram
 
-    private val importedSphere : Renderable
     private val importedGround : Renderable
+
+    private val importedBike : Renderable
 
     private val sceneCam : TronCamera
 
@@ -45,7 +48,7 @@ class Scene(private val window: GameWindow) {
         glFrontFace ( GL_CCW )
         glCullFace ( GL_BACK )
 
-
+        //define ibo
         val posAndColVaoPos = VertexAttribute (3, GL30.GL_FLOAT,6 * 4, 0)
         val posAndColVaoCol = VertexAttribute (3, GL30.GL_FLOAT,6 * 4, 3 * 4)
         val posAndColAttrArray = arrayOf(posAndColVaoPos, posAndColVaoCol)
@@ -55,16 +58,12 @@ class Scene(private val window: GameWindow) {
         val posAndTexcAndNormNorm = VertexAttribute (3, GL30.GL_FLOAT,8 * 4, 5 * 4)
         val posAndTexcAndNormAttrArray = arrayOf(posAndTexcAndNormPos, posAndTexcAndNormTexc, posAndTexcAndNormNorm)
 
+        //Textures
 
-//MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATS
 
-//        val buffyX = BufferUtils.createIntBuffer(512)
-//        val buffyY = BufferUtils.createIntBuffer(512)
-//        val buffy3 = BufferUtils.createIntBuffer(3)
-//        val bufferding = STBImage.stbi_load("assets/textures/ground_emit.png" , buffyX, buffyY, buffy3, 3)
-//
-//        println(bufferding)
 
+
+        //Ground Texture
         val groundEmissionTex = Texture2D.invoke("assets/textures/ground_emit.png", false)
         groundEmissionTex.setTexParams(1,1,GL30.GL_LINEAR,GL30.GL_LINEAR)
 
@@ -76,31 +75,21 @@ class Scene(private val window: GameWindow) {
             Vector2f(64.0f,64.0f))
 
 
+        //Geometry
 
-
-//GEEEEEEEEOOOOOOOOOO
-//        val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
-        val importObjSphere = OBJLoader.loadOBJ("assets/models/LAAT_gunship.obj", false, true)
-        val importedSphereData  = importObjSphere.objects[0].meshes[0]
-        val importedSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray)
-
-
+        //Ground Geo
         val importObjGround = OBJLoader.loadOBJ("assets/models/ground.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
         val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
-//        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray)
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
-        importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
 
-//        importedGround.parent = importedSphere
-
-//        importedSphere.translate(Vector3f(0F,0F,400.0F))
+        importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
 
-        sceneCam = TronCamera(90F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedSphere)
+        sceneCam = TronCamera(90F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
-        sceneCam.translate(Vector3f(0F,0F,4.0F))
+        sceneCam.translate(Vector3f(0F,0F,6.0F))
         }
 
     fun render(dt: Float, t: Float) {
@@ -108,29 +97,36 @@ class Scene(private val window: GameWindow) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         sceneCam.bind(staticShader)
 
-        importedSphere.render(staticShader)
         importedGround.render(staticShader)
+        importedBike.render(staticShader)
 
     }
 
     fun update(dt: Float, t: Float) {
         if(window.getKeyState(GLFW_KEY_W)){
-            importedSphere.translate(Vector3f(0f,0f,-10f*dt))
-        }
-        if(window.getKeyState(GLFW_KEY_A)){
-            importedSphere.rotate(0f,50f*dt,0f)
+            importedBike.translate(Vector3f(0f,0f,-10f*dt))
+            if(window.getKeyState(GLFW_KEY_A)){
+                importedBike.rotate(0f,50f*dt,0f)
+            }
+            if(window.getKeyState(GLFW_KEY_D)){
+                importedBike.rotate(0f,-50f*dt,0f)
+            }
         }
         if(window.getKeyState(GLFW_KEY_S)){
-            importedSphere.translate(Vector3f(0f,0f,10f*dt))
+            importedBike.translate(Vector3f(0f,0f,10f*dt))
+            if(window.getKeyState(GLFW_KEY_A)){
+                importedBike.rotate(0f,50f*dt,0f)
+            }
+            if(window.getKeyState(GLFW_KEY_D)){
+                importedBike.rotate(0f,-50f*dt,0f)
+            }
         }
-        if(window.getKeyState(GLFW_KEY_D)){
-            importedSphere.rotate(0f,-50f*dt,0f)
-        }
+
         if(window.getKeyState(GLFW_KEY_R)){
-            importedSphere.translate(Vector3f(0f,0.1f,0f))
+            importedBike.translate(Vector3f(0f,0.1f,0f))
         }
         if(window.getKeyState(GLFW_KEY_F)){
-            importedSphere.translate(Vector3f(0f,-0.1f,0f))
+            importedBike.translate(Vector3f(0f,-0.1f,0f))
         }
 
 

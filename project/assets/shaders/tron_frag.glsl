@@ -1,6 +1,8 @@
 #version 330 core
 
 uniform sampler2D texEmit;
+uniform sampler2D texDiff;
+uniform sampler2D texSpec;
 
 //input from vertex shader
 in struct VertexData

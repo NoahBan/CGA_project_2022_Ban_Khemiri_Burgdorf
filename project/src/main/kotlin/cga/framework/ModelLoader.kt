@@ -170,7 +170,7 @@ object ModelLoader {
         for (i in model.meshes.indices) {
             meshes.add(Mesh(flattenVertexData(model.meshes[i].vertices, rot),
                     flattenIndexData(model.meshes[i].indices),
-                    vertexAttributes,
+                    vertexAttributes,false,                                 //false musste eingefügt werden
                     materials[model.meshes[i].materialIndex]))
         }
         // assemble the renderable

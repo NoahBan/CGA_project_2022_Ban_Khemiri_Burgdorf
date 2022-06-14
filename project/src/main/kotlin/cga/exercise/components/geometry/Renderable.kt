@@ -4,7 +4,8 @@ import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 
 class Renderable(
-    private val renderList : MutableList<Mesh>, modelMatrix : Matrix4f, parent: Transformable?)
+    private val renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null)
+
     : Transformable(modelMatrix, parent), IRenderable  {
 
     fun add (newMesh : Mesh) : Boolean {
