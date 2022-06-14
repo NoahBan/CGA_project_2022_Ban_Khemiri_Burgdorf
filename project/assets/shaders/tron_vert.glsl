@@ -1,7 +1,7 @@
 #version 330 core
 
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 textureC;
+layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 
 
@@ -20,12 +20,14 @@ out struct VertexData
 {
     vec3 position;
     vec3 normal;
-    vec2 textureC;
+    vec2 texCoord;
     vec2 tcMultiplier;
     float shininess;
 } vertexData;
 
 void main(){
+
+    vertexData.texCoord = texCoord;
 
     vec4 pos = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0f) ;
 

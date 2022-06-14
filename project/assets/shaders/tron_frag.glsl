@@ -7,7 +7,7 @@ in struct VertexData
 {
     vec3 position;
     vec3 normal;
-    vec2 textureC;
+    vec2 texCoord;
     vec2 tcMultiplier;
     float shininess;
 } vertexData;
@@ -17,10 +17,11 @@ out vec4 color;
 
 
 void main(){
-        color = vec4(vertexData.shininess);
 
-//     color = texture2D(texEmit,vertexData.textureC * vertexData.tcMultiplier);
+  //    color = vec4(vertexData.textureC[0],vertexData.textureC[1],1,1);
 
-//    color = normalize(vec4(abs(vertexData.normal), 1.0f));
+    color = texture2D(texEmit,vertexData.texCoord);
+
+//      color = normalize(vec4(abs(vertexData.normal), 1.0f));
 
 }

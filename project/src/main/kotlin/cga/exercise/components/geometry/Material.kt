@@ -3,6 +3,7 @@ package cga.exercise.components.geometry
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2f
+import org.lwjgl.opengl.GL30
 
 class Material(var diff: Texture2D,
                var emit: Texture2D,
@@ -21,8 +22,9 @@ class Material(var diff: Texture2D,
 //        diff.bind(0)
 //        shaderProgram.setUniform("texdDiff", 1)
 
-        emit.bind(0)
-        shaderProgram.setUniform("texEmit", 1)
+        shaderProgram.setUniform("texEmit", GL30.GL_TEXTURE1)
+        emit.bind(GL30.GL_TEXTURE1)
+
 
 //        specular.bind(0)
 //        shaderProgram.setUniform("texSpec", 1)

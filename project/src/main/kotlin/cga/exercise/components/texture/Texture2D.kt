@@ -52,9 +52,9 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         // todo 3.1
         texID = GL30.glGenTextures()
 
-        GL30.glBindTexture(texID, GL30.GL_TEXTURE_2D)
+        GL30.glBindTexture(GL30.GL_TEXTURE_2D, texID)
 
-        GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGB, width, height, 0, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE, imageData)
+        GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA, width, height, 0, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, imageData)
 
         if (genMipMaps) GL30.glGenerateMipmap(GL30.GL_TEXTURE_2D)
 

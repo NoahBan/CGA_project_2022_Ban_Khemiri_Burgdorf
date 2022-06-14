@@ -19,7 +19,8 @@ import org.lwjgl.stb.STBImage
  * Created by Fabian on 16.09.2017.
  */
 class Scene(private val window: GameWindow) {
-    private val staticShader: ShaderProgram
+
+    private val staticShader : ShaderProgram
 
     private val importedSphere : Renderable
     private val importedGround : Renderable
@@ -65,7 +66,7 @@ class Scene(private val window: GameWindow) {
 //        println(bufferding)
 
         val groundEmissionTex = Texture2D.invoke("assets/textures/ground_emit.png", false)
-        groundEmissionTex.setTexParams(GL30.GL_LINEAR,GL30.GL_LINEAR,GL30.GL_LINEAR,GL30.GL_LINEAR)
+        groundEmissionTex.setTexParams(1,1,GL30.GL_LINEAR,GL30.GL_LINEAR)
 
         val matGround = Material(
             groundEmissionTex,
