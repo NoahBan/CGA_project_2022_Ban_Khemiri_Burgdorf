@@ -71,12 +71,12 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         GL30.glTexParameteri(GL30.GL_TEXTURE_2D,GL30.GL_TEXTURE_MAG_FILTER, magFilter)
         GL30.glTexParameterf(GL30.GL_TEXTURE_2D,EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f) //?
 
-        //unbind()
+        unbind()
     }
 
     override fun bind(textureUnit: Int) {
         // todo 3.1
-        GL30.glActiveTexture(textureUnit)
+        GL30.glActiveTexture(GL30.GL_TEXTURE0 + textureUnit)
         GL30.glBindTexture(GL30.GL_TEXTURE_2D, texID)
     }
 
