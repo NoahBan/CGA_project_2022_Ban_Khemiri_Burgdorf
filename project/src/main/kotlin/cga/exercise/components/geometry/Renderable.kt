@@ -4,7 +4,8 @@ import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 
 class Renderable(
-    private val renderList : MutableList<Mesh>, modelMatrix : Matrix4f, parent: Transformable?)
+    private val renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null)
+
     : Transformable(modelMatrix, parent), IRenderable  {
 
     fun add (newMesh : Mesh) : Boolean {
@@ -15,7 +16,7 @@ class Renderable(
     override fun render(shaderProgram : ShaderProgram) {
         shaderProgram.setUniform("model_matrix", this.getWorldModelMatrix(), false)
         for (each in renderList){
-            each.render()
+            each.render(shaderProgram)
         }
     }
 }

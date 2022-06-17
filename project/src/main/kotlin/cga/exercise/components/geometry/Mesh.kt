@@ -1,5 +1,6 @@
 package cga.exercise.components.geometry
 
+import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
@@ -20,7 +21,8 @@ class Mesh(
     vertexdata: FloatArray,
     indexdata: IntArray,
     attributes: Array<VertexAttribute>,
-    private val normalized: Boolean = false
+    private val normalized: Boolean = false,
+    private val material : Material? = null
     ) {
 
     //private data
@@ -33,7 +35,6 @@ class Mesh(
         // todo: place your code here
 
         // todo: generate IDs
-
         vao = GL30.glGenVertexArrays()
         vbo = GL30.glGenBuffers()
         ibo = GL30.glGenBuffers()
@@ -67,6 +68,14 @@ class Mesh(
         GL30.glDrawElements(GL30.GL_TRIANGLES, indexcount, GL30.GL_UNSIGNED_INT, 0)
         GL30.glBindVertexArray(0)
         // call the rendering method every frame
+    }
+
+    fun render(shaderProgram: ShaderProgram) {
+        // todo: place your code here
+        if (material != null){
+            material.bind(shaderProgram)
+        }
+        render()
     }
 
     /**
