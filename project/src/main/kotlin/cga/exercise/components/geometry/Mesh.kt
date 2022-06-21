@@ -72,9 +72,7 @@ class Mesh(
 
     fun render(shaderProgram: ShaderProgram) {
         // todo: place your code here
-        if (material != null){
-            material.bind(shaderProgram)
-        }
+        material?.bind(shaderProgram)
         render()
     }
 

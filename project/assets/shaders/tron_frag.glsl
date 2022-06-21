@@ -22,7 +22,7 @@ void main(){
 
 
 
-    color = texture2D(texEmit,vertexData.texCoord * vertexData.tcMultiplier);
+    color = texture(texEmit,vertexData.texCoord * vertexData.tcMultiplier);
 
 //      color = normalize(vec4(abs(vertexData.normal), 1.0f));
 
