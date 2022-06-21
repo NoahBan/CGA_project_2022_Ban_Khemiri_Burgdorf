@@ -51,12 +51,12 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
     override fun processTexture(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean) {
         // todo 3.1
         texID = GL30.glGenTextures()
-
+        //aktivieren
         GL30.glBindTexture(GL30.GL_TEXTURE_2D, texID)
 
         GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA, width, height, 0, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, imageData)
 
-        if (genMipMaps) GL30.glGenerateMipmap(GL30.GL_TEXTURE_2D)
+        if (genMipMaps) GL30.glGenerateMipmap(GL30.GL_TEXTURE_2D)   //von der Texture verkleinerte Texturen
 
         unbind()
     }
