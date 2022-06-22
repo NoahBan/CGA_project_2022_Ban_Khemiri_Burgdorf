@@ -30,7 +30,7 @@ class Scene(private val window: GameWindow) {
 
     private val sceneCam : TronCamera
 
-    private val  curve : BezierCurve
+    private val curve : BezierCurve
 
     //scene setup
     init {
@@ -96,7 +96,9 @@ class Scene(private val window: GameWindow) {
         curve = BezierCurve(
             listOf(
             Vector3f(0f,0f,0f),
-            Vector3f(20f/2,100f/2,0f),
+            Vector3f(10f,20f,0f),
+            Vector3f(20f,0f,0f),
+            Vector3f(20F,0f,20f),
             Vector3f(40f/2,0f,0f)
             ),
             Matrix4f()
@@ -112,7 +114,7 @@ class Scene(private val window: GameWindow) {
         importedGround.render(staticShader)
         importedBike.render(staticShader)
 
-        println(curve.getModelMatrix())
+        //println(curve.getModelMatrix())
 
     }
 
@@ -143,10 +145,10 @@ class Scene(private val window: GameWindow) {
             importedBike.translate(Vector3f(0f,-0.1f,0f))
         }
         if(window.getKeyState(GLFW_KEY_I)){
-            curve.moveAlong(0.5F * dt)
+            curve.moveAlong(0.1F * dt)
         }
         if(window.getKeyState(GLFW_KEY_K)){
-            curve.moveAlong(-0.5F * dt)
+            curve.moveAlong(-0.1F * dt)
         }
 
 
