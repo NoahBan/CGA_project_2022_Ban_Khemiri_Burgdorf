@@ -30,8 +30,6 @@ class Scene(private val window: GameWindow) {
 
     private val sceneCam : TronCamera
 
-    private val testCurve : BezierCurve
-
     //scene setup
     init {
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
@@ -92,15 +90,7 @@ class Scene(private val window: GameWindow) {
         sceneCam = TronCamera(90F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,0F,6.0F))
-
-        testCurve = BezierCurve(
-            listOf(
-                Vector3f(0F,0F,0F),
-                Vector3f(20F,20F,0F),
-                Vector3f(40F,0F,0F)
-            )
-        )
-    }
+        }
 
     fun render(dt: Float, t: Float) {
         staticShader.use()
@@ -109,8 +99,6 @@ class Scene(private val window: GameWindow) {
 
         importedGround.render(staticShader)
         importedBike.render(staticShader)
-
-        println(testCurve.getTransformAt(1f))
 
     }
 

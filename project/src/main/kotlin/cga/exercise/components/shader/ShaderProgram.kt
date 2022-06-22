@@ -56,6 +56,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
         val loc = GL20.glGetUniformLocation(programID, name)
         if (loc != -1) {
             GL20.glUniformMatrix4fv(loc, transpose, value.get(m4x4buf))
+
             return true
         }
         return false
@@ -66,6 +67,25 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
         val loc = GL20.glGetUniformLocation(programID, name)
         if (loc != -1) {
             GL20.glUniform1i(loc, value)
+            return true
+        }
+        return false
+    }
+
+    fun setUniform(name: String, value: Vector2f): Boolean {
+        if (programID == 0) return false
+        val loc = GL20.glGetUniformLocation(programID, name)
+        if (loc != -1) {
+            GL20.glUniform2f(loc,value[0],value[1])
+            return true
+        }
+        return false
+    }
+    fun setUniform(name: String, value: Vector3f): Boolean {
+        if (programID == 0) return false
+        val loc = GL20.glGetUniformLocation(programID, name)
+        if (loc != -1) {
+            GL20.glUniform3f(loc,value[0],value[1],value[2])
             return true
         }
         return false
