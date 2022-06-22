@@ -96,7 +96,8 @@ class Scene(private val window: GameWindow) {
         testCurve = BezierCurve(
             listOf(
                 Vector3f(0F,0F,0F),
-                Vector3f(10F,20F,30F)
+                Vector3f(20F,20F,0F),
+                Vector3f(40F,0F,0F)
             )
         )
     }
@@ -109,7 +110,7 @@ class Scene(private val window: GameWindow) {
         importedGround.render(staticShader)
         importedBike.render(staticShader)
 
-        println(testCurve.getMatrixAt(1f))
+        println(testCurve.getTransformAt(1f))
 
     }
 
