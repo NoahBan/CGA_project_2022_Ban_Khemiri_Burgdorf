@@ -2,6 +2,7 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
+import cga.exercise.components.light.PointLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
@@ -29,6 +30,8 @@ class Scene(private val window: GameWindow) {
     private val importedBike : Renderable
 
     private val sceneCam : TronCamera
+
+    private val light1 : PointLight
 
     //scene setup
     init {
@@ -90,12 +93,17 @@ class Scene(private val window: GameWindow) {
         sceneCam = TronCamera(90F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,0F,6.0F))
-        }
+
+        light1 = PointLight(Vector3f(0.5F), Matrix4f(), importedBike)
+        light1.translate(Vector3f(0f,2f,0f))
+    }
 
     fun render(dt: Float, t: Float) {
-        staticShader.use()
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+
+        staticShader.use()
         sceneCam.bind(staticShader)
+        light1.bind(staticShader)
 
         importedGround.render(staticShader)
         importedBike.render(staticShader)
