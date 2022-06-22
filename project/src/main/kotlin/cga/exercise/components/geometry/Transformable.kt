@@ -9,7 +9,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
      * Returns copy of object model matrix
      * @return modelMatrix
      */
-    fun getModelMatrix(): Matrix4f {
+    open fun getModelMatrix(): Matrix4f {
 
         return Matrix4f(modelMatrix)
 
@@ -23,7 +23,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
      * @return world modelMatrix
      */
     fun getWorldModelMatrix(): Matrix4f {
-        var temp = Matrix4f(modelMatrix)
+        var temp = Matrix4f(getModelMatrix())
 
         if (this.parent == null) {
             return temp
