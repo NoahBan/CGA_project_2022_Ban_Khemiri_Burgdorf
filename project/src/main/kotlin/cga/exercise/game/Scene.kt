@@ -69,13 +69,13 @@ class Scene(private val window: GameWindow) {
         //Ground Texture
         val groundEmissionTex = Texture2D("assets/textures/ground_emit.png", true)
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
-
         val matGround = Material(
             groundEmissionTex,
             groundEmissionTex,
             groundEmissionTex,
             60.0f,
             Vector2f(64.0f,64.0f))
+
 
 
         //Geometry
@@ -95,7 +95,7 @@ class Scene(private val window: GameWindow) {
         sceneCam.translate(Vector3f(0F,0F,6.0F))
 
         light1 = PointLight(Vector3f(0.5F), Matrix4f(), importedBike)
-        light1.translate(Vector3f(0f,2f,0f))
+        light1.translate(Vector3f(0f,5f,0f))
     }
 
     fun render(dt: Float, t: Float) {
@@ -103,7 +103,7 @@ class Scene(private val window: GameWindow) {
 
         staticShader.use()
         sceneCam.bind(staticShader)
-        light1.bind(staticShader)
+        light1.bind(staticShader,sceneCam.getCalculateViewMatrix(),sceneCam.getCalculateProjectionMatrix())
 
         importedGround.render(staticShader)
         importedBike.render(staticShader)
