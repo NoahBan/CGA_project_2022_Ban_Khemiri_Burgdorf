@@ -145,10 +145,10 @@ class Scene(private val window: GameWindow) {
             importedBike.translate(Vector3f(0f,-0.1f,0f))
         }
         if(window.getKeyState(GLFW_KEY_I)){
-            curve.moveAlong(0.1F * dt)
+            curve.moveAlong(0.3F * dt)
         }
         if(window.getKeyState(GLFW_KEY_K)){
-            curve.moveAlong(-0.1F * dt)
+            curve.moveAlong(-0.3F * dt)
         }
 
 
