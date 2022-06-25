@@ -8,7 +8,7 @@ import org.joml.Math.toRadians
 
 class TronCamera (
     val fov : Float = 90F,
-    val aspectRatio : Float = 16f/9f,
+    val aspectRatio : Float = 9f/9f,
     val nearPlane: Float = 0.1F,
     val farPlane: Float = 100.0F,
     modelMatrix : Matrix4f, parent: Transformable? = null) : Transformable(modelMatrix, parent) , ICamera {
