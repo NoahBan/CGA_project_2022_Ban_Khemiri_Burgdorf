@@ -24,10 +24,10 @@ open class PointLight (
 {
 
     fun getPremultLightPos(viewMatrix : Matrix4f) : Vector3f {
-        val worlModelMatrix = Matrix4f(this.getWorldModelMatrix())
+        val worldModelMatrix = Matrix4f(this.getWorldModelMatrix())
         val thisViewMatrix = Matrix4f(viewMatrix)
 
-        var light_matrix = thisViewMatrix.mul(worlModelMatrix)
+        var light_matrix = getWorldModelMatrix()
 
         return Vector3f(light_matrix.m30(),light_matrix.m31(),light_matrix.m32())
     }

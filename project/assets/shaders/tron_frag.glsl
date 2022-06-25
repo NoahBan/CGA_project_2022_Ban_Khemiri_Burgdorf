@@ -1,12 +1,12 @@
 #version 330 core
 
-//struct Light
-//{
-//    vec3 lightPos;
-//    vec3 lightColor;
-//};
-//uniform Light lightsArray[10];
-//uniform int lightsArrayLength;
+struct Light
+{
+    vec3 lightPos;
+    vec3 lightColor;
+};
+uniform Light lightsArray[10];
+uniform int lightsArrayLength;
 
 //uniform vec3 texAmbi;
 
@@ -41,7 +41,7 @@ in struct VertexData
      vec2 texCoord;
 } vertexData;
 
-
+in vec3 lightDirArray[10];
 
 //fragment shader output
 out vec4 color;
@@ -55,18 +55,18 @@ void main(){
         vec3 matDiffuse = texture(texDiff,vertexData.texCoord * tcMultiplier).xyz;
 
         vec3 vertexNormal = normalize(vertexData.normal);
-        vec3 lightDirection = normalize(lightDir);
 
+    vec3 diffuse = vec3(0);
+    for (int i = 0 ; i < lightsArrayLength ; i++){
+        vec3 lightDirection = normalize(lightDirArray[i]);
 
-//        vec4 fragmentPos = (view_matrix * model_matrix * vec4(vertexData.position, 1.0f)); //vec4 P = (view * model * v);
-//        vec3 lightDir = (vec4(lightPos,1.0) * view_matrix - fragmentPos).xyz;
+        //        vec4 fragmentPos = (view_matrix * model_matrix * vec4(vertexData.position, 1.0f)); //vec4 P = (view * model * v);
+        //        vec3 lightDir = (vec4(lightPos,1.0) * view_matrix - fragmentPos).xyz;
 
-
-
-    //Diffuse
-        float cosAlpha = max(dot(vertexNormal,lightDirection), 0.0);
-        vec3 diffuse = (matDiffuse * lightColor) * cosAlpha;
-
+        //Diffuse
+        float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
+        diffuse += (matDiffuse * lightsArray[i].lightColor) * cosAlpha;
+    }
 
     //All together
         vec3 result = matEmissive + (diffuse) + (ambientColor * matDiffuse);

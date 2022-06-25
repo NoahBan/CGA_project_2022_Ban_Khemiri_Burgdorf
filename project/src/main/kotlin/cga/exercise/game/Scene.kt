@@ -159,8 +159,8 @@ class Scene(private val window: GameWindow) {
         staticShader.use()
         sceneCam.bind(staticShader)
 
-        light1.bindTest(staticShader,sceneCam)
-       // lightHandler.bindLights(staticShader, sceneCam)
+//        light1.bindTest(staticShader,sceneCam)
+        lightHandler.bindLights(staticShader, sceneCam)
 
         importedSphere.render(staticShader)
         importedLightSphere.render(staticShader)
