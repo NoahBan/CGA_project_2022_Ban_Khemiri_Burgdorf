@@ -19,7 +19,6 @@ class LightHandler() {
         }
 
         lights.forEachIndexed { index, light ->
-
             shaderProgram.setUniform("lightsArray[" + index +"].lightPos", light.getPremultLightPos(camera.getCalculateViewMatrix()))
             shaderProgram.setUniform("lightsArray[" + index +"].lightColor", light.lightColor)
             if (index == 9) return

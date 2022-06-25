@@ -28,7 +28,7 @@ open class PointLight (
 
         var light_matrix = thisViewMatrix.mul(worlModelMatrix)
 
-        return Vector3f(Vector3f(light_matrix.m30(),light_matrix.m31(),light_matrix.m32()))
+        return Vector3f(light_matrix.m30(),light_matrix.m31(),light_matrix.m32())
     }
     override fun bind(shaderProgram: ShaderProgram,viewMatrix: Matrix4f) {
 
