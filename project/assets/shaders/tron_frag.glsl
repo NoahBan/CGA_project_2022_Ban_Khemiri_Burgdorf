@@ -1,14 +1,14 @@
 #version 330 core
 
-struct Light
-{
-    vec3 lightPos;
-    vec3 lightColor;
-};
-uniform Light lightsArray[10];
-uniform int lightsArrayLength;
+//struct Light
+//{
+//    vec3 lightPos;
+//    vec3 lightColor;
+//};
+//uniform Light lightsArray[10];
+//uniform int lightsArrayLength;
 
-uniform vec3 texAmbi;
+//uniform vec3 texAmbi;
 
 //light
 uniform vec3 lightPos;
@@ -30,7 +30,7 @@ uniform sampler2D texSpec;
 uniform vec2 tcMultiplier;
 uniform float shininess;
 
-//TESTING
+
 in vec3 lightDir ;
 
 //input from vertex shader
@@ -57,9 +57,11 @@ void main(){
         vec3 vertexNormal = normalize(vertexData.normal);
         vec3 lightDirection = normalize(lightDir);
 
-        vec4 fragmentPos = (view_matrix * model_matrix * vec4(vertexData.position, 1.0f));
 
-        vec3 lightDir = (vec4(lightPos,1.0) - fragmentPos).xyz;
+//        vec4 fragmentPos = (view_matrix * model_matrix * vec4(vertexData.position, 1.0f)); //vec4 P = (view * model * v);
+//        vec3 lightDir = (vec4(lightPos,1.0) * view_matrix - fragmentPos).xyz;
+
+
 
     //Diffuse
         float cosAlpha = max(dot(vertexNormal,lightDirection), 0.0);
@@ -67,17 +69,15 @@ void main(){
 
 
     //All together
-        vec3 result = matEmissive + (diffuse * matDiffuse) + (ambientColor * matDiffuse);
+        vec3 result = matEmissive + (diffuse) + (ambientColor * matDiffuse);
 
         color = vec4(result, 1.0);
 
     //Emissive und Ambient
-       // vec3 AmbientEmissiveTerm = matEmissive + matAmbient * lightColorAmbient;
-       // color += vec4(AmbientEmissiveTerm, 0.0);
+//        vec3 AmbientEmissiveTerm = matEmissive + matAmbient * lightColorAmbient;
+//        color += vec4(AmbientEmissiveTerm, 0.0);
 
 }
-
-
 
 
 //void main(){

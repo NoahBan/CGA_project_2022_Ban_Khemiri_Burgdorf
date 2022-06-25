@@ -121,25 +121,26 @@ class Scene(private val window: GameWindow) {
         importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
 
-        importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(0.0f),Math.toRadians(0f))!!
-        importedLightSphere.parent = importedBike
-        importedLightSphere2.parent = importedBike
+        importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
+
 
         sceneCam = TronCamera(89F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
-        sceneCam.translate(Vector3f(0F,1F,5.0F))
+        sceneCam.translate(Vector3f(0F,1F,3.0F))
 
-        light1 = PointLight(Vector3f(1F,0F,0F), Matrix4f(), importedLightSphere2)
-        light2 = PointLight(Vector3f(0F,0F,1F), Matrix4f(), importedLightSphere)
+        light1 = PointLight(Vector3f(1F,1F,1F), Matrix4f(), importedBike)
+        light2 = PointLight(Vector3f(0F,0F,1F), Matrix4f(), importedBike)
+
+        importedLightSphere.parent = light1
+        importedLightSphere2.parent = light2
 
         importedSphere.translate(Vector3f(0f,2f,-5f))
-        importedLightSphere.translate(Vector3f(-2f,2f,0f))
+
         importedLightSphere.scale(Vector3f(0.05F))
-        importedLightSphere2.translate(Vector3f(2f,2f,0f))
         importedLightSphere2.scale(Vector3f(0.05F))
 
-//        light1.translate(Vector3f(-2f,2f,0f))
-//        light1.translate(Vector3f(2f,2f,0f))
+        light1.translate(Vector3f(-2f,2f,0f))
+        light2.translate(Vector3f(2f,2f,0f))
 
         lightHandler = LightHandler()
 
@@ -147,8 +148,7 @@ class Scene(private val window: GameWindow) {
         lightHandler.addLight(light1)
 
 
-        println(light1.getPremultLightPos(sceneCam.getCalculateViewMatrix()))
-        println(light2.getPremultLightPos(sceneCam.getCalculateViewMatrix()))
+
 
     }
 
@@ -159,15 +159,16 @@ class Scene(private val window: GameWindow) {
         staticShader.use()
         sceneCam.bind(staticShader)
 
-        light1.bind(staticShader,sceneCam.getCalculateViewMatrix())
-        lightHandler.bindLights(staticShader, sceneCam)
+        light1.bindTest(staticShader,sceneCam)
+       // lightHandler.bindLights(staticShader, sceneCam)
 
         importedSphere.render(staticShader)
         importedLightSphere.render(staticShader)
         importedLightSphere2.render(staticShader)
         importedGround.render(staticShader)
         importedBike.render(staticShader)
-
+        println(light1.getPremultLightPos(sceneCam.getWorldModelMatrix()))
+        println(light2.getPremultLightPos(sceneCam.getWorldModelMatrix()))
     }
 
     fun update(dt: Float, t: Float) {

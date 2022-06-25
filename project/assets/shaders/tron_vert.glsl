@@ -15,7 +15,7 @@ uniform mat4 projection_matrix;
 //light
 uniform vec3 lightPos;
 
-//TESTING
+
 out vec3 lightDir ;
 
 //output to fragment shader
@@ -38,4 +38,8 @@ void main(){
     vertexData.normal = norm.xyz;
 
     vertexData.texCoord = texCoord;
+
+    vec4 lp = view_matrix * vec4(lightPos, 1.0);
+    vec4 p = (view_matrix * model_matrix * vec4(position, 1.0f));
+    lightDir = (lp - p).xyz ;
 }

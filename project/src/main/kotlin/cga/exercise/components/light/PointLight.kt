@@ -1,5 +1,6 @@
 package cga.exercise.components.light
 
+import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
@@ -22,8 +23,8 @@ open class PointLight (
     : Transformable(modelMatrix, parent), IPointLight
 {
 
-    fun getPremultLightPos(viewMatrix: Matrix4f) : Vector3f {
-        val worlModelMatrix = Matrix4f(getWorldModelMatrix())
+    fun getPremultLightPos(viewMatrix : Matrix4f) : Vector3f {
+        val worlModelMatrix = Matrix4f(this.getWorldModelMatrix())
         val thisViewMatrix = Matrix4f(viewMatrix)
 
         var light_matrix = thisViewMatrix.mul(worlModelMatrix)
@@ -35,5 +36,15 @@ open class PointLight (
         shaderProgram.setUniform("lightColor",lightColor)
         shaderProgram.setUniform("lightPos", getPremultLightPos(viewMatrix))
 
+    }
+
+    fun bindTest (shaderProgram: ShaderProgram, camera : TronCamera){
+        val worldModelMatrix = Matrix4f(this.getWorldModelMatrix())
+        val thisViewMatrix = Matrix4f(camera.getCalculateViewMatrix())
+
+        var light_matrix = getWorldModelMatrix()//thisViewMatrix.mul(worldModelMatrix)
+
+        shaderProgram.setUniform("lightColor",lightColor)
+        shaderProgram.setUniform("lightPos", Vector3f(light_matrix.m30(),light_matrix.m31(),light_matrix.m32()))
     }
 }
