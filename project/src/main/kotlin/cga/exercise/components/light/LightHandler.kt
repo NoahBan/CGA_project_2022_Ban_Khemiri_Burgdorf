@@ -17,18 +17,38 @@ class LightHandler() {
         //bind ambient "light" color
         shaderProgram.setUniform("ambientColor", ambientLightCol)
 
-        //bind point lights
-        shaderProgram.setUniform("pointLightArrayLength", pointLights.size)
+        bindPointlights(shaderProgram, camera)
+        bindSpotlights(shaderProgram, camera)
+    }
+
+    fun bindPointlights (shaderProgram : ShaderProgram, camera : TronCamera) {
         if (pointLights.size > 10) {
             println("maximum of 10 lights exceeded. Past 10 will be ignored")
             return
         }
+
+        shaderProgram.setUniform("pointLightArrayLength", pointLights.size)
+
         pointLights.forEachIndexed { index, light ->
             shaderProgram.setUniform("pointLightArray[" + index +"].lightPos", light.getPremultLightPos(camera.getCalculateViewMatrix()))
             shaderProgram.setUniform("pointLightArray[" + index +"].lightColor", light.lightColor)
             if (index == 9) return
         }
+    }
 
+    fun bindSpotlights (shaderProgram : ShaderProgram, camera : TronCamera) {
+        if (pointLights.size > 10) {
+            println("maximum of 10 lights exceeded. Past 10 will be ignored")
+            return
+        }
+
+        shaderProgram.setUniform("spotLightArrayLength", spotLights.size)
+
+        pointLights.forEachIndexed { index, spotLight ->
+            shaderProgram.setUniform("spotLightArray[" + index +"].lightPos", spotLight.getPremultLightPos(camera.getCalculateViewMatrix()))
+            shaderProgram.setUniform("spotLightArray[" + index +"].lightColor", spotLight.lightColor)
+            if (index == 9) return
+        }
     }
 
 }
