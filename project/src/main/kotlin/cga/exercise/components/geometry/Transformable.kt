@@ -66,6 +66,12 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
          modelMatrix.translate(deltaPos)
     }
 
+    fun setPosition(deltaPos: Vector3f) {
+        modelMatrix.m30(deltaPos[0])
+        modelMatrix.m31(deltaPos[1])
+        modelMatrix.m32(deltaPos[2])
+    }
+
     /**
      * Translates object based on its parent coordinate system.
      * Hint: this operation has to be left-multiplied

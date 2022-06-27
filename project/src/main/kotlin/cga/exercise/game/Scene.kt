@@ -144,8 +144,8 @@ class Scene(private val window: GameWindow) {
 
         lightHandler = LightHandler()
 
-        lightHandler.addLight(light2)
-        lightHandler.addLight(light1)
+        lightHandler.addPointLight(light2)
+        lightHandler.addPointLight(light1)
 
 
 
@@ -154,13 +154,12 @@ class Scene(private val window: GameWindow) {
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-        staticShader.setUniform("ambientColor", Vector3f(0f))
 
         staticShader.use()
         sceneCam.bind(staticShader)
 
 //        light1.bindTest(staticShader,sceneCam)
-        lightHandler.bindLights(staticShader, sceneCam)
+        lightHandler.bindLights(staticShader, sceneCam, Vector3f(0f))
 
         importedSphere.render(staticShader)
         importedLightSphere.render(staticShader)

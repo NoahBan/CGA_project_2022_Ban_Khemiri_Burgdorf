@@ -37,14 +37,4 @@ open class PointLight (
         shaderProgram.setUniform("lightPos", getPremultLightPos(viewMatrix))
 
     }
-
-    fun bindTest (shaderProgram: ShaderProgram, camera : TronCamera){
-        val worldModelMatrix = Matrix4f(this.getWorldModelMatrix())
-        val thisViewMatrix = Matrix4f(camera.getCalculateViewMatrix())
-
-        var light_matrix = getWorldModelMatrix()//thisViewMatrix.mul(worldModelMatrix)
-
-        shaderProgram.setUniform("lightColor",lightColor)
-        shaderProgram.setUniform("lightPos", Vector3f(light_matrix.m30(),light_matrix.m31(),light_matrix.m32()))
-    }
 }
