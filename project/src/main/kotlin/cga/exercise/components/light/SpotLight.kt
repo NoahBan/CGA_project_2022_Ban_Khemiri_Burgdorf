@@ -8,6 +8,7 @@ import org.joml.Vector3f
 class SpotLight(
         attenuationType : AttenuationType,
         lightColor : Vector3f = Vector3f(1F,1F,1F),
+        intensity : Float,
         modelMatrix : Matrix4f = Matrix4f(),
         projectionMatrix : Matrix4f = Matrix4f(),
         private var winkelInnen : Float,
@@ -15,7 +16,7 @@ class SpotLight(
         parent: Transformable? = null)
 
 
-        : PointLight(attenuationType, lightColor, modelMatrix, parent)
+        : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent)
 
 {
 }

@@ -32,6 +32,7 @@ class LightHandler() {
         pointLights.forEachIndexed { index, light ->
             shaderProgram.setUniform("pointLightArray[" + index +"].lightPos", light.getPremultLightPos(camera.getCalculateViewMatrix()))
             shaderProgram.setUniform("pointLightArray[" + index +"].lightColor", light.lightColor)
+            shaderProgram.setUniform("pointLightArray[" + index +"].intensity", light.intensity)
             shaderProgram.setUniform("pointLightArray[" + index +"].attenuationType", light.attenuationType.ordinal)
             println(light.attenuationType.ordinal)
             if (index == 9) return
@@ -49,6 +50,8 @@ class LightHandler() {
         pointLights.forEachIndexed { index, spotLight ->
             shaderProgram.setUniform("spotLightArray[" + index +"].lightPos", spotLight.getPremultLightPos(camera.getCalculateViewMatrix()))
             shaderProgram.setUniform("spotLightArray[" + index +"].lightColor", spotLight.lightColor)
+            shaderProgram.setUniform("pointLightArray[" + index +"].intensity", spotLight.intensity)
+            shaderProgram.setUniform("pointLightArray[" + index +"].attenuationType", spotLight.attenuationType.ordinal)
             if (index == 9) return
         }
     }

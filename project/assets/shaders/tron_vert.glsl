@@ -26,6 +26,7 @@ struct pointLight
     vec3 lightPos;
     vec3 lightColor;
     int attenuationType;
+    float intensity;
 };
 uniform pointLight pointLightArray[10];
 uniform int pointLightArrayLength;
@@ -37,6 +38,7 @@ struct spotLight
 {
     vec3 lightPos;
     vec3 lightColor;
+    float intensity;
     vec3 direction;
     float cutOff;
 };

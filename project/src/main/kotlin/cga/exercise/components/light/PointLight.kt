@@ -18,6 +18,7 @@ import org.joml.Vector4f
 open class PointLight (
         val attenuationType : AttenuationType,
         var lightColor : Vector3f = Vector3f(1F,1F,1F),
+        var intensity : Float,
         modelMatrix : Matrix4f = Matrix4f(),
         parent: Transformable? = null)
 

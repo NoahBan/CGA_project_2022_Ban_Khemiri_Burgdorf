@@ -127,8 +127,8 @@ class Scene(private val window: GameWindow) {
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
 
-        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(2F,0F,0F), Matrix4f(), importedBike)
-        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,2F), Matrix4f(), importedBike)
+        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 10F, Matrix4f(), importedBike)
+        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 10F, Matrix4f(), importedBike)
 
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2

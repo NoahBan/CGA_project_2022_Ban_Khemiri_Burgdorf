@@ -30,6 +30,7 @@ struct pointLight
     vec3 lightPos;
     vec3 lightColor;
     int attenuationType;
+    float intensity;
 };
 uniform pointLight pointLightArray[10];
 uniform int pointLightArrayLength;
@@ -48,11 +49,21 @@ float getAttenuation(in int inAttenuationType,in float inDistance){
     return attenuation;
 }
 
+void toSRGB (inout vec3 linearCol){
+    linearCol = pow(linearCol, vec3 (1.0/2.2));
+}
+
+void toLinear (inout vec3 srgbCol){
+    srgbCol = pow(srgbCol, vec3(2.2));
+}
+
 void main(){
 
     //get tex color on uv coordinate
     vec3 matEmissive = texture(texEmit, vertexData.texCoord * tcMultiplier).xyz;
     vec3 matDiffuse = texture(texDiff,vertexData.texCoord * tcMultiplier).xyz;
+    toLinear(matDiffuse);
+    toLinear(matEmissive);
 
     vec3 vertexNormal = normalize(vertexData.normal);
 
@@ -68,11 +79,12 @@ void main(){
         float attenuation = getAttenuation(pointLightArray[i].attenuationType, lightDistance);
         int attenuationType = pointLightArray[i].attenuationType;
 
-        diffuse += (matDiffuse * pointLightArray[i].lightColor) * cosAlpha / attenuation;
+        diffuse += matDiffuse * pointLightArray[i].lightColor * pointLightArray[i].intensity * cosAlpha / attenuation;
     }
 
     //add up material inputs
     vec3 result = matEmissive + diffuse + (ambientColor * matDiffuse);
+    toSRGB(result);
 
     color = vec4(result, 1.0);
 }
