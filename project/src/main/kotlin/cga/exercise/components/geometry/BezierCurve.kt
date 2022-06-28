@@ -12,7 +12,7 @@ class BezierCurve (val points: List<Vector3f>,
     val segmentAmount : Int
     val segmentSize : Float
     init {
-        if (points.size < 3) throw Exception("Need at least 3 points for curve to function")
+        if (points.size < 3) throw Exception("Need at least 3 points for curve to")
         if (points.size % 2 == 0) throw Exception("Amount of points must be 3 + 2 * n")
 
         var pointCount = 0
