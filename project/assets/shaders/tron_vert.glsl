@@ -25,10 +25,12 @@ struct pointLight
 {
     vec3 lightPos;
     vec3 lightColor;
+    int attenuationType;
 };
 uniform pointLight pointLightArray[10];
 uniform int pointLightArrayLength;
 out vec3 pointLightDirArray[10];
+out float pointLightDistArray[10];
 
 //directLights
 struct spotLight
@@ -60,8 +62,11 @@ void main(){
     //point light direction
     for (int i = 0 ; i < pointLightArrayLength ; i++)
     {
-        vec4 lp = view_matrix * vec4(pointLightArray[i].lightPos, 1.0);
-        vec4 p = (view_matrix * model_matrix * vec4(position, 1.0f));
-        pointLightDirArray[i] = (lp - p).xyz ;
+        vec4 lightPosition = view_matrix * vec4(pointLightArray[i].lightPos, 1.0);
+        vec4 fragmentPosition = (view_matrix * model_matrix * vec4(position, 1.0f));
+        pointLightDirArray[i] = (lightPosition - fragmentPosition).xyz ;
+
+        float distance = length(pointLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
+        pointLightDistArray[i] = distance;
     }
 }

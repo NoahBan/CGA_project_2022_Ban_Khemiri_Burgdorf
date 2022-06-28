@@ -2,8 +2,7 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
-import cga.exercise.components.light.LightHandler
-import cga.exercise.components.light.PointLight
+import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
@@ -128,8 +127,8 @@ class Scene(private val window: GameWindow) {
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
 
-        light1 = PointLight(Vector3f(1F,1F,1F), Matrix4f(), importedBike)
-        light2 = PointLight(Vector3f(0F,0F,1F), Matrix4f(), importedBike)
+        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(2F,0F,0F), Matrix4f(), importedBike)
+        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,2F), Matrix4f(), importedBike)
 
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2
@@ -146,8 +145,6 @@ class Scene(private val window: GameWindow) {
 
         lightHandler.addPointLight(light2)
         lightHandler.addPointLight(light1)
-
-
 
 
     }

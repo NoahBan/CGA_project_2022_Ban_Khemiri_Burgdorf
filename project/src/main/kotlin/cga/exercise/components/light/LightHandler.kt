@@ -32,6 +32,8 @@ class LightHandler() {
         pointLights.forEachIndexed { index, light ->
             shaderProgram.setUniform("pointLightArray[" + index +"].lightPos", light.getPremultLightPos(camera.getCalculateViewMatrix()))
             shaderProgram.setUniform("pointLightArray[" + index +"].lightColor", light.lightColor)
+            shaderProgram.setUniform("pointLightArray[" + index +"].attenuationType", light.attenuationType.ordinal)
+            println(light.attenuationType.ordinal)
             if (index == 9) return
         }
     }

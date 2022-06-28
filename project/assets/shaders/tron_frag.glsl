@@ -29,14 +29,24 @@ struct pointLight
 {
     vec3 lightPos;
     vec3 lightColor;
+    int attenuationType;
 };
 uniform pointLight pointLightArray[10];
 uniform int pointLightArrayLength;
 in vec3 pointLightDirArray[10];
+in float pointLightDistArray[10];
 
 //pixel color out
 out vec4 color;
 
+float getAttenuation(in int inAttenuationType,in float inDistance){
+    float attenuation = 1;
+    int attenuationType = int(inAttenuationType);
+    if (attenuationType == 1) attenuation *= inDistance;
+    if (attenuationType == 2) attenuation *= inDistance * inDistance;
+    if (attenuationType == 3) attenuation *= inDistance * inDistance * inDistance;
+    return attenuation;
+}
 
 void main(){
 
@@ -52,14 +62,17 @@ void main(){
     //add point lights
     for (int i = 0 ; i < pointLightArrayLength ; i++){
         vec3 lightDirection = normalize(pointLightDirArray[i]);
-
+        float lightDistance = pointLightDistArray[i];
         float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
-        diffuse += (matDiffuse * pointLightArray[i].lightColor) * cosAlpha;
+
+        float attenuation = getAttenuation(pointLightArray[i].attenuationType, lightDistance);
+        int attenuationType = pointLightArray[i].attenuationType;
+
+        diffuse += (matDiffuse * pointLightArray[i].lightColor) * cosAlpha / attenuation;
     }
 
     //add up material inputs
-    vec3 result = matEmissive + (diffuse) + (ambientColor * matDiffuse);
+    vec3 result = matEmissive + diffuse + (ambientColor * matDiffuse);
 
     color = vec4(result, 1.0);
-
 }
