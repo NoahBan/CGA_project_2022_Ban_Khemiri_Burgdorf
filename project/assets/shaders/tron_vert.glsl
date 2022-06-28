@@ -13,6 +13,8 @@ out struct VertexData
     vec2 texCoord;
 } vertexData;
 
+out vec4 fragmentPosition;
+
 //model transformation
 uniform mat4 model_matrix;
 
@@ -60,12 +62,12 @@ void main(){
     //texture coordinates
     vertexData.texCoord = texCoord;
 
+    fragmentPosition = (view_matrix * model_matrix * vec4(position, 1.0f));
 
     //point light direction
     for (int i = 0 ; i < pointLightArrayLength ; i++)
     {
         vec4 lightPosition = view_matrix * vec4(pointLightArray[i].lightPos, 1.0);
-        vec4 fragmentPosition = (view_matrix * model_matrix * vec4(position, 1.0f));
         pointLightDirArray[i] = (lightPosition - fragmentPosition).xyz ;
 
         float distance = length(pointLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);

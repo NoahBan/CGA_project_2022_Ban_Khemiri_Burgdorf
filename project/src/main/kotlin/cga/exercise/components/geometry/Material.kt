@@ -16,18 +16,18 @@ class Material(var diff: Texture2D,
 
 
         diff.bind(0)
-        shaderProgram.setUniform("texdDiff", 0)
+        shaderProgram.setUniform("material.texdDiff", 0)
 
 
         emit.bind(1)
-        shaderProgram.setUniform("texEmit", 1)
+        shaderProgram.setUniform("material.texEmit", 1)
 
 
         specular.bind(2)
-        shaderProgram.setUniform("texSpec", 2)
+        shaderProgram.setUniform("material.texSpec", 2)
 
-        shaderProgram.setUniform("tcMultiplier", tcMultiplier)
-        shaderProgram.setUniform("shininess", shininess)
+        shaderProgram.setUniform("material.tcMultiplier", tcMultiplier)
+        shaderProgram.setUniform("material.shininess", shininess)
 
     }
 }

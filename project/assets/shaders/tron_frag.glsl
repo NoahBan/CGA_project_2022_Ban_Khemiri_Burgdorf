@@ -8,6 +8,8 @@ in struct VertexData
     vec2 texCoord;
 } vertexData;
 
+in vec4 fragmentPosition;
+
 //model transformation
 uniform mat4 model_matrix;
 
@@ -16,11 +18,14 @@ uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 
 //material
-uniform sampler2D texEmit;
-uniform sampler2D texDiff;
-uniform sampler2D texSpec;
-uniform vec2 tcMultiplier;
-uniform float shininess;
+struct Material{
+    sampler2D texEmit;
+    sampler2D texDiff;
+    sampler2D texSpec;
+    vec2 tcMultiplier;
+    float shininess;
+};
+uniform Material material;
 
 //ambient color/light
 uniform vec3 ambientColor;
@@ -60,30 +65,43 @@ void toLinear (inout vec3 srgbCol){
 void main(){
 
     //get tex color on uv coordinate
-    vec3 matEmissive = texture(texEmit, vertexData.texCoord * tcMultiplier).xyz;
-    vec3 matDiffuse = texture(texDiff,vertexData.texCoord * tcMultiplier).xyz;
+    vec3 matEmissive = texture(material.texEmit, vertexData.texCoord * material.tcMultiplier).xyz;
+    vec3 matDiffuse = texture(material.texDiff,vertexData.texCoord * material.tcMultiplier).xyz;
+    vec3 matSpecular = texture(material.texSpec,vertexData.texCoord * material.tcMultiplier).xyz;
     toLinear(matDiffuse);
     toLinear(matEmissive);
 
     vec3 vertexNormal = normalize(vertexData.normal);
 
+    vec3 viewDirection = normalize(view_matrix[3].xyz - fragmentPosition.xyz);
+
     //variable for diffuse color
     vec3 diffuse = vec3(0);
+    vec3 specular = vec3(0);
 
     //add point lights
     for (int i = 0 ; i < pointLightArrayLength ; i++){
         vec3 lightDirection = normalize(pointLightDirArray[i]);
+        vec3 halfwayDirection = normalize(lightDirection + viewDirection);
+
         float lightDistance = pointLightDistArray[i];
         float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
 
         float attenuation = getAttenuation(pointLightArray[i].attenuationType, lightDistance);
         int attenuationType = pointLightArray[i].attenuationType;
-
         diffuse += matDiffuse * pointLightArray[i].lightColor * pointLightArray[i].intensity * cosAlpha / attenuation;
+
+
+        float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
+        specular = pointLightArray[i].lightColor * spec / attenuation;
+
+
+
     }
 
     //add up material inputs
     vec3 result = matEmissive + diffuse + (ambientColor * matDiffuse);
+//    vec3 result = matEmissive + diffuse + specular + (ambientColor * matDiffuse);
     toSRGB(result);
 
     color = vec4(result, 1.0);
