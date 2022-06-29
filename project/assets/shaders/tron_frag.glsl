@@ -122,7 +122,7 @@ void main(){
     }
 
     //add up material inputs
-    vec3 result = matEmissive + diffuse + (ambientColor * matDiffuse);
+    vec3 result = matEmissive*material.emitMultiplier + diffuse + (ambientColor * matDiffuse);
 //    vec3 result = matEmissive + diffuse + specular + (ambientColor * matDiffuse);
     toSRGB(result);
 

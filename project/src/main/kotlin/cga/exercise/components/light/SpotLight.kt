@@ -4,6 +4,7 @@ import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import org.joml.Math
 
 class SpotLight(
         attenuationType : AttenuationType,
@@ -17,6 +18,9 @@ class SpotLight(
 
 
         : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent)
-
 {
+        init {
+                winkelInnen = Math.toRadians(winkelInnen.toDouble()).toFloat()
+                winkelAußen = Math.toRadians(winkelAußen.toDouble()).toFloat()
+        }
 }

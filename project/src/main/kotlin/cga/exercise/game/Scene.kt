@@ -165,8 +165,11 @@ class Scene(private val window: GameWindow) {
         importedSphere.render(staticShader)
         importedLightSphere.render(staticShader)
         importedLightSphere2.render(staticShader)
+        staticShader.setUniform("material.emitMultiplier", Vector3f(0f,0f,Math.abs(Math.sin(t) + 0.1f)))
         importedGround.render(staticShader)
+        staticShader.setUniform("material.emitMultiplier", Vector3f(Math.abs(Math.sin(t)) + 0.1F,0f,0f))
         importedBike.render(staticShader)
+        staticShader.setUniform("material.emitMultiplier", Vector3f(1f))
 
         //println(light1.getPremultLightPos(sceneCam.getWorldModelMatrix()))
         //println(light2.getPremultLightPos(sceneCam.getWorldModelMatrix()))

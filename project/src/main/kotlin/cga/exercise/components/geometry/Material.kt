@@ -30,6 +30,5 @@ class Material(var diff: Texture2D,
 
         shaderProgram.setUniform("material.tcMultiplier", tcMultiplier)
         shaderProgram.setUniform("material.shininess", shininess)
-        shaderProgram.setUniform("material.emitMultiplier", emitMultiplier)
     }
 }
