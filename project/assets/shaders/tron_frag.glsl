@@ -63,7 +63,6 @@ in float spotLightDistArray[10];
 //pixel color out
 out vec4 color;
 
-
 float getAttenuation(in int inAttenuationType,in float inDistance){
     float attenuation = 1;
     int attenuationType = int(inAttenuationType);
@@ -155,7 +154,6 @@ void main(){
 //        CalcLightData calcLightData = calcSpotLight(j, viewDirection, vertexNormal, matDiffuse);
 //        diffuse += calcLightData.diffuse;
 //    }
-
     //add up material inputs
     vec3 result = matEmissive*material.emitMultiplier + diffuse + (ambientColor * matDiffuse);
 //    vec3 result = matEmissive + diffuse + specular + (ambientColor * matDiffuse);
