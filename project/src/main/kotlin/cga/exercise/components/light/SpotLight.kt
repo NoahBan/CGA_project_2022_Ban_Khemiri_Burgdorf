@@ -12,6 +12,7 @@ class SpotLight(
         intensity : Float,
         modelMatrix : Matrix4f = Matrix4f(),
         projectionMatrix : Matrix4f = Matrix4f(),
+        var target : Matrix4f,
         private var winkelInnen : Float,
         private var winkelAußen : Float,
         parent: Transformable? = null)
@@ -27,8 +28,8 @@ class SpotLight(
                 winkelAußen = Math.toRadians(winkelAußen.toDouble()).toFloat()
         }
 
-        fun getSpotLightDirection(target : Matrix4f) : Vector3f{
-
+        fun getSpotLightDirection() : Vector3f{
+                target
                 return Vector3f(0F)
 
         }
