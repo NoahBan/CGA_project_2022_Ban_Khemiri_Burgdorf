@@ -14,8 +14,8 @@ class SpotLight(
         modelMatrix : Matrix4f = Matrix4f(),
         projectionMatrix : Matrix4f = Matrix4f(),
         var target : Matrix4f,
-        private var winkelInnen : Float,
-        private var winkelAußen : Float,
+        var winkelInnen : Float,
+        var winkelAußen : Float,
         parent: Transformable? = null)
         
         

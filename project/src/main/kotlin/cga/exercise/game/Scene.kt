@@ -35,6 +35,8 @@ class Scene(private val window: GameWindow) {
 
     private val light1 : PointLight
     private val light2 : PointLight
+    private val spotLight1 : SpotLight
+
     private val lightHandler : LightHandler
 
     var xposBefore : Double = 0.0
@@ -135,6 +137,8 @@ class Scene(private val window: GameWindow) {
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 10F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 10F, Matrix4f(), importedBike)
 
+        spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 10F, Matrix4f(), Matrix4f(), Matrix4f(),20f,40f)
+
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2
 
@@ -150,6 +154,7 @@ class Scene(private val window: GameWindow) {
 
         lightHandler.addPointLight(light2)
         lightHandler.addPointLight(light1)
+        lightHandler.addSpotLight(spotLight1)
 
 
     }

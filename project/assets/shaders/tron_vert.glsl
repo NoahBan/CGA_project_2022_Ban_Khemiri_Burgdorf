@@ -79,12 +79,14 @@ void main(){
         pointLightDistArray[i] = distance;
     }
 
-    for (int i = 0 ; i < spotLightArrayLength ; i++)
+    for (int j = 0 ; j < spotLightArrayLength ; j++)
     {
-        vec4 lightPosition = view_matrix * vec4(spotLightArray[i].lightPos, 1.0);
-        spotLightDirArray[i] = (lightPosition - fragmentPosition).xyz ;
+        vec4 lightPosition = view_matrix * vec4(spotLightArray[j].lightPos, 1.0);
+        spotLightDirArray[j] = (lightPosition - fragmentPosition).xyz;
 
-        float distance = length(spotLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
-        spotLightDistArray[i] = distance;
+        float distance = length(spotLightArray[j].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
+        spotLightDistArray[j] = distance;
+
+        spotLightTargetDirArray[j] = (view_matrix * vec4(spotLightArray[j].direction, 1)).xyz;
     }
 }

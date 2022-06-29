@@ -12,6 +12,10 @@ class LightHandler() {
         pointLights.add(newLight)
     }
 
+    fun addSpotLight (newLight : SpotLight){
+        spotLights.add(newLight)
+    }
+
     fun bindLights (shaderProgram : ShaderProgram, camera : TronCamera, ambientLightCol : Vector3f) {
 
         //bind ambient "light" color
@@ -52,7 +56,7 @@ class LightHandler() {
             shaderProgram.setUniform("spotLightArray[" + index +"].intensity", spotLight.intensity)
             shaderProgram.setUniform("spotLightArray[" + index +"].attenuationType", spotLight.attenuationType.ordinal)
             shaderProgram.setUniform("spotLightArray[" + index +"].direction", spotLight.getSpotLightDirection(camera))
-            shaderProgram.setUniform("spotLightArray[" + index +"].cutOff", 1)
+            shaderProgram.setUniform("spotLightArray[" + index +"].cutOff", spotLight.winkelInnen)
             if (index == 9) return
         }
     }
