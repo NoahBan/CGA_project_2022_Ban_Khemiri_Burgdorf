@@ -23,14 +23,14 @@ uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 
 //PointLights
-struct pointLight
+struct PointLight
 {
     vec3 lightPos;
     vec3 lightColor;
     int attenuationType;
     float intensity;
 };
-uniform pointLight pointLightArray[10];
+uniform PointLight pointLightArray[10];
 uniform int pointLightArrayLength;
 out vec3 pointLightDirArray[10];
 out float pointLightDistArray[10];
@@ -47,6 +47,7 @@ struct spotLight
 uniform spotLight spotLightArray[10];
 uniform int spotLightArrayLength;
 out vec3 spotLightDirArray[10];
+out float spotLightDistArray[10];
 
 
 void main(){
@@ -72,5 +73,14 @@ void main(){
 
         float distance = length(pointLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
         pointLightDistArray[i] = distance;
+    }
+
+    for (int i = 0 ; i < spotLightArrayLength ; i++)
+    {
+        vec4 lightPosition = view_matrix * vec4(spotLightArray[i].lightPos, 1.0);
+        spotLightDirArray[i] = (lightPosition - fragmentPosition).xyz ;
+
+        float distance = length(spotLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
+        spotLightDistArray[i] = distance;
     }
 }

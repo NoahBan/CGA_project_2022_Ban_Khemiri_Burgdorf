@@ -30,18 +30,35 @@ uniform Material material;
 
 //ambient color/light
 uniform vec3 ambientColor;
-//PointLights
-struct pointLight
+//PointLightStruct
+struct PointLight
 {
     vec3 lightPos;
     vec3 lightColor;
     int attenuationType;
     float intensity;
 };
-uniform pointLight pointLightArray[10];
+//PointLightArrays
+uniform PointLight pointLightArray[10];
 uniform int pointLightArrayLength;
 in vec3 pointLightDirArray[10];
 in float pointLightDistArray[10];
+
+//SpotLightStruct
+struct spotLight
+{
+    vec3 lightPos;
+    vec3 lightColor;
+    float intensity;
+        int attenuationType;
+    vec3 direction;
+    float cutOff;
+};
+//SpotLightArrays
+uniform spotLight spotLightArray[10];
+uniform int spotLightArrayLength;
+in vec3 spotLightDirArray[10];
+in float spotLightDistArray[10];
 
 //pixel color out
 out vec4 color;
@@ -56,16 +73,13 @@ float getAttenuation(in int inAttenuationType,in float inDistance){
     return attenuation;
 }
 
-
 void toSRGB (inout vec3 linearCol){
     linearCol = pow(linearCol, vec3 (1.0/2.2));
 }
 
-
 void toLinear (inout vec3 srgbCol){
     srgbCol = pow(srgbCol, vec3(2.2));
 }
-
 
 struct CalcLightData{
     vec3 diffuse;
@@ -90,10 +104,29 @@ CalcLightData calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, v
     float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
     calcLightData.specular = pointLightArray[index].lightColor * spec / attenuation;
 
-
     return calcLightData;
 }
 
+CalcLightData calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse){
+    vec3 diffuse = vec3(0.0);
+    vec3 specular = vec3(0);
+    CalcLightData calcLightData;
+
+    vec3 spotLightTargetDirection = normalize(spotLightDirArray[index]);
+    vec3 halfwayDirection = normalize(spotLightTargetDirection + viewDirection);
+
+    float lightDistance = (spotLightDistArray[index]);
+    float theta = dot(spotLightTargetDirection, normalize(-spotLightTargetDirection));
+//   float epsilon   = spotLight.cutOff - light.outerCutOff;
+//    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+//   if(theta > spotLightArray[index].cutOff)
+//   {
+//        // do lighting calculations
+//    }
+//    else  // else, use ambient light so scene isn't completely dark outside the spotlight.
+//   color = vec4(ambientColor * vec3(texture(material.texDiff, vertexData.position)), 1.0);
+    return calcLightData;
+}
 
 void main(){
 
@@ -115,11 +148,13 @@ void main(){
 
     //add point lights
     for (int i = 0 ; i < pointLightArrayLength ; i++){
-
         CalcLightData calcLightData = calcPointLight(i, viewDirection, vertexNormal, matDiffuse);
         diffuse += calcLightData.diffuse;
-
     }
+//    for (int j = 0 ; j < spotLightArrayLength ; j++){
+//        CalcLightData calcLightData = calcSpotLight(j, viewDirection, vertexNormal, matDiffuse);
+//        diffuse += calcLightData.diffuse;
+//    }
 
     //add up material inputs
     vec3 result = matEmissive*material.emitMultiplier + diffuse + (ambientColor * matDiffuse);

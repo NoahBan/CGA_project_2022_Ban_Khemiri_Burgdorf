@@ -15,6 +15,9 @@ class SpotLight(
         private var winkelInnen : Float,
         private var winkelAußen : Float,
         parent: Transformable? = null)
+        
+        
+        // postion vom 
 
 
         : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent)
@@ -22,5 +25,11 @@ class SpotLight(
         init {
                 winkelInnen = Math.toRadians(winkelInnen.toDouble()).toFloat()
                 winkelAußen = Math.toRadians(winkelAußen.toDouble()).toFloat()
+        }
+
+        fun getSpotLightDirection(target : Matrix4f) : Vector3f{
+
+                return Vector3f(0F)
+
         }
 }
