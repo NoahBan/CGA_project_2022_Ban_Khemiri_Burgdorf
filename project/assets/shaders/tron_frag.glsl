@@ -45,6 +45,7 @@ in float pointLightDistArray[10];
 //pixel color out
 out vec4 color;
 
+
 float getAttenuation(in int inAttenuationType,in float inDistance){
     float attenuation = 1;
     int attenuationType = int(inAttenuationType);
@@ -54,13 +55,44 @@ float getAttenuation(in int inAttenuationType,in float inDistance){
     return attenuation;
 }
 
+
 void toSRGB (inout vec3 linearCol){
     linearCol = pow(linearCol, vec3 (1.0/2.2));
 }
 
+
 void toLinear (inout vec3 srgbCol){
     srgbCol = pow(srgbCol, vec3(2.2));
 }
+
+
+struct CalcLightData{
+    vec3 diffuse;
+    vec3 specular;
+};
+
+CalcLightData calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse){
+    vec3 diffuse = vec3(0.0);
+    vec3 specular = vec3(0);
+    CalcLightData calcLightData;
+
+    vec3 lightDirection = normalize(pointLightDirArray[index]);
+    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
+
+    float lightDistance = pointLightDistArray[index];
+    float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
+
+    float attenuation = getAttenuation(pointLightArray[index].attenuationType, lightDistance);
+    int attenuationType = pointLightArray[index].attenuationType;
+    calcLightData.diffuse = matDiffuse * pointLightArray[index].lightColor * pointLightArray[index].intensity * cosAlpha / attenuation;
+
+    float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
+    calcLightData.specular = pointLightArray[index].lightColor * spec / attenuation;
+
+
+    return calcLightData;
+}
+
 
 void main(){
 
@@ -70,6 +102,7 @@ void main(){
     vec3 matSpecular = texture(material.texSpec,vertexData.texCoord * material.tcMultiplier).xyz;
     toLinear(matDiffuse);
     toLinear(matEmissive);
+    toLinear(matSpecular);
 
     vec3 vertexNormal = normalize(vertexData.normal);
 
@@ -81,21 +114,9 @@ void main(){
 
     //add point lights
     for (int i = 0 ; i < pointLightArrayLength ; i++){
-        vec3 lightDirection = normalize(pointLightDirArray[i]);
-        vec3 halfwayDirection = normalize(lightDirection + viewDirection);
 
-        float lightDistance = pointLightDistArray[i];
-        float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
-
-        float attenuation = getAttenuation(pointLightArray[i].attenuationType, lightDistance);
-        int attenuationType = pointLightArray[i].attenuationType;
-        diffuse += matDiffuse * pointLightArray[i].lightColor * pointLightArray[i].intensity * cosAlpha / attenuation;
-
-
-        float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
-        specular = pointLightArray[i].lightColor * spec / attenuation;
-
-
+        CalcLightData calcLightData = calcPointLight(i, viewDirection, vertexNormal, matDiffuse);
+        diffuse += calcLightData.diffuse;
 
     }
 
