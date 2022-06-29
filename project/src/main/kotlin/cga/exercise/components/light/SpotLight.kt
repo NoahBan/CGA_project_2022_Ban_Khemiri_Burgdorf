@@ -14,7 +14,7 @@ class SpotLight(
         modelMatrix : Matrix4f = Matrix4f(),
         projectionMatrix : Matrix4f = Matrix4f(),
         var target : Matrix4f,
-        var winkelInnen : Float,
+        var cutoff : Float,
         var winkelAußen : Float,
         parent: Transformable? = null)
         
@@ -25,7 +25,7 @@ class SpotLight(
         : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent)
 {
         init {
-                winkelInnen = Math.toRadians(winkelInnen.toDouble()).toFloat()
+                cutoff = Math.toRadians(cutoff.toDouble()).toFloat()
                 winkelAußen = Math.toRadians(winkelAußen.toDouble()).toFloat()
         }
 
