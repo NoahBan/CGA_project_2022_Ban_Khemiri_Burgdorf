@@ -2,6 +2,7 @@ package cga.exercise.components.geometry
 
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
+import org.joml.Vector3f
 
 class Renderable(
     private val renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null)
@@ -13,8 +14,14 @@ class Renderable(
         return true
     }
 
+    fun setMaterialEmitMult(mult : Vector3f){
+        for (each in renderList){
+            each.setMaterialEmitMul(mult)
+        }
+    }
+
     override fun render(shaderProgram : ShaderProgram) {
-        shaderProgram.setUniform("model_matrix", this.getWorldModelMatrix(), false)
+        shaderProgram.setUniform("model_matrix", getWorldModelMatrix(), false)
         for (each in renderList){
             each.render(shaderProgram)
         }
