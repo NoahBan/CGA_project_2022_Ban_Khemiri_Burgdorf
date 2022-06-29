@@ -7,9 +7,7 @@ import org.joml.Vector3f
 open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var parent: Transformable? = null) {
 
     fun getModelMatrix(): Matrix4f {
-
         return Matrix4f(modelMatrix)
-
     }
 
     fun getWorldModelMatrix(): Matrix4f {
@@ -23,16 +21,16 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
     }
 
     fun rotate(pitch: Float, yaw: Float, roll: Float) {
-
+        //modelMatrix.rotateXYZ((pitch),(yaw),(roll))
         modelMatrix.rotateXYZ(Math.toRadians(pitch),Math.toRadians(yaw),Math.toRadians(roll))
-
     }
 
     fun rotateAroundPoint(pitch: Float, yaw: Float, roll: Float, altMidpoint: Vector3f) {
         val temp = Matrix4f().translate(altMidpoint)
-        temp.rotateXYZ(pitch,yaw,roll)
+        var mMatrix = Matrix4f(modelMatrix)
         temp.translate(Vector3f(altMidpoint).negate())
-        modelMatrix = temp.mul(modelMatrix)
+        temp.rotateXYZ(pitch,yaw,roll)
+        modelMatrix = temp.mul(mMatrix)
     }
 
     fun translate(deltaPos: Vector3f) {

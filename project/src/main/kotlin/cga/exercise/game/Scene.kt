@@ -37,6 +37,8 @@ class Scene(private val window: GameWindow) {
     private val light2 : PointLight
     private val lightHandler : LightHandler
 
+    var xposBefore : Double = 0.0
+
     //scene setup
     init {
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
@@ -165,8 +167,9 @@ class Scene(private val window: GameWindow) {
         importedLightSphere2.render(staticShader)
         importedGround.render(staticShader)
         importedBike.render(staticShader)
-        println(light1.getPremultLightPos(sceneCam.getWorldModelMatrix()))
-        println(light2.getPremultLightPos(sceneCam.getWorldModelMatrix()))
+
+        //println(light1.getPremultLightPos(sceneCam.getWorldModelMatrix()))
+        //println(light2.getPremultLightPos(sceneCam.getWorldModelMatrix()))
     }
 
     fun update(dt: Float, t: Float) {
@@ -193,9 +196,14 @@ class Scene(private val window: GameWindow) {
 
     }
 
-    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
+    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
+    }
 
-    fun onMouseMove(xpos: Double, ypos: Double) {}
+    fun onMouseMove(xpos: Double, ypos: Double) {
+        var xposNew = xpos.minus(xposBefore) * 0.002f
+        sceneCam.rotateAroundPoint(0f,- xposNew.toFloat(),0f,importedBike.getWorldPosition())
+        xposBefore = xpos
+    }
 
     fun cleanup() {}
 }
