@@ -21,6 +21,7 @@ uniform mat4 model_matrix;
 //camera
 uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
+out vec3 ViewDirection;
 
 //PointLights
 struct PointLight
@@ -47,6 +48,7 @@ struct spotLight
 uniform spotLight spotLightArray[10];
 uniform int spotLightArrayLength;
 out vec3 spotLightDirArray[10];
+out vec3 spotLightTargetDirArray[10];
 out float spotLightDistArray[10];
 
 
@@ -64,6 +66,8 @@ void main(){
     vertexData.texCoord = texCoord;
 
     fragmentPosition = (view_matrix * model_matrix * vec4(position, 1.0f));
+
+    ViewDirection = (view_matrix * model_matrix * vec4(-position, 1.0f)).xyz;
 
     //point light direction
     for (int i = 0 ; i < pointLightArrayLength ; i++)

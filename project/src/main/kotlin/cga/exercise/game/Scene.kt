@@ -127,6 +127,7 @@ class Scene(private val window: GameWindow) {
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
 
+
         sceneCam = TronCamera(89F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
@@ -165,11 +166,10 @@ class Scene(private val window: GameWindow) {
         importedSphere.render(staticShader)
         importedLightSphere.render(staticShader)
         importedLightSphere2.render(staticShader)
-        staticShader.setUniform("material.emitMultiplier", Vector3f(0f,0f,Math.abs(Math.sin(t) + 0.1f)))
+        importedGround.setMaterialEmitMult(Vector3f(0f,1f,0f))
         importedGround.render(staticShader)
-        staticShader.setUniform("material.emitMultiplier", Vector3f(Math.abs(Math.sin(t)) + 0.1F,0f,0f))
+        importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
-        staticShader.setUniform("material.emitMultiplier", Vector3f(1f))
 
         //println(light1.getPremultLightPos(sceneCam.getWorldModelMatrix()))
         //println(light2.getPremultLightPos(sceneCam.getWorldModelMatrix()))

@@ -2,6 +2,7 @@ package cga.exercise.components.geometry
 
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
 import org.lwjgl.opengl.GL20
@@ -74,6 +75,10 @@ class Mesh(
         // todo: place your code here
         material?.bind(shaderProgram)
         render()
+    }
+
+    fun setMaterialEmitMul(mult : Vector3f){
+        this.material?.emitMultiplier = mult
     }
 
     /**

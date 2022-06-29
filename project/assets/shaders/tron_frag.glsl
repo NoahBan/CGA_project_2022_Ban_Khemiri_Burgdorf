@@ -16,6 +16,7 @@ uniform mat4 model_matrix;
 //camera
 uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
+in vec3 ViewDirection;
 
 //material
 struct Material{
@@ -50,7 +51,7 @@ struct spotLight
     vec3 lightPos;
     vec3 lightColor;
     float intensity;
-        int attenuationType;
+    int attenuationType;
     vec3 direction;
     float cutOff;
 };
@@ -85,7 +86,7 @@ struct CalcLightData{
     vec3 specular;
 };
 
-CalcLightData calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse){
+CalcLightData calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0);
     CalcLightData calcLightData;
@@ -100,22 +101,29 @@ CalcLightData calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, v
     int attenuationType = pointLightArray[index].attenuationType;
     calcLightData.diffuse = matDiffuse * pointLightArray[index].lightColor * pointLightArray[index].intensity * cosAlpha / attenuation;
 
+    vec3 R = normalize(reflect(-lightDirection,vertexNormal));
+    float cosBeta = max(0.0, dot (R,viewDirection));
+    float cosBetak = pow(cosBeta, material.shininess);
+
+    vec3 specularTerm = matSpecular * pointLightArray[index].lightColor / attenuation;
+
     float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
-    calcLightData.specular = pointLightArray[index].lightColor * spec / attenuation;
+    calcLightData.specular = specularTerm * cosBetak;
 
     return calcLightData;
 }
 
-CalcLightData calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse){
+CalcLightData calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0);
     CalcLightData calcLightData;
 
-    vec3 spotLightTargetDirection = normalize(spotLightDirArray[index]);
-    vec3 halfwayDirection = normalize(spotLightTargetDirection + viewDirection);
+    vec3 lightDirection = normalize(pointLightDirArray[index]);
+    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
+
 
     float lightDistance = (spotLightDistArray[index]);
-    float theta = dot(spotLightTargetDirection, normalize(-spotLightTargetDirection));
+//    float theta = dot(spotLightTargetDirection, normalize(-spotLightTargetDirection));
 //   float epsilon   = spotLight.cutOff - light.outerCutOff;
 //    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 //   if(theta > spotLightArray[index].cutOff)
@@ -138,8 +146,7 @@ void main(){
     toLinear(matSpecular);
 
     vec3 vertexNormal = normalize(vertexData.normal);
-
-    vec3 viewDirection = normalize(view_matrix[3].xyz - fragmentPosition.xyz);
+    vec3 viewDirection = normalize(ViewDirection);
 
     //variable for diffuse color
     vec3 diffuse = vec3(0);
@@ -147,15 +154,17 @@ void main(){
 
     //add point lights
     for (int i = 0 ; i < pointLightArrayLength ; i++){
-        CalcLightData calcLightData = calcPointLight(i, viewDirection, vertexNormal, matDiffuse);
+        CalcLightData calcLightData = calcPointLight(i, viewDirection, vertexNormal, matDiffuse, matSpecular);
         diffuse += calcLightData.diffuse;
+        specular += calcLightData.specular;
     }
-//    for (int j = 0 ; j < spotLightArrayLength ; j++){
-//        CalcLightData calcLightData = calcSpotLight(j, viewDirection, vertexNormal, matDiffuse);
-//        diffuse += calcLightData.diffuse;
-//    }
+    for (int i = 0 ; i < spotLightArrayLength ; i++){
+        CalcLightData calcLightData = calcSpotLight(i, viewDirection, vertexNormal, matDiffuse, matSpecular);
+        diffuse += calcLightData.diffuse;
+        specular += calcLightData.specular;
+    }
     //add up material inputs
-    vec3 result = matEmissive*material.emitMultiplier + diffuse + (ambientColor * matDiffuse);
+    vec3 result = matEmissive*material.emitMultiplier + diffuse + specular + (ambientColor * matDiffuse);
 //    vec3 result = matEmissive + diffuse + specular + (ambientColor * matDiffuse);
     toSRGB(result);
 

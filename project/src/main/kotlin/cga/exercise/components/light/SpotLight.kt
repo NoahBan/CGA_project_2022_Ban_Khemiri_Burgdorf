@@ -1,5 +1,6 @@
 package cga.exercise.components.light
 
+import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
@@ -28,9 +29,9 @@ class SpotLight(
                 winkelAußen = Math.toRadians(winkelAußen.toDouble()).toFloat()
         }
 
-        fun getSpotLightDirection() : Vector3f{
-                target
-                return Vector3f(0F)
-
+        fun getSpotLightDirection(camera : TronCamera) : Vector3f{
+                var pos = Vector3f(getWorldModelMatrix().m30(), getWorldModelMatrix().m31(), getWorldModelMatrix().m32())
+                var tar = Vector3f(target.m30(), target.m31(), target.m32())
+                return pos.sub(tar)
         }
 }
