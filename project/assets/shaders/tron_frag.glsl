@@ -24,6 +24,7 @@ struct Material{
     sampler2D texSpec;
     vec2 tcMultiplier;
     float shininess;
+    vec3 emitMultiplier;
 };
 uniform Material material;
 
