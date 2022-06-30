@@ -119,7 +119,7 @@ CalcLightDataStruct calcPointLight(int index, vec3 viewDirection, vec3 vertexNor
 }
 
 //SPOT LIGHT CALCULATION
-CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
+CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular, bool blinn){
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0);
     CalcLightDataStruct calcLightData;
@@ -142,6 +142,13 @@ CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNorm
         int attenuationType = SpotLightArrayTest.attenuationType;
 
         calcLightData.diffuse = matDiffuse * SpotLightArrayTest.lightColor * SpotLightArrayTest.intensity * softCone * cosAlpha / attenuation;
+        if(blinn){
+            vec3 halb_vektor = normalize(lightDirection+viewDirection);
+            float spec_blinn = pow(max(dot(normalize(vertexNormal),halb_vektor),0.0),Material.shininess);
+            calcLightData.specular = SpotLightArrayTest.lightColor * spec_blinn;
+            return calcLightData;
+        } else {
+
 
         vec3 R = normalize(reflect(-lightDirection, vertexNormal));
         float cosBeta = max(0.0, dot (R, viewDirection));
@@ -151,7 +158,10 @@ CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNorm
 
         //    float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
         calcLightData.specular = specularTerm * cosBetak;
+        }
     }
+    //Blinn-Phong
+
     return calcLightData;
 }
 
@@ -183,7 +193,7 @@ void main(){
         specular += calcPointLightData.specular;
     }
 
-    CalcLightDataStruct calcSpotLightData = calcSpotLight(0, viewDirection, vertexNormal, matDiffuse, matSpecular);
+    CalcLightDataStruct calcSpotLightData = calcSpotLight(0, viewDirection, vertexNormal, matDiffuse, matSpecular, false);
     diffuse += calcSpotLightData.diffuse;
     specular += calcSpotLightData.specular;
 
