@@ -119,22 +119,25 @@ CalcLightDataStruct calcPointLight(int index, vec3 viewDirection, vec3 vertexNor
 }
 
 //SPOT LIGHT CALCULATION
-CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
+CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular, bool blinn){
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0);
     CalcLightDataStruct calcLightData;
 
     vec3 lightDirection = normalize(SpotLightDirArrayTest);
-    //    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
 
-//    float theta= dot(lightDirection, normalize(-SpotLightArrayTest.direction));
     float theta = dot(lightDirection, normalize(SpotLightTargetDirectionTest));
 
     float epsilon = SpotLightArrayTest.cutOff - SpotLightArrayTest.outerCutOff;
 
     float softCone = clamp((SpotLightArrayTest.outerCutOff - theta) / epsilon, 0.0, 1.0);
-
+    if(blinn){
+        vec3 halb_vektor = normalize( lightDirection+ viewDirection);
+        float spec_blinn = pow(max(dot(normalize(vertexNormal),halb_vektor),0.0),Material.shininess);
+        calcLightData.specular = SpotLightArrayTest.lightColor * spec_blinn;
+    }
     if(theta > SpotLightArrayTest.cutOff){
+
         float lightDistance = SpotLightDistArrayTest;
         float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
 
@@ -143,19 +146,17 @@ CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNorm
 
         calcLightData.diffuse = matDiffuse * SpotLightArrayTest.lightColor * SpotLightArrayTest.intensity * softCone * cosAlpha / attenuation;
 
-        vec3 R = normalize(reflect(-lightDirection, vertexNormal));
+        if(blinn) return calcLightData; //Specular-Calculation is finished
+
+        vec3 R = normalize(reflect(-lightDirection, vertexNormal)); //If not Blinn then calculate specular
         float cosBeta = max(0.0, dot (R, viewDirection));
         float cosBetak = pow(cosBeta, Material.shininess);
-
         vec3 specularTerm = matSpecular * SpotLightArrayTest.lightColor * SpotLightArrayTest.intensity * softCone / attenuation;
-
-        //    float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
         calcLightData.specular = specularTerm * cosBetak;
+
     }
     return calcLightData;
 }
-
-
 
 void main(){
 
@@ -183,7 +184,7 @@ void main(){
         specular += calcPointLightData.specular;
     }
 
-    CalcLightDataStruct calcSpotLightData = calcSpotLight(0, viewDirection, vertexNormal, matDiffuse, matSpecular);
+    CalcLightDataStruct calcSpotLightData = calcSpotLight(0, viewDirection, vertexNormal, matDiffuse, matSpecular, false);
     diffuse += calcSpotLightData.diffuse;
     specular += calcSpotLightData.specular;
 
