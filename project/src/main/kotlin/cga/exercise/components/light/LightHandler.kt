@@ -23,6 +23,7 @@ class LightHandler() {
 
         bindPointlights(shaderProgram, camera)
         bindSpotlights(shaderProgram, camera)
+        bindSpotlightsTest(shaderProgram, camera)
     }
 
     fun bindPointlights (shaderProgram : ShaderProgram, camera : TronCamera) {
@@ -56,7 +57,27 @@ class LightHandler() {
             shaderProgram.setUniform("SpotLightArray[" + index +"].intensity", spotLight.intensity)
             shaderProgram.setUniform("SpotLightArray[" + index +"].attenuationType", spotLight.attenuationType.ordinal)
             shaderProgram.setUniform("SpotLightArray[" + index +"].direction", spotLight.getSpotLightDirection(camera))
-            shaderProgram.setUniform("SpotLightArray[" + index +"].cutOff", spotLight.cutoff)
+            shaderProgram.setUniform("SpotLightArray[" + index +"].cutOff", spotLight.cutOff)
+            if (index == 9) return
+        }
+    }
+
+    fun bindSpotlightsTest (shaderProgram : ShaderProgram, camera : TronCamera) {
+        if (spotLights.size > 10) {
+            println("maximum of 10 lights exceeded. Past 10 will be ignored")
+            return
+        }
+
+        shaderProgram.setUniform("SpotLightArrayLength", spotLights.size)
+
+        spotLights.forEachIndexed { index, spotLight ->
+            shaderProgram.setUniform("SpotLightArrayTest.lightPos", spotLight.getWorldPosition())
+            shaderProgram.setUniform("SpotLightArrayTest.lightColor", spotLight.lightColor)
+            shaderProgram.setUniform("SpotLightArrayTest.intensity", spotLight.intensity)
+            shaderProgram.setUniform("SpotLightArrayTest.attenuationType", spotLight.attenuationType.ordinal)
+            shaderProgram.setUniform("SpotLightArrayTest.direction", spotLight.getSpotLightDirection(camera))
+            shaderProgram.setUniform("SpotLightArrayTest.cutOff", spotLight.cutOff)
+            shaderProgram.setUniform("SpotLightArrayTest.outerCutOff", spotLight.outerCutOff)
             if (index == 9) return
         }
     }

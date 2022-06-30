@@ -22,7 +22,7 @@ class TronCamera (
     }
 
     override fun getCalculateProjectionMatrix(): Matrix4f {
-        return Matrix4f().perspective(fov,aspectRatio,nearPlane,farPlane)
+        return Matrix4f().perspective(Math.toRadians(fov),aspectRatio,nearPlane,farPlane)
     }
 
     override fun bind(shader: ShaderProgram) {
