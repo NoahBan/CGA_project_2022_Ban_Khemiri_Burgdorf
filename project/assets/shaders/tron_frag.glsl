@@ -1,25 +1,25 @@
 #version 330 core
 
 //input from vertex shader
-in struct VertexData
+in struct VertexDataStruct
 {
     vec3 position;
     vec3 normal;
     vec2 texCoord;
-} vertexData;
+} VertexData;
 
-in vec4 fragmentPosition;
+in vec4 FragmentPosition;
 
 //model transformation
-uniform mat4 model_matrix;
+uniform mat4 Model_matrix;
 
 //camera
-uniform mat4 view_matrix;
-uniform mat4 projection_matrix;
+uniform mat4 View_matrix;
+uniform mat4 Projection_matrix;
 in vec3 ViewDirection;
 
 //material
-struct Material{
+struct MaterialStruct {
     sampler2D texEmit;
     sampler2D texDiff;
     sampler2D texSpec;
@@ -27,42 +27,46 @@ struct Material{
     float shininess;
     vec3 emitMultiplier;
 };
-uniform Material material;
+uniform MaterialStruct Material;
 
 //ambient color/light
-uniform vec3 ambientColor;
+uniform vec3 AmbientColor;
 //PointLightStruct
-struct PointLight
+struct PointLightStruct
 {
     vec3 lightPos;
     vec3 lightColor;
     int attenuationType;
     float intensity;
 };
-//PointLightArrays
-uniform PointLight pointLightArray[10];
-uniform int pointLightArrayLength;
-in vec3 pointLightDirArray[10];
-in float pointLightDistArray[10];
 
-//SpotLightStruct
-struct spotLight
+//PointLightArrays
+uniform PointLightStruct PointLightArray[10];
+uniform int PointLightArrayLength;
+in vec3 PointLightDirArray[10];
+in float PointLightDistArray[10];
+
+//SpotLights
+struct SpotLightStruct
 {
     vec3 lightPos;
     vec3 lightColor;
-    float intensity;
     int attenuationType;
+    float intensity;
     vec3 direction;
     float cutOff;
+    float outerCutOff;
 };
-//SpotLightArrays
-uniform spotLight spotLightArray[10];
-uniform int spotLightArrayLength;
-in vec3 spotLightDirArray[10];
-in float spotLightDistArray[10];
+uniform SpotLightStruct SpotLightArrayTest;
+in vec3 SpotLightDirArrayTest;
+in float SpotLightDistArrayTest;
+in vec3 SpotLightTargetDirectionTest;
 
 //pixel color out
 out vec4 color;
+
+
+
 
 float getAttenuation(in int inAttenuationType,in float inDistance){
     float attenuation = 1;
@@ -76,96 +80,115 @@ float getAttenuation(in int inAttenuationType,in float inDistance){
 void toSRGB (inout vec3 linearCol){
     linearCol = pow(linearCol, vec3 (1.0/2.2));
 }
-
 void toLinear (inout vec3 srgbCol){
     srgbCol = pow(srgbCol, vec3(2.2));
 }
 
-struct CalcLightData{
+struct CalcLightDataStruct{
     vec3 diffuse;
     vec3 specular;
 };
 
-CalcLightData calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
+//POINT LIGHT CALCULATION
+CalcLightDataStruct calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0);
-    CalcLightData calcLightData;
+    CalcLightDataStruct calcLightData;
 
-    vec3 lightDirection = normalize(pointLightDirArray[index]);
-    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
+    vec3 lightDirection = normalize(PointLightDirArray[index]);
+//    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
 
-    float lightDistance = pointLightDistArray[index];
+    float lightDistance = PointLightDistArray[index];
     float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
 
-    float attenuation = getAttenuation(pointLightArray[index].attenuationType, lightDistance);
-    int attenuationType = pointLightArray[index].attenuationType;
-    calcLightData.diffuse = matDiffuse * pointLightArray[index].lightColor * pointLightArray[index].intensity * cosAlpha / attenuation;
+    float attenuation = getAttenuation(PointLightArray[index].attenuationType, lightDistance);
+    int attenuationType = PointLightArray[index].attenuationType;
+
+    calcLightData.diffuse = matDiffuse * PointLightArray[index].lightColor * PointLightArray[index].intensity * cosAlpha / attenuation;
 
     vec3 R = normalize(reflect(-lightDirection,vertexNormal));
     float cosBeta = max(0.0, dot (R,viewDirection));
-    float cosBetak = pow(cosBeta, material.shininess);
+    float cosBetak = pow(cosBeta, Material.shininess);
 
-    vec3 specularTerm = matSpecular * pointLightArray[index].lightColor / attenuation;
+    vec3 specularTerm = matSpecular * PointLightArray[index].lightColor / attenuation;
 
-    float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
+//    float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
     calcLightData.specular = specularTerm * cosBetak;
 
     return calcLightData;
 }
 
-CalcLightData calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
+//SPOT LIGHT CALCULATION
+CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0);
-    CalcLightData calcLightData;
+    CalcLightDataStruct calcLightData;
 
-    vec3 lightDirection = normalize(pointLightDirArray[index]);
-    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
+    vec3 lightDirection = normalize(SpotLightDirArrayTest);
+    //    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
 
-    float lightDistance = (spotLightDistArray[index]);
-//    float theta = dot(spotLightTargetDirection, normalize(-spotLightTargetDirection));
-//   float epsilon   = spotLight.cutOff - light.outerCutOff;
-//    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-//   if(theta > spotLightArray[index].cutOff)
-//   {
-//        // do lighting calculations
-//    }
-//    else  // else, use ambient light so scene isn't completely dark outside the spotlight.
-//   color = vec4(ambientColor * vec3(texture(material.texDiff, vertexData.position)), 1.0);
+//    float theta= dot(lightDirection, normalize(-SpotLightArrayTest.direction));
+    float theta = dot(lightDirection, normalize(SpotLightTargetDirectionTest));
+
+    float epsilon = SpotLightArrayTest.cutOff - SpotLightArrayTest.outerCutOff;
+
+    float softCone = clamp((SpotLightArrayTest.outerCutOff - theta) / epsilon, 0.0, 1.0);
+
+    if(theta > SpotLightArrayTest.cutOff){
+        float lightDistance = SpotLightDistArrayTest;
+        float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
+
+        float attenuation = getAttenuation(SpotLightArrayTest.attenuationType, lightDistance);
+        int attenuationType = SpotLightArrayTest.attenuationType;
+
+        calcLightData.diffuse = matDiffuse * SpotLightArrayTest.lightColor * SpotLightArrayTest.intensity * softCone * cosAlpha / attenuation;
+
+        vec3 R = normalize(reflect(-lightDirection, vertexNormal));
+        float cosBeta = max(0.0, dot (R, viewDirection));
+        float cosBetak = pow(cosBeta, Material.shininess);
+
+        vec3 specularTerm = matSpecular * SpotLightArrayTest.lightColor * SpotLightArrayTest.intensity * softCone / attenuation;
+
+        //    float spec = pow(max(dot(vertexNormal, halfwayDirection), 0.0), material.shininess);
+        calcLightData.specular = specularTerm * cosBetak;
+    }
     return calcLightData;
 }
+
+
 
 void main(){
 
     //get tex color on uv coordinate
-    vec3 matEmissive = texture(material.texEmit, vertexData.texCoord * material.tcMultiplier).xyz;
-    vec3 matDiffuse = texture(material.texDiff,vertexData.texCoord * material.tcMultiplier).xyz;
-    vec3 matSpecular = texture(material.texSpec,vertexData.texCoord * material.tcMultiplier).xyz;
+    vec3 matEmissive = texture(Material.texEmit, VertexData.texCoord * Material.tcMultiplier).xyz;
+    vec3 matDiffuse = texture(Material.texDiff,VertexData.texCoord * Material.tcMultiplier).xyz;
+    vec3 matSpecular = texture(Material.texSpec,VertexData.texCoord * Material.tcMultiplier).xyz;
     toLinear(matDiffuse);
     toLinear(matEmissive);
     toLinear(matSpecular);
 
-    vec3 vertexNormal = normalize(vertexData.normal);
+    vec3 vertexNormal = normalize(VertexData.normal);
     vec3 viewDirection = normalize(ViewDirection);
 
-    //variable for diffuse color
+    //variables for color
     vec3 diffuse = vec3(0);
     vec3 specular = vec3(0);
+    vec3 emission = matEmissive * Material.emitMultiplier;
+    vec3 ambient = AmbientColor * matDiffuse;
 
     //add point lights
-    for (int i = 0 ; i < pointLightArrayLength ; i++){
-        CalcLightData calcLightData = calcPointLight(i, viewDirection, vertexNormal, matDiffuse, matSpecular);
-        diffuse += calcLightData.diffuse;
-        specular += calcLightData.specular;
+    for (int i = 0 ; i < PointLightArrayLength ; i++){
+        CalcLightDataStruct calcPointLightData = calcPointLight(i, viewDirection, vertexNormal, matDiffuse, matSpecular);
+        diffuse += calcPointLightData.diffuse;
+        specular += calcPointLightData.specular;
     }
-    for (int i = 0 ; i < spotLightArrayLength ; i++){
-        CalcLightData calcLightData = calcSpotLight(i, viewDirection, vertexNormal, matDiffuse, matSpecular);
-        diffuse += calcLightData.diffuse;
-        specular += calcLightData.specular;
-    }
-    //add up material inputs
-    vec3 result = matEmissive*material.emitMultiplier + diffuse + specular + (ambientColor * matDiffuse);
-//  vec3 result = matEmissive + diffuse + specular + (ambientColor * matDiffuse);
-    toSRGB(result);
 
+    CalcLightDataStruct calcSpotLightData = calcSpotLight(0, viewDirection, vertexNormal, matDiffuse, matSpecular);
+    diffuse += calcSpotLightData.diffuse;
+    specular += calcSpotLightData.specular;
+
+    //add up material inputs
+    vec3 result = emission + diffuse + specular + ambient;
+    toSRGB(result);
     color = vec4(result, 1.0);
 }

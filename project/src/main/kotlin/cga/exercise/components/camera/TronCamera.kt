@@ -22,13 +22,13 @@ class TronCamera (
     }
 
     override fun getCalculateProjectionMatrix(): Matrix4f {
-        return Matrix4f().perspective(fov,aspectRatio,nearPlane,farPlane)
+        return Matrix4f().perspective(Math.toRadians(fov),aspectRatio,nearPlane,farPlane)
     }
 
     override fun bind(shader: ShaderProgram) {
         val calculateViewMatrix = getCalculateViewMatrix();
         val calculateProjectionMatrix = getCalculateProjectionMatrix();
-        shader.setUniform("view_matrix",calculateViewMatrix,false);
-        shader.setUniform("projection_matrix",calculateProjectionMatrix,false);
+        shader.setUniform("View_matrix",calculateViewMatrix,false);
+        shader.setUniform("Projection_matrix",calculateProjectionMatrix,false);
     }
 }

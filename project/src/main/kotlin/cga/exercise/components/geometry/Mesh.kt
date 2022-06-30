@@ -8,16 +8,6 @@ import org.lwjgl.opengl.GL15
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 
-/**
- * Creates a Mesh object from vertexdata, intexdata and a given set of vertex attributes
- *
- * @param vertexdata plain float array of vertex data
- * @param indexdata  index data
- * @param attributes vertex attributes contained in vertex data
- * @throws Exception If the creation of the required OpenGL objects fails, an exception is thrown
- *
- * Created by Fabian on 16.09.2017.
- */
 class Mesh(
     vertexdata: FloatArray,
     indexdata: IntArray,
@@ -60,9 +50,6 @@ class Mesh(
         GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
-    /**
-     * renders the mesh
-     */
     fun render() {
         // todo: place your code here
         GL30.glBindVertexArray(vao)
@@ -81,9 +68,6 @@ class Mesh(
         this.material?.emitMultiplier = mult
     }
 
-    /**
-     * Deletes the previously allocated OpenGL objects for this mesh
-     */
     fun cleanup() {
         if (ibo != 0) GL15.glDeleteBuffers(ibo)
         if (vbo != 0) GL15.glDeleteBuffers(vbo)

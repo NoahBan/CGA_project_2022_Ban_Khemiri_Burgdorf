@@ -1,93 +1,92 @@
 #version 330 core
 
 //Vertex Attributes
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 texCoord;
-layout(location = 2) in vec3 normal;
+layout(location = 0) in vec3 Position;
+layout(location = 1) in vec2 TexCoord;
+layout(location = 2) in vec3 Normal;
 
 //vertex data to fragment shader
-out struct VertexData
+out struct VertexDataStruct
 {
     vec3 position;
     vec3 normal;
     vec2 texCoord;
-} vertexData;
+} VertexData;
 
-out vec4 fragmentPosition;
+out vec4 FragmentPosition;
 
 //model transformation
-uniform mat4 model_matrix;
+uniform mat4 Model_matrix;
 
 //camera
-uniform mat4 view_matrix;
-uniform mat4 projection_matrix;
+uniform mat4 View_matrix;
+uniform mat4 Projection_matrix;
 out vec3 ViewDirection;
 
-
-//directLights
-struct spotLight
-{
-    vec3 lightPos;
-    vec3 lightColor;
-    float intensity;
-    vec3 direction;
-    float cutOff;
-};
-uniform spotLight spotLightArray[10];
-uniform int spotLightArrayLength;
-out vec3 spotLightDirArray[10];
-out vec3 spotLightTargetDirArray[10];
-out float spotLightDistArray[10];
-
 //PointLights
-out struct PointLight
+struct PointLightStruct
 {
     vec3 lightPos;
     vec3 lightColor;
     int attenuationType;
     float intensity;
-    vec3 lightDirection;
-    float lightDistance;
 };
-uniform PointLight pointLightArray[10];
-uniform int pointLightArrayLength;
-//out vec3 pointLightDirArray[10];
-//out float pointLightDistArray[10];
+uniform PointLightStruct PointLightArray[10];
+uniform int PointLightArrayLength;
+out vec3 PointLightDirArray[10];
+out float PointLightDistArray[10];
+
+//SpotLights
+struct SpotLightStruct
+{
+    vec3 lightPos;
+    vec3 lightColor;
+    int attenuationType;
+    float intensity;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+};
+uniform SpotLightStruct SpotLightArrayTest;
+out vec3 SpotLightDirArrayTest;
+out float SpotLightDistArrayTest;
+out vec3 SpotLightTargetDirectionTest;
+
+
 
 void main(){
     //transform vertices
-    vec4 pos = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0f);
+    vec4 pos = Projection_matrix * View_matrix * Model_matrix * vec4(Position, 1.0f);
     gl_Position = pos;
-    vertexData.position = pos.xyz;
+    VertexData.position = pos.xyz;
 
     //camera normals
-    vec4 norm = transpose(inverse(view_matrix * model_matrix)) * vec4(normal, 0.0f);
-    vertexData.normal = norm.xyz;
+    vec4 norm = transpose(inverse(View_matrix * Model_matrix)) * vec4(Normal, 0.0f);
+    VertexData.normal = norm.xyz;
 
     //texture coordinates
-    vertexData.texCoord = texCoord;
+    VertexData.texCoord = TexCoord;
 
-    fragmentPosition = (view_matrix * model_matrix * vec4(position, 1.0f));
+    FragmentPosition = (View_matrix * Model_matrix * vec4(Position, 1.0f));
 
-    ViewDirection = (view_matrix * model_matrix * vec4(-position, 1.0f)).xyz;
+    ViewDirection = (View_matrix * Model_matrix * vec4(-Position, 1.0f)).xyz;
 
     //point light direction
-    for (int i = 0 ; i < pointLightArrayLength ; i++)
+    for (int i = 0 ; i < PointLightArrayLength ; i++)
     {
-        vec4 lightPosition = view_matrix * vec4(pointLightArray[i].lightPos, 1.0);
-        pointLightArray[i].lightDirection = (lightPosition - fragmentPosition).xyz ;
+        vec4 pointLightPosition = View_matrix * vec4(PointLightArray[i].lightPos, 1.0);
+        PointLightDirArray[i] = (pointLightPosition - FragmentPosition).xyz ;
 
-        float distance = length(pointLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
-        pointLightArray[i].lightDistance = distance;
+        float pointLightDistance = length(PointLightArray[i].lightPos - (Model_matrix * vec4(Position, 1.0f)).xyz);
+        PointLightDistArray[i] = pointLightDistance;
     }
 
-    for (int i = 0 ; i < spotLightArrayLength ; i++)
-    {
+    vec4 spotLightPosition = View_matrix * vec4(SpotLightArrayTest.lightPos, 1.0);
+    SpotLightDirArrayTest = (spotLightPosition - FragmentPosition).xyz ;
 
-        vec4 lightPosition = view_matrix * vec4(spotLightArray[i].lightPos, 1.0);
-        spotLightDirArray[i] = (lightPosition - fragmentPosition).xyz ;
+    float spotLightDistance = length(SpotLightArrayTest.lightPos - (Model_matrix * vec4(Position, 1.0f)).xyz);
+    SpotLightDistArrayTest = spotLightDistance;
 
-        float distance = length(spotLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
-        spotLightDistArray[i] = distance;
-    }
+    SpotLightTargetDirectionTest = (View_matrix * vec4(SpotLightArrayTest.direction, 0)).xyz;
+
 }

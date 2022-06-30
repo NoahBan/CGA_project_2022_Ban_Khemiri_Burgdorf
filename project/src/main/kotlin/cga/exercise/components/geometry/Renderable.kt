@@ -21,7 +21,7 @@ class Renderable(
     }
 
     override fun render(shaderProgram : ShaderProgram) {
-        shaderProgram.setUniform("model_matrix", getWorldModelMatrix(), false)
+        shaderProgram.setUniform("Model_matrix", getWorldModelMatrix(), false)
         for (each in renderList){
             each.render(shaderProgram)
         }

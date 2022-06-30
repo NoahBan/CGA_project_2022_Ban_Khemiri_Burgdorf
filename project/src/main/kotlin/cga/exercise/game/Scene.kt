@@ -30,12 +30,17 @@ class Scene(private val window: GameWindow) {
     private val importedSphere : Renderable
     private val importedLightSphere : Renderable
     private val importedLightSphere2 : Renderable
+    private val importedLightSphere3 : Renderable
 
     private val sceneCam : TronCamera
 
     private val light1 : PointLight
     private val light2 : PointLight
+    private val spotLight1 : SpotLight
+
     private val lightHandler : LightHandler
+
+    private val testMatrix = Transformable();
 
     var xposBefore : Double = 0.0
 
@@ -76,7 +81,8 @@ class Scene(private val window: GameWindow) {
 
         //Ground Texture
         val groundEmissionTex = Texture2D("assets/textures/ground_emit.png", true)
-        val groundDiffuseTex = Texture2D("assets/textures/ground_diff.png", true)
+//        val groundDiffuseTex = Texture2D("assets/textures/ground_diff.png", true)
+        val groundDiffuseTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
 
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
         val matGround = Material(
@@ -123,33 +129,42 @@ class Scene(private val window: GameWindow) {
         importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
         importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
+        importedLightSphere3 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
 
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
 
 
-        sceneCam = TronCamera(89F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
+        sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
+//        sceneCam.rotate(-90F,0F,0F)
+//        sceneCam.setPosition(Vector3f(0f,10f,0f))
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 10F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 10F, Matrix4f(), importedBike)
 
+        spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(0F,1F, 0F), 100F, Matrix4f(), Matrix4f(),20f,40f)
+        spotLight1.setPosition(Vector3f(0f,3f,0f))
+
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2
+        importedLightSphere3.parent = spotLight1
 
         importedSphere.translate(Vector3f(0f,2f,-5f))
 
         importedLightSphere.scale(Vector3f(0.05F))
         importedLightSphere2.scale(Vector3f(0.05F))
+        importedLightSphere3.scale(Vector3f(0.05F))
 
-        light1.translate(Vector3f(-2f,2f,0f))
-        light2.translate(Vector3f(2f,2f,0f))
+        light1.translate(Vector3f(-1f,2f,0f))
+        light2.translate(Vector3f(1f,2f,0f))
 
         lightHandler = LightHandler()
 
         lightHandler.addPointLight(light2)
         lightHandler.addPointLight(light1)
+        lightHandler.addSpotLight(spotLight1)
 
 
     }
@@ -160,19 +175,17 @@ class Scene(private val window: GameWindow) {
         staticShader.use()
         sceneCam.bind(staticShader)
 
-//        light1.bindTest(staticShader,sceneCam)
         lightHandler.bindLights(staticShader, sceneCam, Vector3f(0f))
 
         importedSphere.render(staticShader)
         importedLightSphere.render(staticShader)
         importedLightSphere2.render(staticShader)
+        importedLightSphere3.render(staticShader)
         importedGround.setMaterialEmitMult(Vector3f(0f,1f,0f))
         importedGround.render(staticShader)
         importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
 
-        //println(light1.getPremultLightPos(sceneCam.getWorldModelMatrix()))
-        //println(light2.getPremultLightPos(sceneCam.getWorldModelMatrix()))
     }
 
     fun update(dt: Float, t: Float) {
