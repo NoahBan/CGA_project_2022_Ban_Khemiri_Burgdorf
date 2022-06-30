@@ -36,6 +36,7 @@ class LightHandler() {
             shaderProgram.setUniform("pointLightArray[" + index +"].attenuationType", light.attenuationType.ordinal)
             if (index == 9) return
         }
+
     }
 
     fun bindSpotlights (shaderProgram : ShaderProgram, camera : TronCamera) {

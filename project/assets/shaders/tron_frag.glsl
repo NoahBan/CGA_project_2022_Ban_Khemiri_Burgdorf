@@ -121,7 +121,6 @@ CalcLightData calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, ve
     vec3 lightDirection = normalize(pointLightDirArray[index]);
     vec3 halfwayDirection = normalize(lightDirection + viewDirection);
 
-
     float lightDistance = (spotLightDistArray[index]);
 //    float theta = dot(spotLightTargetDirection, normalize(-spotLightTargetDirection));
 //   float epsilon   = spotLight.cutOff - light.outerCutOff;
@@ -165,7 +164,7 @@ void main(){
     }
     //add up material inputs
     vec3 result = matEmissive*material.emitMultiplier + diffuse + specular + (ambientColor * matDiffuse);
-//    vec3 result = matEmissive + diffuse + specular + (ambientColor * matDiffuse);
+//  vec3 result = matEmissive + diffuse + specular + (ambientColor * matDiffuse);
     toSRGB(result);
 
     color = vec4(result, 1.0);

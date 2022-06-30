@@ -23,18 +23,6 @@ uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 out vec3 ViewDirection;
 
-//PointLights
-struct PointLight
-{
-    vec3 lightPos;
-    vec3 lightColor;
-    int attenuationType;
-    float intensity;
-};
-uniform PointLight pointLightArray[10];
-uniform int pointLightArrayLength;
-out vec3 pointLightDirArray[10];
-out float pointLightDistArray[10];
 
 //directLights
 struct spotLight
@@ -51,6 +39,20 @@ out vec3 spotLightDirArray[10];
 out vec3 spotLightTargetDirArray[10];
 out float spotLightDistArray[10];
 
+//PointLights
+out struct PointLight
+{
+    vec3 lightPos;
+    vec3 lightColor;
+    int attenuationType;
+    float intensity;
+    vec3 lightDirection;
+    float lightDistance;
+};
+uniform PointLight pointLightArray[10];
+uniform int pointLightArrayLength;
+//out vec3 pointLightDirArray[10];
+//out float pointLightDistArray[10];
 
 void main(){
     //transform vertices
@@ -73,14 +75,15 @@ void main(){
     for (int i = 0 ; i < pointLightArrayLength ; i++)
     {
         vec4 lightPosition = view_matrix * vec4(pointLightArray[i].lightPos, 1.0);
-        pointLightDirArray[i] = (lightPosition - fragmentPosition).xyz ;
+        pointLightArray[i].lightDirection = (lightPosition - fragmentPosition).xyz ;
 
         float distance = length(pointLightArray[i].lightPos - (model_matrix * vec4(position, 1.0f)).xyz);
-        pointLightDistArray[i] = distance;
+        pointLightArray[i].lightDistance = distance;
     }
 
     for (int i = 0 ; i < spotLightArrayLength ; i++)
     {
+
         vec4 lightPosition = view_matrix * vec4(spotLightArray[i].lightPos, 1.0);
         spotLightDirArray[i] = (lightPosition - fragmentPosition).xyz ;
 
