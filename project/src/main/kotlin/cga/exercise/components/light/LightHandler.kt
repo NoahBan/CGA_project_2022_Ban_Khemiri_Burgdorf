@@ -34,11 +34,11 @@ class LightHandler() {
 
         shaderProgram.setUniform("PointLightArrayLength", pointLights.size)
 
-        pointLights.forEachIndexed { index, light ->
-            shaderProgram.setUniform("PointLightArray[" + index +"].lightPos", light.getWorldPosition())
-            shaderProgram.setUniform("PointLightArray[" + index +"].lightColor", light.lightColor)
-            shaderProgram.setUniform("PointLightArray[" + index +"].intensity", light.intensity)
-            shaderProgram.setUniform("PointLightArray[" + index +"].attenuationType", light.attenuationType.ordinal)
+        pointLights.forEachIndexed { index, pointLight ->
+            shaderProgram.setUniform("PointLightArray[" + index +"].lightPos", pointLight.getWorldPosition())
+            shaderProgram.setUniform("PointLightArray[" + index +"].lightColor", pointLight.lightColor)
+            shaderProgram.setUniform("PointLightArray[" + index +"].intensity", pointLight.intensity)
+            shaderProgram.setUniform("PointLightArray[" + index +"].attenuationType", pointLight.attenuationType.ordinal)
             if (index == 9) return
         }
     }

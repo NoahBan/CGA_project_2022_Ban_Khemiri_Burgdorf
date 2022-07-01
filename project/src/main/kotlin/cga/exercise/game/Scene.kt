@@ -88,7 +88,7 @@ class Scene(private val window: GameWindow) {
         val matGround = Material(
             groundDiffuseTex,
             groundEmissionTex,
-            groundEmissionTex,
+            groundDiffuseTex,
             60.0f,
             Vector2f(64.0f,64.0f))
 
@@ -126,6 +126,7 @@ class Scene(private val window: GameWindow) {
         val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
+//        importedGround.scale(Vector3f(100F,1F,100F))
         importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
         importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
@@ -158,8 +159,8 @@ class Scene(private val window: GameWindow) {
         importedLightSphere2.scale(Vector3f(0.05F))
         importedLightSphere3.scale(Vector3f(0.05F))
 
-        light1.translate(Vector3f(-1f,2f,0f))
-        light2.translate(Vector3f(1f,2f,0f))
+        light1.translate(Vector3f(-1f,1f,0f))
+        light2.translate(Vector3f(1f,1f,0f))
 
         lightHandler = LightHandler()
 
