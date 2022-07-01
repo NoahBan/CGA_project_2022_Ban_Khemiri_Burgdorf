@@ -31,10 +31,10 @@ struct PointLightStruct
     int attenuationType;
     float intensity;
 };
-uniform PointLightStruct PointLightArray[10];
+uniform PointLightStruct PointLightArray[5];
 uniform int PointLightArrayLength;
-out vec3 PointLightDirArray[10];
-out float PointLightDistArray[10];
+out vec3 PointLightDirArray[5];
+out float PointLightDistArray[5];
 
 //SpotLights
 struct SpotLightStruct
@@ -47,10 +47,11 @@ struct SpotLightStruct
     float cutOff;
     float outerCutOff;
 };
-uniform SpotLightStruct SpotLightArrayTest;
-out vec3 SpotLightDirArrayTest;
-out float SpotLightDistArrayTest;
-out vec3 SpotLightTargetDirectionTest;
+uniform SpotLightStruct SpotLightArray[5];
+uniform int SpotLightArrayLength;
+out vec3 SpotLightDirArray[5];
+out float SpotLightDistArray[5];
+out vec3 SpotLightTargetDirection[5];
 
 
 
@@ -81,12 +82,14 @@ void main(){
         PointLightDistArray[i] = pointLightDistance;
     }
 
-    vec4 spotLightPosition = View_matrix * vec4(SpotLightArrayTest.lightPos, 1.0);
-    SpotLightDirArrayTest = (spotLightPosition - FragmentPosition).xyz ;
+    for (int j = 0 ; j < SpotLightArrayLength ; j++)
+    {
+        vec4 spotLightPosition = View_matrix * vec4(SpotLightArray[j].lightPos, 1.0);
+        SpotLightDirArray[j] = (spotLightPosition - FragmentPosition).xyz;
 
-    float spotLightDistance = length(SpotLightArrayTest.lightPos - (Model_matrix * vec4(Position, 1.0f)).xyz);
-    SpotLightDistArrayTest = spotLightDistance;
+        float spotLightDistance = length(SpotLightArray[j].lightPos - (Model_matrix * vec4(Position, 1.0f)).xyz);
+        SpotLightDistArray[j] = spotLightDistance;
 
-    SpotLightTargetDirectionTest = (View_matrix * vec4(SpotLightArrayTest.direction, 0)).xyz;
-
+        SpotLightTargetDirection[j] = (View_matrix * vec4(SpotLightArray[j].direction, 0)).xyz;
+    }
 }
