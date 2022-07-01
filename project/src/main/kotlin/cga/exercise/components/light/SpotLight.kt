@@ -13,7 +13,7 @@ class SpotLight(
         lightColor : Vector3f = Vector3f(1F,1F,1F),
         intensity : Float,
         modelMatrix : Matrix4f = Matrix4f(),
-        var target : Matrix4f,
+        var target : Transformable?,
         var cutOff : Float,
         var outerCutOff : Float,
         parent: Transformable? = null)
@@ -24,16 +24,28 @@ class SpotLight(
 
         : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent)
 {
+
+
+        var direction = Transformable()
+
         init {
                 cutOff = Math.toRadians(cutOff.toDouble()).toFloat()
                 outerCutOff = Math.toRadians(outerCutOff.toDouble()).toFloat()
+                direction.parent = this
+                direction.setPosition(Vector3f(0F,-1F,0F))
         }
 
-        fun getSpotLightDirection(camera : TronCamera) : Vector3f{
-                var pos = Vector3f(getWorldModelMatrix().m30(), getWorldModelMatrix().m31(), getWorldModelMatrix().m32())
-                var tar = Vector3f(target.m30(), target.m31(), target.m32())
 
-                var lightDir = pos.sub(tar)
+
+        fun getSpotLightDirection(camera : TronCamera) : Vector3f{
+                var posM = Matrix4f(getWorldModelMatrix())
+                var posV = Vector3f(posM.m30(), posM.m31(), posM.m32())
+                var tar = Vector3f(direction.getWorldModelMatrix().m30(), direction.getWorldModelMatrix().m31(), direction.getWorldModelMatrix().m32())
+                if (target != null){
+                        tar = Vector3f(target!!.getWorldModelMatrix().m30(), target!!.getWorldModelMatrix().m31(), target!!.getWorldModelMatrix().m32())
+                }
+
+                var lightDir = posV.sub(tar)
                 var lightDir4 = Vector4f(lightDir[0],lightDir[0],lightDir[0],1F)
 
                 var camAxis = camera.getCalculateViewMatrix()
