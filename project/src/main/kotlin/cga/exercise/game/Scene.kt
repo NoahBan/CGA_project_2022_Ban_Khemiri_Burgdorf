@@ -83,12 +83,13 @@ class Scene(private val window: GameWindow) {
         val groundEmissionTex = Texture2D("assets/textures/ground_emit.png", true)
 //        val groundDiffuseTex = Texture2D("assets/textures/ground_diff.png", true)
         val groundDiffuseTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
+        val groundSpecTex = Texture2D("assets/textures/ground_spec.png", true)
 
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
         val matGround = Material(
             groundDiffuseTex,
             groundEmissionTex,
-            groundDiffuseTex,
+            groundSpecTex,
             60.0f,
             Vector2f(64.0f,64.0f))
 
@@ -121,7 +122,7 @@ class Scene(private val window: GameWindow) {
         val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
 
         //Ground Geo
-        val importObjGround = OBJLoader.loadOBJ("assets/models/ground.obj", true)
+        val importObjGround = OBJLoader.loadOBJ("assets/models/ground_blender.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
         val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
 

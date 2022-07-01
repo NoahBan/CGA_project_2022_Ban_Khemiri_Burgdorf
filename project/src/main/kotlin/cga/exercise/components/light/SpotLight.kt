@@ -46,7 +46,7 @@ class SpotLight(
                 }
 
                 var lightDir = posV.sub(tar)
-                var lightDir4 = Vector4f(lightDir[0],lightDir[0],lightDir[0],1F)
+                var lightDir4 = Vector4f(lightDir[0],lightDir[1],lightDir[2],0F)
 
                 var camAxis = camera.getCalculateViewMatrix()
 

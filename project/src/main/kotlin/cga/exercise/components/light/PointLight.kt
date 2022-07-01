@@ -11,10 +11,10 @@ import org.joml.Vector4f
 // A - Emissive Material
 // B - Ambient Light Color
 // C - Diffuse Reflection
-// D - Specular Reflection
+// D - Specular Reflection //Sharpens highlight, makes it more intense
 
 //4.1.2
-// Skalarprodukt könnte negativ sein, wenn wir das Objekt von hinten betrachten
+// Skalarprodukt könnte negativ sein, wenn wir das Objekt von hinten betrachten.
 open class PointLight (
         val attenuationType : AttenuationType,
         var lightColor : Vector3f = Vector3f(1F,1F,1F),

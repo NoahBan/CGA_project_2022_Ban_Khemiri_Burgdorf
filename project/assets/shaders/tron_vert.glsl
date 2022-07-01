@@ -70,7 +70,7 @@ void main(){
 
     FragmentPosition = (View_matrix * Model_matrix * vec4(Position, 1.0f));
 
-    ViewDirection = (View_matrix * Model_matrix * vec4(-Position, 1.0f)).xyz;
+    ViewDirection = (View_matrix * Model_matrix * vec4(-Position, 1.0f)).xyz; //toCamera
 
     //point light direction
     for (int i = 0 ; i < PointLightArrayLength ; i++)

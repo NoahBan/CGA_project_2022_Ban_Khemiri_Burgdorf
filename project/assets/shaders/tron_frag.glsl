@@ -90,6 +90,8 @@ struct CalcLightDataStruct{
     vec3 specular;
 };
 
+
+
 //POINT LIGHT CALCULATION
 CalcLightDataStruct calcPointLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular){
     vec3 diffuse = vec3(0.0);
@@ -118,6 +120,8 @@ CalcLightDataStruct calcPointLight(int index, vec3 viewDirection, vec3 vertexNor
 
     return calcLightData;
 }
+
+
 
 //SPOT LIGHT CALCULATION
 CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular, bool blinn){
@@ -158,6 +162,9 @@ CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNorm
     }
     return calcLightData;
 }
+
+
+
 
 void main(){
 

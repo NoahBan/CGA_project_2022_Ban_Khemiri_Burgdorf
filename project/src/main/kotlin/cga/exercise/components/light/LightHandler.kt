@@ -27,8 +27,8 @@ class LightHandler() {
     }
 
     fun bindPointlights (shaderProgram : ShaderProgram, camera : TronCamera) {
-        if (pointLights.size > 10) {
-            println("maximum of 10 lights exceeded. Past 10 will be ignored")
+        if (pointLights.size > 5) {
+            println("maximum of 10 lights exceeded. Past 5 will be ignored")
             return
         }
 
@@ -39,13 +39,13 @@ class LightHandler() {
             shaderProgram.setUniform("PointLightArray[" + index +"].lightColor", pointLight.lightColor)
             shaderProgram.setUniform("PointLightArray[" + index +"].intensity", pointLight.intensity)
             shaderProgram.setUniform("PointLightArray[" + index +"].attenuationType", pointLight.attenuationType.ordinal)
-            if (index == 9) return
+            if (index == 4) return
         }
     }
 
     fun bindSpotlights (shaderProgram : ShaderProgram, camera : TronCamera) {
-        if (spotLights.size > 10) {
-            println("maximum of 10 lights exceeded. Past 10 will be ignored")
+        if (spotLights.size > 5) {
+            println("maximum of 10 lights exceeded. Past 5 will be ignored")
             return
         }
 
@@ -59,8 +59,7 @@ class LightHandler() {
             shaderProgram.setUniform("SpotLightArray[" + index + "].direction", spotLight.getSpotLightDirection(camera))
             shaderProgram.setUniform("SpotLightArray[" + index + "].cutOff", spotLight.cutOff)
             shaderProgram.setUniform("SpotLightArray[" + index + "].outerCutOff", spotLight.outerCutOff)
-            if (index == 9) return
+            if (index == 4) return
         }
     }
-
 }
