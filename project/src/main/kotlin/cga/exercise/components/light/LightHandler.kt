@@ -49,7 +49,6 @@ class LightHandler() {
             println("maximum of 10 lights exceeded. Past 10 will be ignored")
             return
         }
-
         shaderProgram.setUniform("SpotLightArrayLength", spotLights.size)
 
         spotLights.forEachIndexed { index, spotLight ->

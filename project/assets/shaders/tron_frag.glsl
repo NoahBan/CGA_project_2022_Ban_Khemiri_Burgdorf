@@ -57,6 +57,8 @@ struct SpotLightStruct
     float cutOff;
     float outerCutOff;
 };
+
+//SpotLightArrays
 uniform SpotLightStruct SpotLightArrayTest;
 in vec3 SpotLightDirArrayTest;
 in float SpotLightDistArrayTest;
@@ -64,9 +66,6 @@ in vec3 SpotLightTargetDirectionTest;
 
 //pixel color out
 out vec4 color;
-
-
-
 
 float getAttenuation(in int inAttenuationType,in float inDistance){
     float attenuation = 1;

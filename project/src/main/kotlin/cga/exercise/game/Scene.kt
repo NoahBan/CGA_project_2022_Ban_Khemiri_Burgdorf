@@ -133,19 +133,18 @@ class Scene(private val window: GameWindow) {
 
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
-
-
         sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
 //        sceneCam.rotate(-90F,0F,0F)
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
 
+        //2 PointLights
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 10F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 10F, Matrix4f(), importedBike)
 
         spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(0F,1F, 0F), 100F, Matrix4f(), Matrix4f(),20f,40f)
-        spotLight1.setPosition(Vector3f(0f,3f,0f))
+        spotLight1.setPosition(Vector3f(0f,4f,0f))
 
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2
@@ -165,7 +164,6 @@ class Scene(private val window: GameWindow) {
         lightHandler.addPointLight(light2)
         lightHandler.addPointLight(light1)
         lightHandler.addSpotLight(spotLight1)
-
 
     }
 
@@ -208,7 +206,6 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_F)){
             importedBike.translate(Vector3f(0f,-0.1f,0f))
         }
-
 
     }
 
