@@ -47,7 +47,6 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
         staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
-        //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -57,12 +56,9 @@ class Scene(private val window: GameWindow) {
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
-
         glEnable ( GL_CULL_FACE )
         glFrontFace ( GL_CCW )
         glCullFace ( GL_BACK )
-
-
 
         //define ibo
         val posAndColVaoPos = VertexAttribute (3, GL30.GL_FLOAT,6 * 4, 0)
@@ -75,41 +71,54 @@ class Scene(private val window: GameWindow) {
         val posAndTexcAndNormAttrArray = arrayOf(posAndTexcAndNormPos, posAndTexcAndNormTexc, posAndTexcAndNormNorm)
 
         //Textures
-
-
-
+        //pureTextures
+        val pureBlackTex = Texture2D("assets/textures/pureColor/pureBlack.png", true)
+        pureBlackTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureBlueTex = Texture2D("assets/textures/pureColor/pureBlue.png", true)
+        pureBlueTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureGreenTex = Texture2D("assets/textures/pureColor/pureGreen.png", true)
+        pureGreenTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureGreyTex = Texture2D("assets/textures/pureColor/pureGrey.png", true)
+        pureGreyTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureRedTex = Texture2D("assets/textures/pureColor/pureRed.png", true)
+        pureRedTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureWhiteTex = Texture2D("assets/textures/pureColor/pureWhite.png", true)
+        pureWhiteTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Ground Texture
         val groundEmissionTex = Texture2D("assets/textures/ground_emit.png", true)
-//        val groundDiffuseTex = Texture2D("assets/textures/ground_diff.png", true)
-        val groundDiffuseTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
-        val groundSpecTex = Texture2D("assets/textures/ground_spec.png", true)
-
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val groundDiffuseTex = Texture2D("assets/textures/ground_diff.png", true)
+        groundDiffuseTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val groundSpecTex = Texture2D("assets/textures/ground_spec.png", true)
+        groundSpecTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+
+        //Sphere Texture
+        val sphereDiffuseTex = Texture2D("assets/textures/sphere.png", true)
+        sphereDiffuseTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val sphereEmissionTex = Texture2D("assets/textures/sphere_emissive.png", true)
+        sphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
+        lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+
+        //Materials
         val matGround = Material(
             groundDiffuseTex,
             groundEmissionTex,
             groundSpecTex,
             60.0f,
-            Vector2f(64.0f,64.0f))
-
-        //Sphere Texture
-        val sphereDiffuseTex = Texture2D("assets/textures/sphere.png", true)
-        val sphereEmissionTex = Texture2D("assets/textures/sphere_emissive.png", true)
-        val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
-        groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+            Vector2f(64.0f,64.0f)
+        )
         val matSphere = Material(
-                lightSphereEmissionTex,
-                sphereEmissionTex,
-                sphereDiffuseTex,
-                60.0f,
-                Vector2f(1f,1f))
+            lightSphereEmissionTex,
+            sphereEmissionTex,
+            sphereDiffuseTex
+        )
         val matLightSphere = Material(
-                sphereEmissionTex,
-                lightSphereEmissionTex,
-                sphereDiffuseTex,
-                60.0f,
-                Vector2f(1f,1f))
+            pureBlackTex,
+            pureWhiteTex,
+            pureWhiteTex
+        )
 
 
 
