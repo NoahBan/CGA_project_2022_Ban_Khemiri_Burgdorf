@@ -70,6 +70,7 @@ compileTestKotlin {
 }
 
 task(fatJar, type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes('Main-Class': 'cga.exercise.MainKt')
     }
