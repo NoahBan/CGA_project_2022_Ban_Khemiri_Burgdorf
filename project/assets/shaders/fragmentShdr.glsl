@@ -87,17 +87,16 @@ vec3 calcPointLightDiff(int index, vec3 vertexNormal, vec3 matDiffuse){
     return diffuseTerm * cosa / attenuation;
 }
 vec3 calcPointLightSpec(int index,vec3 vertexNormal, vec3 matSpecular){
+    vec3 V = normalize(PointToCamDir);
+    vec3 R = normalize(reflect(-PointToPointlightDir[index], vertexNormal));
 
-    vec3 viewDir = normalize(PointToCamDir);
-    //vec3 viewDir = normalize(View_matrix * Model_matrix * vec4(-VertexData.position,1.0f)).xyz;
-    vec3 reflectedLight = normalize(reflect(-PointLights[index].lightPos,VertexData.normal));
-    float cosBeta = max(0.0, dot(viewDir, reflectedLight));
-    float cosBetak = pow(cosBeta, Material.shininess);
+    float cosBeta = max(0.0,dot(R,V));
+    float cosBetak = pow(cosBeta,Material.shininess);
     vec3 specularTerm = matSpecular * PointLights[index].lightColor;
-    float attenuation = getAttenuation(PointLights[index].attenuationType, VertexData.position,PointLights[index].lightPos);
-
+    float attenuation = getAttenuation(PointLights[index].attenuationType, VertexData.position, PointLights[index].lightPos);
     return specularTerm * cosBetak / attenuation;
 }
+
 /*
 //SPOT LIGHT CALCULATION
 //CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular, bool blinn){
@@ -116,6 +115,7 @@ void main(){
     toLinear(matEmissive);
     toLinear(matSpecular);
 
+
     vec3 vertexNormal = normalize(VertexData.normal);
 
     //variables for color
@@ -126,7 +126,7 @@ void main(){
 
     //add point lights
     for (int i = 0 ; i < PointLightsLength ; i++){
-//        diffuse += calcPointLightDiff(i, vertexNormal, matDiffuse);
+        diffuse += calcPointLightDiff(i, vertexNormal, matDiffuse);
         specular += calcPointLightSpec(i, vertexNormal, matSpecular);
     }
 /*

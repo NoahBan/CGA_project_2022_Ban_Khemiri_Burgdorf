@@ -125,7 +125,7 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex,
             pureBlackTex,
             pureWhiteTex,
-            256.0f,
+            1.0f,
             Vector2f(64.0f,64.0f)
         )
         val matSphere = Material(
@@ -163,25 +163,6 @@ class Scene(private val window: GameWindow) {
 
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
-        importedBike.renderList[0].material!!.diff = pureWhiteTex
-        importedBike.renderList[0].material!!.emit = pureBlackTex
-        importedBike.renderList[0].material!!.specular = pureWhiteTex
-        importedBike.renderList[1].material!!.diff = pureWhiteTex
-        importedBike.renderList[1].material!!.specular = pureWhiteTex
-        importedBike.renderList[1].material!!.emit = pureBlackTex
-        importedBike.renderList[2].material!!.diff = pureWhiteTex
-        importedBike.renderList[2].material!!.specular = pureWhiteTex
-        importedBike.renderList[2].material!!.emit = pureBlackTex
-        importedBike.renderList[3].material!!.diff = pureWhiteTex
-        importedBike.renderList[3].material!!.specular = pureWhiteTex
-        importedBike.renderList[3].material!!.emit = pureBlackTex
-        importedBike.renderList[4].material!!.diff = pureWhiteTex
-        importedBike.renderList[4].material!!.specular = pureWhiteTex
-        importedBike.renderList[4].material!!.emit = pureBlackTex
-        importedBike.renderList[5].material!!.diff = pureWhiteTex
-        importedBike.renderList[5].material!!.specular = pureWhiteTex
-        importedBike.renderList[5].material!!.emit = pureBlackTex
-
         sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
@@ -218,7 +199,7 @@ class Scene(private val window: GameWindow) {
         lightHandler.addPointLight(light1)
         lightHandler.addSpotLight(spotLight1)
 
-        importedGround.rotate(0f,0f,90f)
+//        importedGround.rotate(0f,0f,90f)
     }
 
     fun render(dt: Float, t: Float) {

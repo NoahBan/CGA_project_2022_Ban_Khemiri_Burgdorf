@@ -34,21 +34,21 @@ struct PointLightStruct
 uniform PointLightStruct PointLights[5];
 uniform int PointLightsLength;
 out vec3 PointToPointlightDir[5];
-/*
-//SpotLights
-//struct SpotLightStruct
-//{
-//    vec3 lightPos;
-//    vec3 lightColor;
-//    int attenuationType;
-//    float intensity;
-//    vec3 direction;
-//    float cutOff;
-//    float outerCutOff;
-//};
-//uniform SpotLightStruct SpotLights[5];
-//uniform int SpotLightsLength;
-*/
+
+SpotLights
+struct SpotLightStruct
+{
+    vec3 lightPos;
+    vec3 lightColor;
+    int attenuationType;
+    float intensity;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+};
+uniform SpotLightStruct SpotLights[5];
+uniform int SpotLightsLength;
+
 void main(){
     //transform vertices
     gl_Position = Projection_matrix * View_matrix * Model_matrix * vec4(Vertex_Position, 1.0f);
