@@ -6,7 +6,7 @@ import org.joml.Vector3f
 
 open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var parent: Transformable? = null) {
 
-    fun getModelMatrix(): Matrix4f {
+    open fun getModelMatrix(): Matrix4f {
         return Matrix4f(modelMatrix)
     }
 
