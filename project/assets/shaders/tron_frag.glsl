@@ -79,10 +79,10 @@ float getAttenuation(in int inAttenuationType,in float inDistance){
 }
 
 void toSRGB (inout vec3 linearCol){
-    linearCol = pow(linearCol, vec3 (1.0/2.2));
+    linearCol = pow(linearCol, vec3 (2.2));
 }
 void toLinear (inout vec3 srgbCol){
-    srgbCol = pow(srgbCol, vec3(2.2));
+    srgbCol = pow(srgbCol, vec3(1.0/2.2));
 }
 
 struct CalcLightDataStruct{

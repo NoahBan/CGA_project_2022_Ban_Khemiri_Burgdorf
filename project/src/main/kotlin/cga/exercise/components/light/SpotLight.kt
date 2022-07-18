@@ -44,20 +44,12 @@ class SpotLight(
                 if (target != null){
                         tar = Vector3f(target!!.getWorldModelMatrix().m30(), target!!.getWorldModelMatrix().m31(), target!!.getWorldModelMatrix().m32())
                 }
-
                 var lightDir = posV.sub(tar)
                 var lightDir4 = Vector4f(lightDir[0],lightDir[1],lightDir[2],0F)
 
                 var camAxis = camera.getCalculateViewMatrix()
 
                 var mult = lightDir4.mul(camAxis)
-
-//                var mult = Vector4f(
-//                        camAxis.m00() * lightDir4[0] + camAxis.m10() * lightDir4[1] + camAxis.m20() * lightDir4[2] + camAxis.m30() * lightDir4[3],
-//                        camAxis.m01() * lightDir4[0] + camAxis.m11() * lightDir4[1] + camAxis.m21() * lightDir4[2] + camAxis.m31() * lightDir4[3],
-//                        camAxis.m02() * lightDir4[0] + camAxis.m12() * lightDir4[1] + camAxis.m22() * lightDir4[2] + camAxis.m32() * lightDir4[3],
-//                        camAxis.m03() * lightDir4[0] + camAxis.m13() * lightDir4[1] + camAxis.m23() * lightDir4[2] + camAxis.m33() * lightDir4[3]
-//                )
 
                 println(mult)
 

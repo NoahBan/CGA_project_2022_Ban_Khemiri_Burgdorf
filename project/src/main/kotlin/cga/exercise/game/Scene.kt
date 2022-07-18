@@ -152,10 +152,10 @@ class Scene(private val window: GameWindow) {
 //        sceneCam.rotate(-90F,0F,0F)
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
 
-        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 10F, Matrix4f(), importedBike)
-        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 10F, Matrix4f(), importedBike)
+        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 2F, Matrix4f(), importedBike)
+        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 2F, Matrix4f(), importedBike)
 
-        spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(0F,1F, 0F), 100F, Matrix4f(), null,20f,40f, importedBike)
+        spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(0F,1F, 0F), 2F, Matrix4f(), null,20f,40f, importedBike)
         spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
         spotLight1.rotate(45f,0f,0f)
 
@@ -197,7 +197,6 @@ class Scene(private val window: GameWindow) {
         importedGround.render(staticShader)
         importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
-
     }
 
     fun update(dt: Float, t: Float) {
