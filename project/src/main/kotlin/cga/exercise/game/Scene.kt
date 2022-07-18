@@ -2,6 +2,7 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
+import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
@@ -9,11 +10,9 @@ import cga.framework.GameWindow
 import cga.framework.OBJLoader
 import cga.framework.ModelLoader
 import org.joml.*
-import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
-import org.lwjgl.stb.STBImage
 import org.joml.Math
 
 
@@ -28,14 +27,27 @@ class Scene(private val window: GameWindow) {
 
     private val importedBike : Renderable
 
+    private val importedSphere : Renderable
+    private val importedLightSphere : Renderable
+    private val importedLightSphere2 : Renderable
+    private val importedLightSphere3 : Renderable
+
     private val sceneCam : TronCamera
 
-    private val curve : BezierCurve
+    private val light1 : PointLight
+    private val light2 : PointLight
+    private val spotLight1 : SpotLight
+
+    private val lightHandler : LightHandler
+
+    private val testMatrix = Transformable();
+
+    var xposBefore : Double = 0.0
 
     //scene setup
     init {
-        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
-        //staticShader = ShaderProgram("assets/shaders/simple_vert.glsl", "assets/shaders/simple_frag.glsl")
+        staticShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
+//        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -44,7 +56,6 @@ class Scene(private val window: GameWindow) {
         //glCullFace(GL_BACK); GLError.checkThrow()
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
-
 
         glEnable ( GL_CULL_FACE )
         glFrontFace ( GL_CCW )
@@ -61,81 +72,166 @@ class Scene(private val window: GameWindow) {
         val posAndTexcAndNormAttrArray = arrayOf(posAndTexcAndNormPos, posAndTexcAndNormTexc, posAndTexcAndNormNorm)
 
         //Textures
-
-
-
+        //pureTextures
+        val pureBlackTex = Texture2D("assets/textures/pureColor/pureBlack.png", true)
+        pureBlackTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureBlueTex = Texture2D("assets/textures/pureColor/pureBlue.png", true)
+        pureBlueTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureGreenTex = Texture2D("assets/textures/pureColor/pureGreen.png", true)
+        pureGreenTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureGreyTex = Texture2D("assets/textures/pureColor/pureGrey.png", true)
+        pureGreyTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureRedTex = Texture2D("assets/textures/pureColor/pureRed.png", true)
+        pureRedTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val pureWhiteTex = Texture2D("assets/textures/pureColor/pureWhite.png", true)
+        pureWhiteTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Ground Texture
-        val groundEmissionTex = Texture2D.invoke("assets/textures/ground_emit.png", true)
+        val groundEmissionTex = Texture2D("assets/textures/ground_emit.png", true)
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val groundDiffuseTex = Texture2D("assets/textures/ground_diff.png", true)
+        groundDiffuseTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val groundSpecTex = Texture2D("assets/textures/ground_spec.png", true)
+        groundSpecTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
+        //Sphere Texture
+        val sphereDiffuseTex = Texture2D("assets/textures/sphere.png", true)
+        sphereDiffuseTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val sphereEmissionTex = Texture2D("assets/textures/sphere_emissive.png", true)
+        sphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
+        lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+
+        //Materials
+//        val matGround = Material(
+//            groundDiffuseTex,
+//            groundEmissionTex,
+//            groundSpecTex,
+//            60.0f,
+//            Vector2f(64.0f,64.0f)
+//        )
+//        val matSphere = Material(
+//            lightSphereEmissionTex,
+//            sphereEmissionTex,
+//            sphereDiffuseTex
+//        )
+//        val matLightSphere = Material(
+//            pureBlackTex,
+//            pureWhiteTex,
+//            pureWhiteTex
+//        )
+//TEST
         val matGround = Material(
-            groundEmissionTex,
-            groundEmissionTex,
-            groundEmissionTex,
-            60.0f,
-            Vector2f(64.0f,64.0f))
+            pureWhiteTex,
+            pureBlackTex,
+            pureWhiteTex,
+            1.0f,
+            Vector2f(64.0f,64.0f)
+        )
+        val matSphere = Material(
+            pureWhiteTex,
+            pureBlackTex,
+            pureWhiteTex
+        )
+        val matLightSphere = Material(
+            pureWhiteTex,
+            pureWhiteTex,
+            pureWhiteTex
+        )
+
 
 
         //Geometry
 
+        //Sphere Geo
+        val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
+        val importedSphereData  = importObjSphere.objects[0].meshes[0]
+        val importedSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matSphere)
+        val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
+
         //Ground Geo
-        val importObjGround = OBJLoader.loadOBJ("assets/models/ground.obj", true)
+        val importObjGround = OBJLoader.loadOBJ("assets/models/ground_blender.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
         val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
+        //importedGround.scale(Vector3f(100F,1F,100F))
+        importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
+        importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
+        importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
+        importedLightSphere3 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
 
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
-
-        sceneCam = TronCamera(90F, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
+        sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
-        sceneCam.translate(Vector3f(0F,0F,6.0F))
+        sceneCam.translate(Vector3f(0F,1F,3.0F))
+//        sceneCam.rotate(-90F,0F,0F)
+//        sceneCam.setPosition(Vector3f(0f,10f,0f))
 
-        curve = BezierCurve(
-            listOf(
-            Vector3f(0f,0f,0f),
-            Vector3f(10f,20f,0f),
-            Vector3f(20f,0f,0f),
-            Vector3f(20F,0f,20f),
-            Vector3f(40f/2,0f,0f)
-            ),
-            Matrix4f()
-        )
-        importedBike.parent = curve
-        }
+        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 1F, Matrix4f(), importedBike)
+        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 1F, Matrix4f(), importedBike)
+
+        spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(0F,1F, 0F), 2F, Matrix4f(), 20f,40f, importedBike)
+        spotLight1.setPosition(Vector3f(0f,1f,-2.8f))
+        spotLight1.rotate(60f,0f,0f)
+
+        importedLightSphere.parent = light1
+        importedLightSphere2.parent = light2
+        importedLightSphere3.parent = spotLight1
+
+        val test = AttenuationType.QUADRATIC.ordinal
+
+        println(test)
+
+        importedSphere.translate(Vector3f(0f,2f,-4f))
+
+        importedLightSphere.scale(Vector3f(0.05F))
+        importedLightSphere2.scale(Vector3f(0.05F))
+        importedLightSphere3.scale(Vector3f(0.05F))
+
+        light1.translate(Vector3f(-1f,1f,0f))
+        light2.translate(Vector3f(1f,1f,0f))
+
+        lightHandler = LightHandler()
+
+        lightHandler.addPointLight(light2)
+        lightHandler.addPointLight(light1)
+        lightHandler.addSpotLight(spotLight1)
+
+//        importedGround.rotate(0f,0f,90f)
+    }
 
     fun render(dt: Float, t: Float) {
-        staticShader.use()
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+
+        staticShader.use()
         sceneCam.bind(staticShader)
 
+        lightHandler.bindLights(staticShader, sceneCam, Vector3f(0f))
+
+        importedSphere.render(staticShader)
+        importedLightSphere.render(staticShader)
+        importedLightSphere2.render(staticShader)
+        importedLightSphere3.render(staticShader)
+//        importedGround.setMaterialEmitMult(Vector3f(0f,1f,0f))
         importedGround.render(staticShader)
+//        importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
-
-        //println(curve.getModelMatrix())
-
     }
 
     fun update(dt: Float, t: Float) {
         if(window.getKeyState(GLFW_KEY_W)){
             importedBike.translate(Vector3f(0f,0f,-10f*dt))
-            if(window.getKeyState(GLFW_KEY_A)){
-                importedBike.rotate(0f,50f*dt,0f)
-            }
-            if(window.getKeyState(GLFW_KEY_D)){
-                importedBike.rotate(0f,-50f*dt,0f)
-            }
         }
         if(window.getKeyState(GLFW_KEY_S)){
             importedBike.translate(Vector3f(0f,0f,10f*dt))
-            if(window.getKeyState(GLFW_KEY_A)){
-                importedBike.rotate(0f,50f*dt,0f)
-            }
-            if(window.getKeyState(GLFW_KEY_D)){
-                importedBike.rotate(0f,-50f*dt,0f)
-            }
+        }
+        if(window.getKeyState(GLFW_KEY_A)){
+            importedBike.rotate(0f,50f*dt,0f)
+        }
+        if(window.getKeyState(GLFW_KEY_D)){
+            importedBike.rotate(0f,-50f*dt,0f)
         }
 
         if(window.getKeyState(GLFW_KEY_R)){
@@ -144,19 +240,18 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_F)){
             importedBike.translate(Vector3f(0f,-0.1f,0f))
         }
-        if(window.getKeyState(GLFW_KEY_I)){
-            curve.moveAlong(0.3F * dt)
-        }
-        if(window.getKeyState(GLFW_KEY_K)){
-            curve.moveAlong(-0.3F * dt)
-        }
 
 
     }
 
-    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
+    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
+    }
 
-    fun onMouseMove(xpos: Double, ypos: Double) {}
+    fun onMouseMove(xpos: Double, ypos: Double) {
+        var xposNew = xpos.minus(xposBefore) * 0.002f
+        sceneCam.rotateAroundPoint(0f,- xposNew.toFloat(),0f,importedBike.getWorldPosition())
+        xposBefore = xpos
+    }
 
     fun cleanup() {}
 }

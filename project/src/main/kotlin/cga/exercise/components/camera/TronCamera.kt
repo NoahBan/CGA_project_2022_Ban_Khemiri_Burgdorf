@@ -8,7 +8,7 @@ import org.joml.Math.toRadians
 
 class TronCamera (
     val fov : Float = 90F,
-    val aspectRatio : Float = 16f/9f,
+    val aspectRatio : Float = 9f/9f,
     val nearPlane: Float = 0.1F,
     val farPlane: Float = 100.0F,
     modelMatrix : Matrix4f, parent: Transformable? = null) : Transformable(modelMatrix, parent) , ICamera {
@@ -22,13 +22,13 @@ class TronCamera (
     }
 
     override fun getCalculateProjectionMatrix(): Matrix4f {
-        return Matrix4f().perspective(fov,aspectRatio,nearPlane,farPlane)
+        return Matrix4f().perspective(Math.toRadians(fov),aspectRatio,nearPlane,farPlane)
     }
 
     override fun bind(shader: ShaderProgram) {
         val calculateViewMatrix = getCalculateViewMatrix();
         val calculateProjectionMatrix = getCalculateProjectionMatrix();
-        shader.setUniform("view_matrix",calculateViewMatrix,false);
-        shader.setUniform("projection_matrix",calculateProjectionMatrix,false);
+        shader.setUniform("View_matrix",calculateViewMatrix,false);
+        shader.setUniform("Projection_matrix",calculateProjectionMatrix,false);
     }
 }
