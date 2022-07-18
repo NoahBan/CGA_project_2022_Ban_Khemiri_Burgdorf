@@ -66,9 +66,6 @@ in vec3 SpotLightTargetDirection[5];
 //pixel color out
 out vec4 color;
 
-
-
-
 float getAttenuation(in int inAttenuationType,in float inDistance){
     float attenuation = 1;
     int attenuationType = int(inAttenuationType);
@@ -105,7 +102,6 @@ CalcLightDataStruct calcPointLight(int index, vec3 viewDirection, vec3 vertexNor
     float cosAlpha = max(dot(vertexNormal, lightDirection), 0.0);
 
     float attenuation = getAttenuation(PointLightArray[index].attenuationType, lightDistance);
-    int attenuationType = PointLightArray[index].attenuationType;
 
     calcLightData.diffuse = matDiffuse * PointLightArray[index].lightColor * PointLightArray[index].intensity * cosAlpha / attenuation;
 
@@ -164,8 +160,6 @@ CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNorm
 }
 
 
-
-
 void main(){
 
     //get tex color on uv coordinate
@@ -192,11 +186,11 @@ void main(){
         specular += calcPointLightData.specular;
     }
 
-    for (int j = 0 ; j < SpotLightArrayLength ; j++){
-        CalcLightDataStruct calcSpotLightData = calcSpotLight(j, viewDirection, vertexNormal, matDiffuse, matSpecular, false);
-        diffuse += calcSpotLightData.diffuse;
-        specular += calcSpotLightData.specular;
-    }
+//    for (int j = 0 ; j < SpotLightArrayLength ; j++){
+//        CalcLightDataStruct calcSpotLightData = calcSpotLight(j, viewDirection, vertexNormal, matDiffuse, matSpecular, false);
+//        diffuse += calcSpotLightData.diffuse;
+//        specular += calcSpotLightData.specular;
+//    }
 
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;

@@ -76,9 +76,9 @@ void main(){
     for (int i = 0 ; i < PointLightArrayLength ; i++)
     {
         vec4 pointLightPosition = View_matrix * vec4(PointLightArray[i].lightPos, 1.0);
-        PointLightDirArray[i] = (pointLightPosition - FragmentPosition).xyz ;
+        PointLightDirArray[i] = (vec4(PointLightArray[i].lightPos, 1.0) - FragmentPosition).xyz ;
 
-        float pointLightDistance = length(PointLightArray[i].lightPos - (Model_matrix * vec4(Position, 1.0f)).xyz);
+        float pointLightDistance = length(pointLightPosition.xyz - (Model_matrix * vec4(Position, 0.0f)).xyz);
         PointLightDistArray[i] = pointLightDistance;
     }
 

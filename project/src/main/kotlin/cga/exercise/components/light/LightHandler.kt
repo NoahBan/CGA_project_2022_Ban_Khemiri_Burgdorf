@@ -22,7 +22,7 @@ class LightHandler() {
         shaderProgram.setUniform("AmbientColor", ambientLightCol)
 
         bindPointlights(shaderProgram, camera)
-        bindSpotlights(shaderProgram, camera)
+//        bindSpotlights(shaderProgram, camera)
 //        bindSpotlightsTest(shaderProgram, camera)
     }
 
@@ -32,13 +32,13 @@ class LightHandler() {
             return
         }
 
-        shaderProgram.setUniform("PointLightArrayLength", pointLights.size)
+        shaderProgram.setUniform("PointLightsLength", pointLights.size)
 
         pointLights.forEachIndexed { index, pointLight ->
-            shaderProgram.setUniform("PointLightArray[" + index +"].lightPos", pointLight.getWorldPosition())
-            shaderProgram.setUniform("PointLightArray[" + index +"].lightColor", pointLight.lightColor)
-            shaderProgram.setUniform("PointLightArray[" + index +"].intensity", pointLight.intensity)
-            shaderProgram.setUniform("PointLightArray[" + index +"].attenuationType", pointLight.attenuationType.ordinal)
+            shaderProgram.setUniform("PointLights[" + index +"].lightPos", pointLight.getPremultLightPos(camera.getCalculateViewMatrix()))
+            shaderProgram.setUniform("PointLights[" + index +"].lightColor", pointLight.lightColor)
+            shaderProgram.setUniform("PointLights[" + index +"].intensity", pointLight.intensity)
+            shaderProgram.setUniform("PointLights[" + index +"].attenuationType", pointLight.attenuationType.ordinal)
             if (index == 4) return
         }
     }

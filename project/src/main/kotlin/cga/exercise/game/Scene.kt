@@ -46,7 +46,8 @@ class Scene(private val window: GameWindow) {
 
     //scene setup
     init {
-        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
+        staticShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
+//        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -102,20 +103,38 @@ class Scene(private val window: GameWindow) {
         lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Materials
+//        val matGround = Material(
+//            groundDiffuseTex,
+//            groundEmissionTex,
+//            groundSpecTex,
+//            60.0f,
+//            Vector2f(64.0f,64.0f)
+//        )
+//        val matSphere = Material(
+//            lightSphereEmissionTex,
+//            sphereEmissionTex,
+//            sphereDiffuseTex
+//        )
+//        val matLightSphere = Material(
+//            pureBlackTex,
+//            pureWhiteTex,
+//            pureWhiteTex
+//        )
+//TEST
         val matGround = Material(
-            groundDiffuseTex,
-            groundEmissionTex,
-            groundSpecTex,
-            60.0f,
+            pureWhiteTex,
+            pureBlackTex,
+            pureWhiteTex,
+            256.0f,
             Vector2f(64.0f,64.0f)
         )
         val matSphere = Material(
-            lightSphereEmissionTex,
-            sphereEmissionTex,
-            sphereDiffuseTex
+            pureWhiteTex,
+            pureBlackTex,
+            pureWhiteTex
         )
         val matLightSphere = Material(
-            pureBlackTex,
+            pureWhiteTex,
             pureWhiteTex,
             pureWhiteTex
         )
@@ -136,7 +155,7 @@ class Scene(private val window: GameWindow) {
         val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
-//        importedGround.scale(Vector3f(100F,1F,100F))
+        //importedGround.scale(Vector3f(100F,1F,100F))
         importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
         importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
@@ -144,7 +163,24 @@ class Scene(private val window: GameWindow) {
 
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
-
+        importedBike.renderList[0].material!!.diff = pureWhiteTex
+        importedBike.renderList[0].material!!.emit = pureBlackTex
+        importedBike.renderList[0].material!!.specular = pureWhiteTex
+        importedBike.renderList[1].material!!.diff = pureWhiteTex
+        importedBike.renderList[1].material!!.specular = pureWhiteTex
+        importedBike.renderList[1].material!!.emit = pureBlackTex
+        importedBike.renderList[2].material!!.diff = pureWhiteTex
+        importedBike.renderList[2].material!!.specular = pureWhiteTex
+        importedBike.renderList[2].material!!.emit = pureBlackTex
+        importedBike.renderList[3].material!!.diff = pureWhiteTex
+        importedBike.renderList[3].material!!.specular = pureWhiteTex
+        importedBike.renderList[3].material!!.emit = pureBlackTex
+        importedBike.renderList[4].material!!.diff = pureWhiteTex
+        importedBike.renderList[4].material!!.specular = pureWhiteTex
+        importedBike.renderList[4].material!!.emit = pureBlackTex
+        importedBike.renderList[5].material!!.diff = pureWhiteTex
+        importedBike.renderList[5].material!!.specular = pureWhiteTex
+        importedBike.renderList[5].material!!.emit = pureBlackTex
 
         sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
@@ -152,16 +188,20 @@ class Scene(private val window: GameWindow) {
 //        sceneCam.rotate(-90F,0F,0F)
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
 
-        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 2F, Matrix4f(), importedBike)
-        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 2F, Matrix4f(), importedBike)
+        light1 = PointLight(AttenuationType.LINEAR,Vector3f(1F,0F,0F), 1F, Matrix4f(), importedBike)
+        light2 = PointLight(AttenuationType.LINEAR,Vector3f(0F,0F,1F), 1F, Matrix4f(), importedBike)
 
-        spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(0F,1F, 0F), 2F, Matrix4f(), null,20f,40f, importedBike)
+        spotLight1 = SpotLight(AttenuationType.LINEAR,Vector3f(0F,1F, 0F), 0F, Matrix4f(), null,20f,40f, importedBike)
         spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
         spotLight1.rotate(45f,0f,0f)
 
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2
         importedLightSphere3.parent = spotLight1
+
+        val test = AttenuationType.QUADRATIC.ordinal
+
+        println(test)
 
         importedSphere.translate(Vector3f(0f,2f,-4f))
 
@@ -178,7 +218,7 @@ class Scene(private val window: GameWindow) {
         lightHandler.addPointLight(light1)
         lightHandler.addSpotLight(spotLight1)
 
-
+        importedGround.rotate(0f,0f,90f)
     }
 
     fun render(dt: Float, t: Float) {
@@ -193,9 +233,9 @@ class Scene(private val window: GameWindow) {
         importedLightSphere.render(staticShader)
         importedLightSphere2.render(staticShader)
         importedLightSphere3.render(staticShader)
-        importedGround.setMaterialEmitMult(Vector3f(0f,1f,0f))
+//        importedGround.setMaterialEmitMult(Vector3f(0f,1f,0f))
         importedGround.render(staticShader)
-        importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
+//        importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
     }
 
