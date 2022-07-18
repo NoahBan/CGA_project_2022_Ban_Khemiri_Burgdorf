@@ -22,7 +22,7 @@ open class PointLight (
         : Transformable(modelMatrix, parent) {
 
 fun getPremultLightPos(viewMatrix : Matrix4f) : Vector3f {
-        val worldModelMatrix = Matrix4f(this.getWorldModelMatrix())
+        val worldModelMatrix = Matrix4f(getWorldModelMatrix())
 
         val calcLightPos = Vector4f(
                 viewMatrix.m00() * worldModelMatrix.m30() + viewMatrix.m10() * worldModelMatrix.m31() + viewMatrix.m20() * worldModelMatrix.m32() + viewMatrix.m30() * worldModelMatrix.m33(),

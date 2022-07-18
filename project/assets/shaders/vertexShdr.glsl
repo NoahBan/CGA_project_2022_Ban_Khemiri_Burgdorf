@@ -35,7 +35,8 @@ uniform PointLightStruct PointLights[5];
 uniform int PointLightsLength;
 out vec3 PointToPointlightDir[5];
 
-SpotLights
+
+//SpotLights
 struct SpotLightStruct
 {
     vec3 lightPos;
@@ -48,6 +49,7 @@ struct SpotLightStruct
 };
 uniform SpotLightStruct SpotLights[5];
 uniform int SpotLightsLength;
+out vec3 PointToSpotlightDir[5];
 
 void main(){
     //transform vertices
@@ -66,14 +68,16 @@ void main(){
     //texture coordinates
     VertexData.texCoord = TexCoord;
 
+    vec4 vertexpos = View_matrix * Model_matrix * vec4(Vertex_Position, 1.0f);
     //point light direction
     for (int i = 0 ; i < PointLightsLength ; i++)
     {
-        vec4 vertexpos = View_matrix * Model_matrix * vec4(Vertex_Position, 1.0f);
+
         PointToPointlightDir[i] = (PointLights[i].lightPos - vertexpos.xyz);
     }
 
-//    for (int j = 0 ; j < SpotLightsLength ; j++)
-//    {
-//    }
+    for (int j = 0 ; j < SpotLightsLength ; j++)
+    {
+        PointToSpotlightDir[j] = (SpotLights[j].lightPos - vertexpos.xyz);
+    }
 }

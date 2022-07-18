@@ -22,8 +22,7 @@ class LightHandler() {
         shaderProgram.setUniform("AmbientColor", ambientLightCol)
 
         bindPointlights(shaderProgram, camera)
-//        bindSpotlights(shaderProgram, camera)
-//        bindSpotlightsTest(shaderProgram, camera)
+        bindSpotlights(shaderProgram, camera)
     }
 
     fun bindPointlights (shaderProgram : ShaderProgram, camera : TronCamera) {
@@ -49,16 +48,16 @@ class LightHandler() {
             return
         }
 
-        shaderProgram.setUniform("SpotLightArrayLength", spotLights.size)
+        shaderProgram.setUniform("SpotLightsLength", spotLights.size)
 
         spotLights.forEachIndexed { index, spotLight ->
-            shaderProgram.setUniform("SpotLightArray[" + index + "].lightPos", spotLight.getWorldPosition())
-            shaderProgram.setUniform("SpotLightArray[" + index + "].lightColor", spotLight.lightColor)
-            shaderProgram.setUniform("SpotLightArray[" + index + "].intensity", spotLight.intensity)
-            shaderProgram.setUniform("SpotLightArray[" + index + "].attenuationType", spotLight.attenuationType.ordinal)
-            shaderProgram.setUniform("SpotLightArray[" + index + "].direction", spotLight.getSpotLightDirection(camera))
-            shaderProgram.setUniform("SpotLightArray[" + index + "].cutOff", spotLight.cutOff)
-            shaderProgram.setUniform("SpotLightArray[" + index + "].outerCutOff", spotLight.outerCutOff)
+            shaderProgram.setUniform("SpotLights[" + index + "].lightPos", spotLight.getPremultLightPos(camera.getCalculateViewMatrix()))
+            shaderProgram.setUniform("SpotLights[" + index + "].lightColor", spotLight.lightColor)
+            shaderProgram.setUniform("SpotLights[" + index + "].intensity", spotLight.intensity)
+            shaderProgram.setUniform("SpotLights[" + index + "].attenuationType", spotLight.attenuationType.ordinal)
+            shaderProgram.setUniform("SpotLights[" + index + "].direction", spotLight.getSpotLightDirection(camera))
+            shaderProgram.setUniform("SpotLights[" + index + "].cutOff", spotLight.cutOff)
+            shaderProgram.setUniform("SpotLights[" + index + "].outerCutOff", spotLight.outerCutOff)
             if (index == 4) return
         }
     }

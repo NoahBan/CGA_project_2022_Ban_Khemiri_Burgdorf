@@ -42,23 +42,22 @@ struct PointLightStruct
 uniform PointLightStruct PointLights[5];
 uniform int PointLightsLength;
 in vec3 PointToPointlightDir[5];
-/*
-//SpotLights
-//struct SpotLightStruct
-//{
-//    vec3 lightPos;
-//    vec3 lightColor;
-//    int attenuationType;
-//    float intensity;
-//    vec3 direction;
-//    float cutOff;
-//    float outerCutOff;
-//};
-//uniform SpotLightStruct SpotLightArray[5];
-//uniform int SpotLightArrayLength;
 
-//pixel color out
-*/
+//SpotLights
+struct SpotLightStruct
+{
+    vec3 lightPos;
+    vec3 lightColor;
+    int attenuationType;
+    float intensity;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+};
+uniform SpotLightStruct SpotLights[5];
+uniform int SpotLightsLength;
+in vec3 PointToSpotlightDir[5];
+
 out vec4 color;
 
 float getAttenuation(int inAttenuationType,vec3 fragPosition,vec3 lightPos){
@@ -97,13 +96,37 @@ vec3 calcPointLightSpec(int index,vec3 vertexNormal, vec3 matSpecular){
     return specularTerm * cosBetak / attenuation;
 }
 
-/*
+
 //SPOT LIGHT CALCULATION
-//CalcLightDataStruct calcSpotLight(int index, vec3 viewDirection, vec3 vertexNormal, vec3 matDiffuse, vec3 matSpecular, bool blinn){
-//
-//    return calcLightData;
-//}
-*/
+vec3 calcSpotLightDiff(int index, vec3 vertexNormal, vec3 matDiffuse){
+
+    vec3 pointToSpotlightDir = normalize(PointToSpotlightDir[index]);
+
+    float theta = dot(pointToSpotlightDir, normalize(SpotLights[index].direction));
+    float epsilon = SpotLights[index].cutOff - SpotLights[index].outerCutOff;
+    float softBorder = clamp((theta - SpotLights[index].outerCutOff) / epsilon, 0.0,1.0);
+    
+    if (theta > SpotLights[index].outerCutOff){
+        return vec3(0);
+    } else if(theta > SpotLights[index].cutOff) {
+        float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
+        vec3 diffuseTerm = matDiffuse * (SpotLights[index].lightColor * SpotLights[index].intensity);
+        float attenuation = getAttenuation(SpotLights[index].attenuationType, VertexData.position,SpotLights[index].lightPos);
+        vec3 result = (diffuseTerm * cosa * softBorder / attenuation);
+        return result;
+    } else {
+        float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
+        vec3 diffuseTerm = matDiffuse * (SpotLights[index].lightColor * SpotLights[index].intensity);
+        float attenuation = getAttenuation(SpotLights[index].attenuationType, VertexData.position,SpotLights[index].lightPos);
+        vec3 result = (diffuseTerm * cosa / attenuation);
+        return result;
+    }
+
+//    float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
+//    vec3 diffuseTerm = matDiffuse * (SpotLights[index].lightColor * SpotLights[index].intensity);
+//    float attenuation = getAttenuation(SpotLights[index].attenuationType, VertexData.position,SpotLights[index].lightPos);
+//    return diffuseTerm * cosa / attenuation;
+}
 
 void main(){
 
@@ -114,7 +137,6 @@ void main(){
     toLinear(matDiffuse);
     toLinear(matEmissive);
     toLinear(matSpecular);
-
 
     vec3 vertexNormal = normalize(VertexData.normal);
 
@@ -129,13 +151,12 @@ void main(){
         diffuse += calcPointLightDiff(i, vertexNormal, matDiffuse);
         specular += calcPointLightSpec(i, vertexNormal, matSpecular);
     }
-/*
-//    for (int j = 0 ; j < SpotLightArrayLength ; j++){
-//        CalcLightDataStruct calcSpotLightData = calcSpotLight(j, viewDirection, vertexNormal, matDiffuse, matSpecular, false);
-//        diffuse += calcSpotLightData.diffuse;
+
+    for (int j = 0 ; j < SpotLightsLength ; j++){
+        diffuse += calcSpotLightDiff(j, vertexNormal, matDiffuse);
 //        specular += calcSpotLightData.specular;
-//    }
-*/
+    }
+
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);

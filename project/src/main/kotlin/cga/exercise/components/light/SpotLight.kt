@@ -13,49 +13,33 @@ class SpotLight(
         lightColor : Vector3f = Vector3f(1F,1F,1F),
         intensity : Float,
         modelMatrix : Matrix4f = Matrix4f(),
-        var target : Transformable?,
         var cutOff : Float,
         var outerCutOff : Float,
-        parent: Transformable? = null)
-        
-        
-        // postion vom 
-
-
+        parent: Transformable? = null,
+        var target : Transformable = Transformable(Matrix4f()))
+        // postion vom
         : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent)
 {
-
-
-        var direction = Transformable()
-
+        //target ist als Position angegeben. "Richtung" des Spotlights ergibt sich aus Neigung aus Positionsvektor zu Target-Vektor
         init {
                 cutOff = Math.toRadians(cutOff.toDouble()).toFloat()
                 outerCutOff = Math.toRadians(outerCutOff.toDouble()).toFloat()
-                direction.parent = this
-                direction.setPosition(Vector3f(0F,-1F,0F))
+                target.parent = this
+                target.translate(Vector3f(0f,-1f,0f))
         }
-
-
-
         fun getSpotLightDirection(camera : TronCamera) : Vector3f{
-                var posM = Matrix4f(getWorldModelMatrix())
-                var posV = Vector3f(posM.m30(), posM.m31(), posM.m32())
-                var tar = Vector3f(direction.getWorldModelMatrix().m30(), direction.getWorldModelMatrix().m31(), direction.getWorldModelMatrix().m32())
-                if (target != null){
-                        tar = Vector3f(target!!.getWorldModelMatrix().m30(), target!!.getWorldModelMatrix().m31(), target!!.getWorldModelMatrix().m32())
-                }
-                var lightDir = posV.sub(tar)
-                var lightDir4 = Vector4f(lightDir[0],lightDir[1],lightDir[2],0F)
+                var viewMatrix1 = camera.getCalculateViewMatrix()
+                var viewMatrix2 = camera.getCalculateViewMatrix()
+                var worldModelMatrix = viewMatrix1.mul(getWorldModelMatrix())
+                var targetMatrix = viewMatrix2.mul(target.getWorldModelMatrix())
 
-                var camAxis = camera.getCalculateViewMatrix()
+                var direction = Vector3f(
+                        worldModelMatrix.m30()-targetMatrix.m30(),
+                        worldModelMatrix.m31()-targetMatrix.m31(),
+                        worldModelMatrix.m32()-targetMatrix.m32()
+                )
 
-                var mult = lightDir4.mul(camAxis)
-
-                println(mult)
-
-                var returner = Vector3f(mult[0], mult[1], mult[2])
-
-                return lightDir
+                return direction
         }
 }
 
