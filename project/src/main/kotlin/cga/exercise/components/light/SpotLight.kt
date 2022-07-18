@@ -13,8 +13,8 @@ class SpotLight(
         lightColor : Vector3f = Vector3f(1F,1F,1F),
         intensity : Float,
         modelMatrix : Matrix4f = Matrix4f(),
-        var cutOff : Float,
-        var outerCutOff : Float,
+        private var cutOff : Float,
+        private var outerCutOff : Float,
         parent: Transformable? = null,
         var target : Transformable = Transformable(Matrix4f()))
         // postion vom
@@ -22,11 +22,33 @@ class SpotLight(
 {
         //target ist als Position angegeben. "Richtung" des Spotlights ergibt sich aus Neigung aus Positionsvektor zu Target-Vektor
         init {
-                cutOff = Math.toRadians(cutOff.toDouble()).toFloat()
-                outerCutOff = Math.toRadians(outerCutOff.toDouble()).toFloat()
+                var tempInner = cutOff
+                var tempOuter = outerCutOff
+
+                if (tempInner < 1F) tempInner = 1f
+                if (tempOuter < tempInner) tempOuter = tempInner + 1
+
+                cutOff = Math.cos(Math.toRadians(tempInner.toDouble())).toFloat()
+                outerCutOff = Math.cos(Math.toRadians(tempOuter.toDouble())).toFloat()
+
                 target.parent = this
                 target.translate(Vector3f(0f,-1f,0f))
         }
+
+        fun setCutoff(inner : Float, outer : Float){
+                var tempInner = inner
+                var tempOuter = outer
+
+                if (tempInner < 1F) tempInner = 1f
+                if (tempOuter < tempInner) tempOuter = tempInner + 1
+
+                cutOff = Math.cos(Math.toRadians(tempInner.toDouble())).toFloat()
+                outerCutOff = Math.cos(Math.toRadians(tempOuter.toDouble())).toFloat()
+        }
+
+        fun getCutOff() = cutOff
+        fun getOuterCutOff() = outerCutOff
+
         fun getSpotLightDirection(camera : TronCamera) : Vector3f{
                 var viewMatrix1 = camera.getCalculateViewMatrix()
                 var viewMatrix2 = camera.getCalculateViewMatrix()

@@ -56,8 +56,8 @@ class LightHandler() {
             shaderProgram.setUniform("SpotLights[" + index + "].intensity", spotLight.intensity)
             shaderProgram.setUniform("SpotLights[" + index + "].attenuationType", spotLight.attenuationType.ordinal)
             shaderProgram.setUniform("SpotLights[" + index + "].direction", spotLight.getSpotLightDirection(camera))
-            shaderProgram.setUniform("SpotLights[" + index + "].cutOff", spotLight.cutOff)
-            shaderProgram.setUniform("SpotLights[" + index + "].outerCutOff", spotLight.outerCutOff)
+            shaderProgram.setUniform("SpotLights[" + index + "].cutOff", spotLight.getCutOff())
+            shaderProgram.setUniform("SpotLights[" + index + "].outerCutOff", spotLight.getOuterCutOff())
             if (index == 4) return
         }
     }

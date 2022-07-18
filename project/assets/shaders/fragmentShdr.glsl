@@ -102,18 +102,17 @@ vec3 calcSpotLightDiff(int index, vec3 vertexNormal, vec3 matDiffuse){
 
     vec3 pointToSpotlightDir = normalize(PointToSpotlightDir[index]);
 
-    float theta = dot(normalize(SpotLights[index].direction), pointToSpotlightDir);
-    float epsilon = SpotLights[index].outerCutOff - SpotLights[index].cutOff;
+    float theta = dot(pointToSpotlightDir, normalize(SpotLights[index].direction));
+    float epsilon = SpotLights[index].cutOff - SpotLights[index].outerCutOff;
     float softBorder = clamp((theta - SpotLights[index].outerCutOff) / epsilon, 1.0,0.0);
-    
-//    if (theta > SpotLights[index].cutOff){
+
+
         float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
         vec3 diffuseTerm = matDiffuse * (SpotLights[index].lightColor * SpotLights[index].intensity);
-        float attenuation = getAttenuation(SpotLights[index].attenuationType, VertexData.position,SpotLights[index].lightPos);
+        float attenuation = getAttenuation(SpotLights[index].attenuationType, VertexData.position, SpotLights[index].lightPos);
         return diffuseTerm * softBorder / attenuation;
-//    } else{
-//        return vec3(0);
-    }
+
+}
 
 //    float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
 //    vec3 diffuseTerm = matDiffuse * (SpotLights[index].lightColor * SpotLights[index].intensity);

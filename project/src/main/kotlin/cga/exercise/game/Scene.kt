@@ -172,8 +172,8 @@ class Scene(private val window: GameWindow) {
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 1F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 1F, Matrix4f(), importedBike)
 
-        spotLight1 = SpotLight(AttenuationType.NODECAY,Vector3f(0F,1F, 0F), 1F, Matrix4f(), 20f,40f, importedBike)
-        spotLight1.setPosition(Vector3f(0f,2f,-2.8f))
+        spotLight1 = SpotLight(AttenuationType.NODECAY,Vector3f(0F,1F, 0F), 1F, Matrix4f(), 10f,50f, importedBike)
+        spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
         spotLight1.rotate(30f,0f,0f)
 
         importedLightSphere.parent = light1
