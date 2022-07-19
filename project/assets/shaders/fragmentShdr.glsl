@@ -78,47 +78,46 @@ void toLinear (inout vec3 srgbCol){
 }
 
 //POINT LIGHT CALCULATION
-vec3 calcPointLightDiff(int index, vec3 vertexNormal, vec3 matDiffuse){
-    vec3 pointToPointlightDir = normalize(PointToPointlightDir[index]);
+vec3 calcLightDiff(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 vertexNormal, vec3 matDiffuse){
+    vec3 pointToPointlightDir = normalize(pointTolightDir);
     float cosa = max(0.0, dot(vertexNormal, pointToPointlightDir));
-    vec3 diffuseTerm = matDiffuse * (PointLights[index].lightColor * PointLights[index].intensity);
-    float attenuation = getAttenuation(PointLights[index].attenuationType, VertexData.position,PointLights[index].lightPos);
+    vec3 diffuseTerm = matDiffuse * (lightColor * intensity);
+    float attenuation = getAttenuation(attenuationType, VertexData.position,lightPos);
     return diffuseTerm * cosa / attenuation;
 }
-vec3 calcPointLightSpec(int index,vec3 vertexNormal, vec3 matSpecular){
+vec3 calcLightSpec(vec3 lightPos, vec3 pointTolightDir, vec3 lightColor, float intensity, int attenuationType,vec3 vertexNormal, vec3 matSpecular){
     vec3 V = normalize(PointToCamDir);
-    vec3 R = normalize(reflect(-PointToPointlightDir[index], vertexNormal));
+    vec3 R = normalize(reflect(-pointTolightDir, vertexNormal));
 
     float cosBeta = max(0.0,dot(R,V));
     float cosBetak = pow(cosBeta,Material.shininess);
-    vec3 specularTerm = matSpecular * PointLights[index].lightColor;
-    float attenuation = getAttenuation(PointLights[index].attenuationType, VertexData.position, PointLights[index].lightPos);
-    return specularTerm * cosBetak / attenuation;
+    vec3 specularTerm = matSpecular * lightColor;
+    float attenuation = getAttenuation(attenuationType, VertexData.position, lightPos);
+    return specularTerm * cosBetak;// * intensity / attenuation;
 }
-
 
 //SPOT LIGHT CALCULATION
-vec3 calcSpotLightDiff(int index, vec3 vertexNormal, vec3 matDiffuse){
+vec3 calcSpotLightDiff(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 spotLightDir, float cutOff, float outerCutOff, vec3 vertexNormal, vec3 matDiffuse){
+    float theta = dot(normalize(pointTolightDir), normalize(spotLightDir));
+    float epsilon = cutOff - outerCutOff;
+    float softBorder = clamp((theta - outerCutOff) / epsilon, 0.0, 1.0);
 
-    vec3 pointToSpotlightDir = normalize(PointToSpotlightDir[index]);
-
-    float theta = dot(pointToSpotlightDir, normalize(SpotLights[index].direction));
-    float epsilon = SpotLights[index].cutOff - SpotLights[index].outerCutOff;
-    float softBorder = clamp((theta - SpotLights[index].outerCutOff) / epsilon, 0.0,1.0);
-
-
-        float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
-        vec3 diffuseTerm = matDiffuse * (SpotLights[index].lightColor * SpotLights[index].intensity);
-        float attenuation = getAttenuation(SpotLights[index].attenuationType, VertexData.position, SpotLights[index].lightPos);
-        return diffuseTerm * softBorder / attenuation;
-
+    if (theta > outerCutOff){
+        vec3 diffuse = calcLightDiff(lightPos, pointTolightDir, lightColor, intensity, attenuationType, vertexNormal, matDiffuse);
+        return diffuse * softBorder;
+    } else return vec3(0);
 }
 
-//    float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
-//    vec3 diffuseTerm = matDiffuse * (SpotLights[index].lightColor * SpotLights[index].intensity);
-//    float attenuation = getAttenuation(SpotLights[index].attenuationType, VertexData.position,SpotLights[index].lightPos);
-//    return diffuseTerm * cosa / attenuation;
-//}
+vec3 calcSpotLightSpec(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 spotLightDir, float cutOff, float outerCutOff, vec3 vertexNormal, vec3 matSpecular){
+    float theta = dot(normalize(pointTolightDir), normalize(spotLightDir));
+    float epsilon = cutOff - outerCutOff;
+    float softBorder = clamp((theta - outerCutOff) / epsilon, 0.0, 1.0);
+
+    if (theta > outerCutOff){
+        vec3 specular = calcLightSpec(lightPos, pointTolightDir, lightColor, intensity, attenuationType, vertexNormal, matSpecular);
+        return specular * softBorder;
+    } else return vec3(0);
+}
 
 void main(){
 
@@ -139,21 +138,21 @@ void main(){
     vec3 ambient = AmbientColor * matDiffuse;
 
     //add point lights
+//    calcLightDiff(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 vertexNormal, vec3 matDiffuse)
     for (int i = 0 ; i < PointLightsLength ; i++){
-        diffuse += calcPointLightDiff(i, vertexNormal, matDiffuse);
-        specular += calcPointLightSpec(i, vertexNormal, matSpecular);
+        if(matDiffuse != 0) diffuse += calcLightDiff(PointLights[i].lightPos,PointToPointlightDir[i],PointLights[i].lightColor, PointLights[i].intensity, PointLights[i].attenuationType, vertexNormal, matDiffuse);
+        if(matSpecular != 0) specular += calcLightSpec(PointLights[i].lightPos,PointToPointlightDir[i], PointLights[i].lightColor, PointLights[i].intensity, PointLights[i].attenuationType, vertexNormal, matSpecular);
     }
 
     for (int j = 0 ; j < SpotLightsLength ; j++){
-        diffuse += calcSpotLightDiff(j, vertexNormal, matDiffuse);
-//        specular += calcSpotLightData.specular;
+        //diffuse += calcSpotLightDiff(j, vertexNormal, matDiffuse);
+        if(matDiffuse != 0) diffuse += calcSpotLightDiff(SpotLights[j].lightPos,PointToSpotlightDir[j],SpotLights[j].lightColor, SpotLights[j].intensity, SpotLights[j].attenuationType, SpotLights[j].direction,SpotLights[j].cutOff,SpotLights[j].outerCutOff, vertexNormal, matDiffuse);
+        if(matSpecular != 0) specular += calcSpotLightSpec(SpotLights[j].lightPos,PointToSpotlightDir[j],SpotLights[j].lightColor, SpotLights[j].intensity, SpotLights[j].attenuationType, SpotLights[j].direction,SpotLights[j].cutOff,SpotLights[j].outerCutOff, vertexNormal, matSpecular);
     }
-
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);
     color = vec4(result, 1.0);
-
 //    color = vec4(PointLights[0].lightColor, 1.0);
 
 }

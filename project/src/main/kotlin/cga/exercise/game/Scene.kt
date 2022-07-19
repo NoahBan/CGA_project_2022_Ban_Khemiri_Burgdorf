@@ -123,7 +123,7 @@ class Scene(private val window: GameWindow) {
 //TEST
         val matGround = Material(
             pureWhiteTex,
-            pureBlackTex,
+            groundEmissionTex,
             pureWhiteTex,
             1.0f,
             Vector2f(64.0f,64.0f)
@@ -172,9 +172,9 @@ class Scene(private val window: GameWindow) {
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 1F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 1F, Matrix4f(), importedBike)
 
-        spotLight1 = SpotLight(AttenuationType.NODECAY,Vector3f(0F,1F, 0F), 1F, Matrix4f(), 10f,50f, importedBike)
+        spotLight1 = SpotLight(AttenuationType.NODECAY,Vector3f(0F,1F, 0F), 1F, Matrix4f(), 20f,70f, importedBike)
         spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
-        spotLight1.rotate(30f,0f,0f)
+        spotLight1.rotate(70f,0f,0f)
 
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2
