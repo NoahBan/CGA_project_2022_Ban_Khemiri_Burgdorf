@@ -104,7 +104,7 @@ vec3 calcSpotLightDiff(int index, vec3 vertexNormal, vec3 matDiffuse){
 
     float theta = dot(pointToSpotlightDir, normalize(SpotLights[index].direction));
     float epsilon = SpotLights[index].cutOff - SpotLights[index].outerCutOff;
-    float softBorder = clamp((theta - SpotLights[index].outerCutOff) / epsilon, 1.0,0.0);
+    float softBorder = clamp((theta - SpotLights[index].outerCutOff) / epsilon, 0.0,1.0);
 
 
         float cosa = max(0.0, dot(vertexNormal, pointToSpotlightDir));
