@@ -40,7 +40,10 @@ class Scene(private val window: GameWindow) {
 
     private val lightHandler : LightHandler
 
-    private val testMatrix = Transformable();
+    private val testMatrix = Transformable()
+
+    private val xWingBody : Renderable
+    private val xTopKramR2Body : Renderable
 
     var xposBefore : Double = 0.0
 
@@ -139,7 +142,17 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex
         )
 
+        //X_Wing
+        val xWingBodyOBJ = OBJLoader.loadOBJ("assets/models/X_Wing/X_Body.obj", true)
+        val xWingBodyData  = xWingBodyOBJ.objects[0].meshes[0]
+        val xWingBodyMesh = Mesh (xWingBodyData.vertexData, xWingBodyData.indexData, posAndTexcAndNormAttrArray,false, matSphere)
+        xWingBody = Renderable(mutableListOf(xWingBodyMesh), Matrix4f(), null)
 
+        val xTopKramR2BodyOBJ = OBJLoader.loadOBJ("assets/models/X_Wing/X_TopKram_R2_Body.obj", true)
+        val xTopKramR2BodyData  = xTopKramR2BodyOBJ.objects[0].meshes[0]
+        val xTopKramR2BodyMesh = Mesh (xTopKramR2BodyData.vertexData, xTopKramR2BodyData.indexData, posAndTexcAndNormAttrArray,false, matSphere)
+        xTopKramR2Body = Renderable(mutableListOf(xTopKramR2BodyMesh), Matrix4f(), xWingBody)
+        xTopKramR2Body.setPosition(Vector3f(0f,14.179f,46.364f))
 
         //Geometry
 
@@ -164,7 +177,7 @@ class Scene(private val window: GameWindow) {
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
         sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
-        sceneCam.rotate(-20F,0F,0F)
+        sceneCam.rotate(-30F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
 //        sceneCam.rotate(-90F,0F,0F)
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
@@ -172,9 +185,9 @@ class Scene(private val window: GameWindow) {
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 1F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 1F, Matrix4f(), importedBike)
 
-        spotLight1 = SpotLight(AttenuationType.NODECAY,Vector3f(0F,1F, 0F), 1F, Matrix4f(), 20f,70f, importedBike)
-        spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
-        spotLight1.rotate(70f,0f,0f)
+        spotLight1 = SpotLight(AttenuationType.NODECAY,Vector3f(1F,1F, 1F), 1F, Matrix4f(), 20f,70f, null)
+        spotLight1.setPosition(Vector3f(0f,10f,0f))
+//        spotLight1.rotate(70f,0f,0f)
 
         importedLightSphere.parent = light1
         importedLightSphere2.parent = light2
@@ -200,6 +213,7 @@ class Scene(private val window: GameWindow) {
         lightHandler.addSpotLight(spotLight1)
 
 //        importedGround.rotate(0f,0f,90f)
+        xWingBody.scale(Vector3f(0.05F,0.05F,0.05f))
     }
 
     fun render(dt: Float, t: Float) {
@@ -218,6 +232,10 @@ class Scene(private val window: GameWindow) {
         importedGround.render(staticShader)
 //        importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
+
+        //XWing
+        xWingBody.render(staticShader)
+        xTopKramR2Body.render(staticShader)
     }
 
     fun update(dt: Float, t: Float) {
