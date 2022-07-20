@@ -13,7 +13,7 @@ class Mesh(
     indexdata: IntArray,
     attributes: Array<VertexAttribute>,
     private val normalized: Boolean = false,
-    val material : Material? = null
+    var material : Material? = null
     ) {
 
     //private data
