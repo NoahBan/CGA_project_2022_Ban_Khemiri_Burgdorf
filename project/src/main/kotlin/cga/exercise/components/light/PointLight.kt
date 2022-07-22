@@ -14,9 +14,9 @@ import org.joml.*
 //4.1.2
 // Skalarprodukt könnte negativ sein, wenn wir das Objekt von hinten betrachten.
 open class PointLight (
-        val attenuationType : AttenuationType,
-        var lightColor : Vector3f = Vector3f(1F,1F,1F),
-        var intensity : Float,
+         val attenuationType : AttenuationType,
+         var lightColor : Vector3f = Vector3f(1F,1F,1F),
+         var intensity : Float,
         modelMatrix : Matrix4f = Matrix4f(),
         parent: Transformable? = null)
         : Transformable(modelMatrix, parent) {

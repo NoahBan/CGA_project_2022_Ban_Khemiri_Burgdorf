@@ -5,6 +5,11 @@ layout(location = 0) in vec3 Vertex_Position;
 layout(location = 1) in vec2 TexCoord;
 layout(location = 2) in vec3 Normal;
 
+
+#define MAXPOINTLIGHTS 5
+#define MAXSPOTLIGHTS 5
+#define MAXDIRECTIONALLIGHTS 5
+
 //vertex data to fragment shader
 out struct VertexDataStruct
 {
@@ -31,9 +36,9 @@ struct PointLightStruct
     int attenuationType;
     float intensity;
 };
-uniform PointLightStruct PointLights[5];
+uniform PointLightStruct PointLights[MAXPOINTLIGHTS];
 uniform int PointLightsLength;
-out vec3 PointToPointlightDir[5];
+out vec3 PointToPointlightDir[MAXPOINTLIGHTS];
 
 
 //SpotLights
@@ -47,9 +52,19 @@ struct SpotLightStruct
     float cutOff;
     float outerCutOff;
 };
-uniform SpotLightStruct SpotLights[5];
+uniform SpotLightStruct SpotLights[MAXSPOTLIGHTS];
 uniform int SpotLightsLength;
-out vec3 PointToSpotlightDir[5];
+
+//DirectionalLights
+out vec3 PointToSpotlightDir[MAXSPOTLIGHTS];
+//DirectionalLight
+struct DirectionalLight {
+
+    vec3 direction;
+    vec3 lightColor;
+    float intensity;
+};
+uniform DirectionalLight DirectionalLights[MAXDIRECTIONALLIGHTS];
 
 void main(){
     //transform vertices
@@ -70,13 +85,16 @@ void main(){
 
     vec4 vertexpos = View_matrix * Model_matrix * vec4(Vertex_Position, 1.0f);
     //point light direction
-    for (int i = 0 ; i < PointLightsLength ; i++)
+    for (int i = 0 ; i < MAXPOINTLIGHTS ; i++)
     {
-
         PointToPointlightDir[i] = (PointLights[i].lightPos - vertexpos.xyz);
     }
 
-    for (int j = 0 ; j < SpotLightsLength ; j++)
+    for (int j = 0 ; j < MAXSPOTLIGHTS ; j++)
+    {
+        PointToSpotlightDir[j] = (SpotLights[j].lightPos - vertexpos.xyz);
+    }
+    for (int j = 0 ; j < MAXSPOTLIGHTS ; j++)
     {
         PointToSpotlightDir[j] = (SpotLights[j].lightPos - vertexpos.xyz);
     }

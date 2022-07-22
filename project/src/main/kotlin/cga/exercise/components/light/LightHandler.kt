@@ -7,6 +7,7 @@ import org.joml.Vector3f
 class LightHandler() {
     private val pointLights = mutableListOf<PointLight>()
     private val spotLights = mutableListOf<SpotLight>()
+    private val directionalLights = mutableListOf<DirectionalLight>()
 
     fun addPointLight (newLight : PointLight){
         pointLights.add(newLight)
@@ -16,6 +17,10 @@ class LightHandler() {
         spotLights.add(newLight)
     }
 
+    fun addDirectionalLight(newLight:DirectionalLight){
+        directionalLights.add(newLight);
+    }
+
     fun bindLights (shaderProgram : ShaderProgram, camera : TronCamera, ambientLightCol : Vector3f) {
 
         //bind ambient "light" color
@@ -23,6 +28,7 @@ class LightHandler() {
 
         bindPointlights(shaderProgram, camera)
         bindSpotlights(shaderProgram, camera)
+        bindDirectionalLights(shaderProgram,camera)
     }
 
     fun bindPointlights (shaderProgram : ShaderProgram, camera : TronCamera) {
@@ -58,6 +64,15 @@ class LightHandler() {
             shaderProgram.setUniform("SpotLights[" + index + "].direction", spotLight.getSpotLightDirection(camera))
             shaderProgram.setUniform("SpotLights[" + index + "].cutOff", spotLight.getCutOff())
             shaderProgram.setUniform("SpotLights[" + index + "].outerCutOff", spotLight.getOuterCutOff())
+            if (index == 4) return
+        }
+    }
+
+    fun bindDirectionalLights(shaderProgram : ShaderProgram, camera : TronCamera){
+        directionalLights.forEachIndexed{ index,directionalLight ->
+            shaderProgram.setUniform("DirectionalLights[" + index +"].direction", directionalLight.direction)
+            shaderProgram.setUniform("DirectionalLights[" + index +"].lightColor", directionalLight.lightColor)
+            shaderProgram.setUniform("DirectionalLights[" + index +"].intensity", directionalLight.intensity)
             if (index == 4) return
         }
     }

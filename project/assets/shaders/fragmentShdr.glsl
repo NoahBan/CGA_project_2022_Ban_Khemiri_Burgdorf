@@ -1,5 +1,8 @@
 #version 330 core
 
+#define MAXSPOTLIGHTS 5
+#define MAXPOINTLIGHTS 5
+#define MAXDIRECTIONALLIGHTS 5
 //input from vertex shader
 in struct VertexDataStruct
 {
@@ -39,9 +42,9 @@ struct PointLightStruct
     int attenuationType;
     float intensity;
 };
-uniform PointLightStruct PointLights[5];
+uniform PointLightStruct PointLights[MAXPOINTLIGHTS];
 uniform int PointLightsLength;
-in vec3 PointToPointlightDir[5];
+in vec3 PointToPointlightDir[MAXPOINTLIGHTS];
 
 //SpotLights
 struct SpotLightStruct
@@ -54,9 +57,18 @@ struct SpotLightStruct
     float cutOff;
     float outerCutOff;
 };
-uniform SpotLightStruct SpotLights[5];
+uniform SpotLightStruct SpotLights[MAXSPOTLIGHTS];
 uniform int SpotLightsLength;
-in vec3 PointToSpotlightDir[5];
+in vec3 PointToSpotlightDir[MAXSPOTLIGHTS];
+
+//DirectionalLight
+struct DirectionalLight {
+
+    vec3 direction;
+    vec3 lightColor;
+    float intensity;
+};
+uniform DirectionalLight DirectionalLights[MAXDIRECTIONALLIGHTS];
 
 out vec4 color;
 
@@ -77,7 +89,8 @@ void toLinear (inout vec3 srgbCol){
     srgbCol = pow(srgbCol, vec3(1.0/2.2));
 }
 
-//POINT LIGHT CALCULATION
+//(POINT) LIGHT CALCULATION
+
 vec3 calcLightDiff(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 vertexNormal, vec3 matDiffuse){
     vec3 pointToPointlightDir = normalize(pointTolightDir);
     float cosa = max(0.0, dot(vertexNormal, pointToPointlightDir));
@@ -93,7 +106,7 @@ vec3 calcLightSpec(vec3 lightPos, vec3 pointTolightDir, vec3 lightColor, float i
     float cosBetak = pow(cosBeta,Material.shininess);
     vec3 specularTerm = matSpecular * lightColor;
     float attenuation = getAttenuation(attenuationType, VertexData.position, lightPos);
-    return specularTerm * cosBetak;// * intensity / attenuation;
+    return specularTerm * cosBetak * intensity / attenuation;// * intensity / attenuation;
 }
 
 //SPOT LIGHT CALCULATION
@@ -119,6 +132,24 @@ vec3 calcSpotLightSpec(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float
     } else return vec3(0);
 }
 
+//DIRECTIONAL LIGHT CALCULATION
+vec3 calcDirecLightDiff(vec3 direction,vec3 lightColor, float intensity, vec3 vertexNormal, vec3 matDiffuse){
+    vec3 lightDirection = normalize(-direction);
+    vec3 normal = normalize (vertexNormal);
+    float cosa = max(0.0, dot(normal, lightDirection));
+    vec3 diffuseTerm = matDiffuse * (lightColor * intensity);
+    return diffuseTerm * cosa;
+}
+vec3 calcDirecLightSpec(vec3 direction,vec3 lightColor, float intensity, vec3 vertexNormal, vec3 matSpecular){
+    vec3 lightDirection = normalize(-direction);
+    vec3 normal = normalize (vertexNormal);
+    vec3 V = normalize(PointToCamDir);
+    vec3 R = normalize(reflect(-lightDirection, normal));
+    float cosBeta = max(0.0,dot(R,V));
+    float cosBetak = pow(cosBeta,Material.shininess);
+    vec3 specularTerm = matSpecular * intensity;
+    return specularTerm * cosBetak;
+}
 void main(){
 
     //get tex color on uv coordinate
@@ -138,7 +169,7 @@ void main(){
     vec3 ambient = AmbientColor * matDiffuse;
 
     //add point lights
-//    calcLightDiff(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 vertexNormal, vec3 matDiffuse)
+
     for (int i = 0 ; i < PointLightsLength ; i++){
         if(matDiffuse != 0) diffuse += calcLightDiff(PointLights[i].lightPos,PointToPointlightDir[i],PointLights[i].lightColor, PointLights[i].intensity, PointLights[i].attenuationType, vertexNormal, matDiffuse);
         if(matSpecular != 0) specular += calcLightSpec(PointLights[i].lightPos,PointToPointlightDir[i], PointLights[i].lightColor, PointLights[i].intensity, PointLights[i].attenuationType, vertexNormal, matSpecular);
@@ -149,6 +180,8 @@ void main(){
         if(matDiffuse != 0) diffuse += calcSpotLightDiff(SpotLights[j].lightPos,PointToSpotlightDir[j],SpotLights[j].lightColor, SpotLights[j].intensity, SpotLights[j].attenuationType, SpotLights[j].direction,SpotLights[j].cutOff,SpotLights[j].outerCutOff, vertexNormal, matDiffuse);
         if(matSpecular != 0) specular += calcSpotLightSpec(SpotLights[j].lightPos,PointToSpotlightDir[j],SpotLights[j].lightColor, SpotLights[j].intensity, SpotLights[j].attenuationType, SpotLights[j].direction,SpotLights[j].cutOff,SpotLights[j].outerCutOff, vertexNormal, matSpecular);
     }
+    if(matDiffuse != 0) diffuse += calcDirecLightDiff(DirectionalLights[0].direction, DirectionalLights[0].lightColor,DirectionalLights[0].intensity,vertexNormal, matDiffuse);
+    if(matSpecular != 0) specular += calcDirecLightSpec(DirectionalLights[0].direction, DirectionalLights[0].lightColor,DirectionalLights[0].intensity,vertexNormal, matSpecular);
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);

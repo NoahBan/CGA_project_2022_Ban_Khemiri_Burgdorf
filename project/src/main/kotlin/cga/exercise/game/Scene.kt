@@ -5,6 +5,7 @@ import cga.exercise.components.geometry.*
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
+import cga.exercise.components.texture.CubeMap
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.OBJLoader
@@ -22,12 +23,15 @@ import org.joml.Math
 class Scene(private val window: GameWindow) {
 
     private val staticShader : ShaderProgram
+    private val skyboxShader : ShaderProgram
 
     private val importedGround : Renderable
 
     private val importedBike : Renderable
 
     private val importedSphere : Renderable
+    private val importedSphere1 : Renderable
+    private val importedSphere2 : Renderable
     private val importedLightSphere : Renderable
     private val importedLightSphere2 : Renderable
     private val importedLightSphere3 : Renderable
@@ -38,6 +42,8 @@ class Scene(private val window: GameWindow) {
     private val light2 : PointLight
     private val spotLight1 : SpotLight
 
+    private val dirLight1 : DirectionalLight
+
     private val lightHandler : LightHandler
 
     private val testMatrix = Transformable();
@@ -47,8 +53,8 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
         staticShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
-//        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
-
+        //staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
+        skyboxShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
         glDisable(GL_CULL_FACE); GLError.checkThrow()
@@ -102,6 +108,17 @@ class Scene(private val window: GameWindow) {
         val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
         lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
+        var faces  = arrayOf(
+            "assets/textures/pureColor/pureGrey.png",
+            "assets/textures/pureColor/pureGrey.png",
+            "assets/textures/pureColor/pureGrey.png",
+            "assets/textures/pureColor/pureGrey.png",
+            "assets/textures/pureColor/pureGrey.png",
+            "assets/textures/pureColor/pureGrey.png")
+
+        val cubemaxTexture = CubeMap(faces,true).cubemapTexture
+
+
         //Materials
 //        val matGround = Material(
 //            groundDiffuseTex,
@@ -139,8 +156,6 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex
         )
 
-
-
         //Geometry
 
         //Sphere Geo
@@ -157,6 +172,8 @@ class Scene(private val window: GameWindow) {
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
         //importedGround.scale(Vector3f(100F,1F,100F))
         importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
+        importedSphere1 = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
+        importedSphere2 = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
         importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere3 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
@@ -169,10 +186,10 @@ class Scene(private val window: GameWindow) {
 //        sceneCam.rotate(-90F,0F,0F)
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
 
-        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0F,0F), 1F, Matrix4f(), importedBike)
-        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,0F,1F), 1F, Matrix4f(), importedBike)
-
-        spotLight1 = SpotLight(AttenuationType.NODECAY,Vector3f(0F,1F, 0F), 1F, Matrix4f(), 20f,70f, importedBike)
+        light1 = PointLight(AttenuationType.LINEAR,Vector3f(1F,0F,0F), 0F, Matrix4f(), importedBike)
+        light2 = PointLight(AttenuationType.LINEAR,Vector3f(0F,0F,1F), 0F, Matrix4f(), importedBike)
+        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0f),0.8F, Vector3f(4f,-0.1f,-3.1f));
+        spotLight1 = SpotLight(AttenuationType.LINEAR,Vector3f(0F,1F, 0F), 0F, Matrix4f(), 20f,70f, importedBike)
         spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
         spotLight1.rotate(70f,0f,0f)
 
@@ -185,6 +202,8 @@ class Scene(private val window: GameWindow) {
         println(test)
 
         importedSphere.translate(Vector3f(0f,2f,-4f))
+        importedSphere1.translate(Vector3f(3f,2f,-4f))
+        importedSphere2.translate(Vector3f(-3f,2f,-4f))
 
         importedLightSphere.scale(Vector3f(0.05F))
         importedLightSphere2.scale(Vector3f(0.05F))
@@ -195,6 +214,7 @@ class Scene(private val window: GameWindow) {
 
         lightHandler = LightHandler()
 
+       lightHandler.addDirectionalLight(dirLight1)
         lightHandler.addPointLight(light2)
         lightHandler.addPointLight(light1)
         lightHandler.addSpotLight(spotLight1)
@@ -211,6 +231,8 @@ class Scene(private val window: GameWindow) {
         lightHandler.bindLights(staticShader, sceneCam, Vector3f(0f))
 
         importedSphere.render(staticShader)
+        importedSphere1.render(staticShader)
+        importedSphere2.render(staticShader)
         importedLightSphere.render(staticShader)
         importedLightSphere2.render(staticShader)
         importedLightSphere3.render(staticShader)
@@ -221,6 +243,7 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
+        var i = 0
         if(window.getKeyState(GLFW_KEY_W)){
             importedBike.translate(Vector3f(0f,0f,-10f*dt))
         }
@@ -233,15 +256,12 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_D)){
             importedBike.rotate(0f,-50f*dt,0f)
         }
-
         if(window.getKeyState(GLFW_KEY_R)){
             importedBike.translate(Vector3f(0f,0.1f,0f))
         }
         if(window.getKeyState(GLFW_KEY_F)){
             importedBike.translate(Vector3f(0f,-0.1f,0f))
         }
-
-
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
