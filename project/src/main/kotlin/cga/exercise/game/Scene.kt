@@ -1,6 +1,7 @@
 package cga.exercise.game
 
 import cga.exercise.components.camera.Camera
+import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.light.*
@@ -22,15 +23,18 @@ class Scene(private val window: GameWindow) {
 
     private val staticShader : ShaderProgram
 
-    private val importedGround : Renderable
+    private val ground : Renderable
 
+    private val player : PlayerObject
 
     private val importedSphere : Renderable
     private val importedLightSphere : Renderable
     private val importedLightSphere2 : Renderable
     private val importedLightSphere3 : Renderable
 
-    private val sceneCam : TargetCamera
+    private val cameraHandler = CameraHandler()
+    private val followCam : TargetCamera
+    private val thirdPersonCam : Camera
 
     private val light1 : PointLight
     private val light2 : PointLight
@@ -38,10 +42,12 @@ class Scene(private val window: GameWindow) {
 
     private val lightHandler : LightHandler
 
-    private val player : PlayerObject
+    var waitForButtonPress = 0f
 
     private var wingToFlat = false
     private var wingToX = false
+
+
 
     var xposBefore : Double = 0.0
 
@@ -87,13 +93,10 @@ class Scene(private val window: GameWindow) {
         val pureWhiteTex = Texture2D("assets/textures/pureColor/pureWhite.png", true)
         pureWhiteTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
+
         //Ground Texture
-        val groundEmissionTex = Texture2D("assets/textures/ground_emit.png", true)
+        val groundEmissionTex = Texture2D("assets/models/Ground/ground_emit.png", true)
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
-        val groundDiffuseTex = Texture2D("assets/textures/ground_diff.png", true)
-        groundDiffuseTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
-        val groundSpecTex = Texture2D("assets/textures/ground_spec.png", true)
-        groundSpecTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Sphere Texture
         val sphereDiffuseTex = Texture2D("assets/textures/sphere.png", true)
@@ -105,36 +108,11 @@ class Scene(private val window: GameWindow) {
 
         player = PlayerObject(Matrix4f())
 
-        //Materials
-//        val matGround = Material(
-//            groundDiffuseTex,
-//            groundEmissionTex,
-//            groundSpecTex,
-//            60.0f,
-//            Vector2f(64.0f,64.0f)
-//        )
-//        val matSphere = Material(
-//            lightSphereEmissionTex,
-//            sphereEmissionTex,
-//            sphereDiffuseTex
-//        )
-//        val matLightSphere = Material(
-//            pureBlackTex,
-//            pureWhiteTex,
-//            pureWhiteTex
-//        )
-//TEST
+
         val matSphere = Material(
             pureWhiteTex,
             pureBlackTex,
             pureWhiteTex
-        )
-        val matGround = Material(
-            pureWhiteTex,
-            groundEmissionTex,
-            pureWhiteTex,
-            60.0f,
-            Vector2f(64.0f,64.0f)
         )
         val matLightSphere = Material(
             pureWhiteTex,
@@ -151,24 +129,26 @@ class Scene(private val window: GameWindow) {
         val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
 
         //Ground Geo
-        val importObjGround = OBJLoader.loadOBJ("assets/models/ground_blender.obj", true)
+        val matGround = Material(
+            pureBlackTex,
+            groundEmissionTex,
+            pureBlackTex,
+            60.0f,
+            Vector2f(64.0f,64.0f)
+        )
+        val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
         val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
+        ground = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
+        ground.scale(Vector3f(200f,10f,800f))
+        ground.setPosition(Vector3f(0F,-13F,0F))
+        ground.rotate(0f,90f,0f)
 
-        importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
-        importedGround.setPosition(Vector3f(0F,-5F,0F))
+
         importedSphere = Renderable(mutableListOf(importedSphereMesh), Matrix4f(), null)
         importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere3 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
-
-        //sceneCam = Camera(80f, 16f/9f, 0.1F, 100.0F, Matrix4f(), player)
-        //sceneCam.rotate(-15F,0F,0F)
-        //sceneCam.translate(Vector3f(0F,0F,3.0F))
-
-        sceneCam = TargetCamera(player,80f, 16f/9f, 0.1F, 100.0F, Matrix4f(), player)
-        //sceneCam.rotate(-15F,0F,0F)
-        sceneCam.translate(Vector3f(0F,0F,3.0F))
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0.9F), 20F, Matrix4f(), player)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0.9F), 20F, Matrix4f(), player)
@@ -193,9 +173,18 @@ class Scene(private val window: GameWindow) {
 
         lightHandler = LightHandler()
 
-        lightHandler.addPointLight(light2)
-        lightHandler.addPointLight(light1)
-        lightHandler.addSpotLight(spotLight1)
+//        lightHandler.addPointLight(light2)
+//        lightHandler.addPointLight(light1)
+//        lightHandler.addSpotLight(spotLight1)
+
+        followCam = TargetCamera(player,20f, 16f/9f, 0.1F, 1000.0F+35F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
+        followCam.translate(Vector3f(0F,2F,35.0F))
+        cameraHandler.addCamera(followCam)
+
+        thirdPersonCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player)
+        thirdPersonCam.translate(Vector3f(0F,1.2F,2.2F))
+        thirdPersonCam.rotate(-6F,0F,0F)
+        cameraHandler.addCamera(thirdPersonCam)
 
     }
 
@@ -203,15 +192,16 @@ class Scene(private val window: GameWindow) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
         staticShader.use()
-        sceneCam.bind(staticShader)
 
-        lightHandler.bindLights(staticShader, sceneCam, Vector3f(0.3f))
+        cameraHandler.getActiveCamera().bind(staticShader)
+
+        lightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(1f))
 
 //        importedSphere.render(staticShader)
         importedLightSphere.render(staticShader)
         importedLightSphere2.render(staticShader)
         importedLightSphere3.render(staticShader)
-        importedGround.render(staticShader)
+        ground.render(staticShader)
 
 
         player.render(staticShader)
@@ -219,7 +209,10 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
+        println(t)
         player.setDT(dt)
+        player.setT(t)
+        ground.renderList[0].material!!.movingV += dt.toFloat() * 10f
 
         if(window.getKeyState(GLFW_KEY_W)){
             player.moveUp(dt)
@@ -249,6 +242,18 @@ class Scene(private val window: GameWindow) {
             player.rotateAllWings("flat")
             if (!player.wingsMoving()) wingToFlat = false
         }
+
+
+        if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress){
+            waitForButtonPress = t + 0.2f
+            cameraHandler.prevCam()
+        }
+        if(window.getKeyState(GLFW_KEY_M) && t >= waitForButtonPress){
+            waitForButtonPress = t + 0.2f
+            cameraHandler.nextCam()
+        }
+
+
 
 
     }

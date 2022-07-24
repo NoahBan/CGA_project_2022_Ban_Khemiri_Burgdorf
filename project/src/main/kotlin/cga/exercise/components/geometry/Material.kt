@@ -11,7 +11,10 @@ class Material(var diff: Texture2D,
                var specular: Texture2D,
                var shininess: Float = 60.0f,
                var tcMultiplier : Vector2f = Vector2f(1.0f),
-               var emitMultiplier : Vector3f = Vector3f(1F)){
+               var emitMultiplier : Vector3f = Vector3f(1F),
+               var movingU : Float = 0.0f,
+               var movingV : Float = 0.0f
+               ){
 
     fun bind(shaderProgram: ShaderProgram) {
         // todo 3.2
@@ -31,5 +34,10 @@ class Material(var diff: Texture2D,
         shaderProgram.setUniform("Material.tcMultiplier", tcMultiplier)
         shaderProgram.setUniform("Material.shininess", shininess)
         shaderProgram.setUniform("Material.emitMultiplier", emitMultiplier)
+
+        if (movingU == 0f && movingV == 0f)  shaderProgram.setUniform("Material.movingMat", 0)
+        else shaderProgram.setUniform("Material.movingMat", 1)
+        shaderProgram.setUniform("Material.movingU", movingU)
+        shaderProgram.setUniform("Material.movingV", movingV)
     }
 }

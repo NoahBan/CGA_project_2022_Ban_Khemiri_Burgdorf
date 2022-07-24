@@ -9,13 +9,19 @@ import org.joml.Math
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL30
-import org.lwjgl.system.MathUtil
-import java.lang.reflect.UndeclaredThrowableException
-import kotlin.math.min
 
 class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Transformable(modelMatrix, parent) {
 
-    private var dt = 0f
+    private var deltaTime = 0f
+    private var time = 0f
+
+    private val maxUp = 5f
+    private val maxRight = 10f
+    private val maxDown = maxUp * -1f
+    private val maxLeft = -10f
+    private val speed = 10f
+
+
 
     val playerGeo : MutableList<Renderable>
     private val xBody : Renderable
@@ -78,14 +84,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         Math.toRadians(0f),
         Math.toRadians(0f),
         Math.toRadians(0f))!!
-        xBody.renderList[0].material = matSphere //Body
-        xBody.renderList[1].material = matSphere //Nase
-        xBody.renderList[2].material = matSphere //Gitter
-        xBody.renderList[3].material = matSphere //CockpitGlas
-        xBody.renderList[4].material = matSphere //CockpitRahmen
-        xBody.renderList[5].material = matSphere //TopKram
-        xBody.renderList[6].material = matSphere //R2 Kop
-        xBody.renderList[7].material = matSphere //R2 Kop
         xBody.parent = this
         xBody.scale(Vector3f(0.03f,0.03f,0.03f))
 
@@ -281,19 +279,34 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     }
 
     fun setDT (newDt : Float){
-        dt = newDt
+        deltaTime = newDt
+    }
+    fun setT (newTime : Float){
+        time = newTime
     }
     fun moveUp(dt : Float){
-        this.translate(Vector3f(0f, 10f*dt, 0f))
+        val matrix = getModelMatrix()
+        val newVal = clampf(matrix.m31()+speed*dt, maxDown,maxUp)
+        matrix.m31(newVal)
+        setModelMatrix(matrix)
     }
     fun moveDown(dt : Float){
-        this.translate(Vector3f(0f, -10f*dt, 0f))
+        val matrix = getModelMatrix()
+        val newVal = clampf(matrix.m31()-speed*dt, maxDown,maxUp)
+        matrix.m31(newVal)
+        setModelMatrix(matrix)
     }
     fun moveLeft(dt : Float){
-        this.translate(Vector3f(-10f*dt, 0f, 0f))
+        val matrix = getModelMatrix()
+        val newVal = clampf(matrix.m30()-speed*dt, maxLeft,maxRight)
+        matrix.m30(newVal)
+        setModelMatrix(matrix)
     }
     fun moveRight(dt : Float){
-        this.translate(Vector3f(10f*dt, 0f, 0f))
+        val matrix = getModelMatrix()
+        val newVal = clampf(matrix.m30()+speed*dt, maxLeft,maxRight)
+        matrix.m30(newVal)
+        setModelMatrix(matrix)
     }
 
     fun wingsMoving() : Boolean = wingOLmoving && wingORmoving && wingULmoving && wingURmoving
@@ -330,10 +343,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         else if (toMode == "flat"){direction = -1f}
         else {throw java.lang.Exception ("toMode must be 'x' or 'flat'")
         }
-        wingOLposition = clampf(wingOLposition + dt * direction, 0f,1f)
-        wingORposition = clampf(wingORposition + dt * direction, 0f,1f)
-        wingULposition = clampf(wingULposition + dt * direction, 0f,1f)
-        wingURposition = clampf(wingURposition + dt * direction, 0f,1f)
+        wingOLposition = clampf(wingOLposition + deltaTime * direction, 0f,1f)
+        wingORposition = clampf(wingORposition + deltaTime * direction, 0f,1f)
+        wingULposition = clampf(wingULposition + deltaTime * direction, 0f,1f)
+        wingURposition = clampf(wingURposition + deltaTime * direction, 0f,1f)
         wingOLrotate(wingOLposition)
         wingORrotate(wingORposition)
         wingULrotate(wingULposition)

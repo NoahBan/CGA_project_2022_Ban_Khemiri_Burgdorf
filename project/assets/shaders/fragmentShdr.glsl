@@ -26,6 +26,9 @@ struct MaterialStruct {
     vec2 tcMultiplier;
     float shininess;
     vec3 emitMultiplier;
+    int movingMat;
+    float movingU;
+    float movingV;
 };
 uniform MaterialStruct Material;
 
@@ -122,9 +125,14 @@ vec3 calcSpotLightSpec(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float
 void main(){
 
     //get tex color on uv coordinate
-    vec3 matEmissive = texture(Material.texEmit, VertexData.texCoord * Material.tcMultiplier).xyz;
-    vec3 matDiffuse = texture(Material.texDiff,VertexData.texCoord * Material.tcMultiplier).xyz;
-    vec3 matSpecular = texture(Material.texSpec,VertexData.texCoord * Material.tcMultiplier).xyz;
+    vec2 texCoord = VertexData.texCoord * Material.tcMultiplier;
+    if (Material.movingMat == 1){
+        texCoord[0] += Material.movingU;
+        texCoord[1] += Material.movingV;
+    };
+    vec3 matEmissive = texture(Material.texEmit, texCoord).xyz;
+    vec3 matDiffuse = texture(Material.texDiff,texCoord).xyz;
+    vec3 matSpecular = texture(Material.texSpec,texCoord).xyz;
     toLinear(matDiffuse);
     toLinear(matEmissive);
     toLinear(matSpecular);
