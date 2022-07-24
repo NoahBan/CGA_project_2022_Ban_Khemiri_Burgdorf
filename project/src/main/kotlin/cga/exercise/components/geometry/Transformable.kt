@@ -10,6 +10,10 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
         return Matrix4f(modelMatrix)
     }
 
+    fun setModelMatrix(matrix : Matrix4f){
+        modelMatrix = matrix
+    }
+
     fun getWorldModelMatrix(): Matrix4f {
         var temp = Matrix4f(modelMatrix)
 

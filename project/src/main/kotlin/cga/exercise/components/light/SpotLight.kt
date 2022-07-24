@@ -1,12 +1,10 @@
 package cga.exercise.components.light
 
-import cga.exercise.components.camera.TronCamera
+import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.joml.Math
-import org.joml.Vector4f
 
 class SpotLight(
         attenuationType : AttenuationType,
@@ -49,7 +47,7 @@ class SpotLight(
         fun getCutOff() = cutOff
         fun getOuterCutOff() = outerCutOff
 
-        fun getSpotLightDirection(camera : TronCamera) : Vector3f{
+        fun getSpotLightDirection(camera : Camera) : Vector3f{
                 var viewMatrix1 = camera.getCalculateViewMatrix()
                 var viewMatrix2 = camera.getCalculateViewMatrix()
                 var worldModelMatrix = viewMatrix1.mul(getWorldModelMatrix())

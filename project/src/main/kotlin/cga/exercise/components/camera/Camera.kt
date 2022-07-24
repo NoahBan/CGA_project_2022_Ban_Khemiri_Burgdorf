@@ -3,10 +3,9 @@ package cga.exercise.components.camera
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.*
-import org.joml.Math.toRadians
 
 
-class TronCamera (
+open class Camera (
     val fov : Float = 90F,
     val aspectRatio : Float = 9f/9f,
     val nearPlane: Float = 0.1F,

@@ -1,8 +1,6 @@
 package cga.exercise.components.light
 
-import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.shader.ShaderProgram
 import org.joml.*
 
 // 4.1.1

@@ -1,6 +1,7 @@
 package cga.exercise.game
 
-import cga.exercise.components.camera.TronCamera
+import cga.exercise.components.camera.Camera
+import cga.exercise.components.camera.TargetCamera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
@@ -8,12 +9,10 @@ import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.OBJLoader
-import cga.framework.ModelLoader
 import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
-import org.joml.Math
 
 
 /**
@@ -31,7 +30,7 @@ class Scene(private val window: GameWindow) {
     private val importedLightSphere2 : Renderable
     private val importedLightSphere3 : Renderable
 
-    private val sceneCam : TronCamera
+    private val sceneCam : TargetCamera
 
     private val light1 : PointLight
     private val light2 : PointLight
@@ -40,6 +39,9 @@ class Scene(private val window: GameWindow) {
     private val lightHandler : LightHandler
 
     private val player : PlayerObject
+
+    private var wingToFlat = false
+    private var wingToX = false
 
     var xposBefore : Double = 0.0
 
@@ -160,9 +162,13 @@ class Scene(private val window: GameWindow) {
         importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
         importedLightSphere3 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
 
-        sceneCam = TronCamera(80f, 16f/9f, 0.1F, 100.0F, Matrix4f(), player)
-        sceneCam.rotate(-15F,0F,0F)
-        sceneCam.translate(Vector3f(0F,1F,13.0F))
+        //sceneCam = Camera(80f, 16f/9f, 0.1F, 100.0F, Matrix4f(), player)
+        //sceneCam.rotate(-15F,0F,0F)
+        //sceneCam.translate(Vector3f(0F,0F,3.0F))
+
+        sceneCam = TargetCamera(player,80f, 16f/9f, 0.1F, 100.0F, Matrix4f(), player)
+        //sceneCam.rotate(-15F,0F,0F)
+        sceneCam.translate(Vector3f(0F,0F,3.0F))
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0.9F), 20F, Matrix4f(), player)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0.9F), 20F, Matrix4f(), player)
@@ -213,6 +219,8 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
+        player.setDT(dt)
+
         if(window.getKeyState(GLFW_KEY_W)){
             player.moveUp(dt)
         }
@@ -225,6 +233,23 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_D)){
             player.moveRight(dt)
         }
+
+        if(window.getKeyState(GLFW_KEY_T) && !player.wingsMoving()){
+            wingToX = true
+        }
+        if (wingToX){
+            player.rotateAllWings("x")
+            if (!player.wingsMoving()) wingToX = false
+        }
+
+        if(window.getKeyState(GLFW_KEY_G) && !player.wingsMoving()){
+            wingToFlat = true
+        }
+        if (wingToFlat){
+            player.rotateAllWings("flat")
+            if (!player.wingsMoving()) wingToFlat = false
+        }
+
 
     }
 

@@ -1,6 +1,6 @@
 package cga.exercise.components.light
 
-import cga.exercise.components.camera.TronCamera
+import cga.exercise.components.camera.Camera
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Vector3f
 
@@ -16,7 +16,7 @@ class LightHandler() {
         spotLights.add(newLight)
     }
 
-    fun bindLights (shaderProgram : ShaderProgram, camera : TronCamera, ambientLightCol : Vector3f) {
+    fun bindLights (shaderProgram : ShaderProgram, camera : Camera, ambientLightCol : Vector3f) {
 
         //bind ambient "light" color
         shaderProgram.setUniform("AmbientColor", ambientLightCol)
@@ -25,7 +25,7 @@ class LightHandler() {
         bindSpotlights(shaderProgram, camera)
     }
 
-    fun bindPointlights (shaderProgram : ShaderProgram, camera : TronCamera) {
+    fun bindPointlights (shaderProgram : ShaderProgram, camera : Camera) {
         if (pointLights.size > 5) {
             println("maximum of 10 lights exceeded. Past 5 will be ignored")
             return
@@ -42,7 +42,7 @@ class LightHandler() {
         }
     }
 
-    fun bindSpotlights (shaderProgram : ShaderProgram, camera : TronCamera) {
+    fun bindSpotlights (shaderProgram : ShaderProgram, camera : Camera) {
         if (spotLights.size > 5) {
             println("maximum of 10 lights exceeded. Past 5 will be ignored")
             return
