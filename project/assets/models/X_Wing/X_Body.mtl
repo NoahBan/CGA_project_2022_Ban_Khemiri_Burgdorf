@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd pureGrey.png
+map_Kd 1_1014_BaseColordsghsdgh.png
 map_Ke pureBlack.png
 
 newmtl X_Body_Gitter_Mat
@@ -22,7 +22,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd pureGrey.png
+map_Kd 1_1009_BaseColorgdsgsd.png
 map_Ke pureBlack.png
 
 newmtl X_Body_Mat
@@ -47,7 +47,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd pureGrey.png
+map_Kd 1_1003_BaseColor_Nase.png
 map_Ke pureBlack.png
 
 newmtl X_Cockpit_Glas_Mat
@@ -59,7 +59,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd pureGrey.png
+map_Kd 1_1016_BaseColorasgdsasg.png
 map_Ke pureBlack.png
 
 newmtl X_Cockpit_Rahmen_Mat
@@ -71,7 +71,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd pureGrey.png
+map_Kd 1_1016_BaseColorasgdsasg.png
 map_Ke pureBlack.png
 
 newmtl X_R2_Kopf_Mat
@@ -83,7 +83,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd pureGrey.png
+map_Kd 1_1006_BaseColorDHDB.png
 map_Ke pureBlack.png
 
 newmtl X_TopKram_R2_Body_Mat
@@ -95,5 +95,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd 1_1007_BaseColorFHF.png
+map_Kd 1_1006_BaseColorDHDB.png
 map_Ke pureBlack.png

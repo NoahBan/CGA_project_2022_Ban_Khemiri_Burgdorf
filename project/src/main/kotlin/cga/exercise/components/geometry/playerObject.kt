@@ -15,10 +15,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private var deltaTime = 0f
     private var time = 0f
 
-    private val maxUp = 5f
-    private val maxRight = 10f
-    private val maxDown = maxUp * -1f
-    private val maxLeft = -10f
+    private val maxUp = 8f
+    private val maxRight = 12.5f
+    private val maxDown = -7f
+    private val maxLeft = maxRight * -1f
     private val speed = 10f
     private val wingRotationSpeed = 1f
 
@@ -98,17 +98,17 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         val pureRedTex = Texture2D("assets/textures/pureColor/pureRed.png", true)
         pureRedTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
-        val matSphere = Material(
-            pureWhiteTex,
-            pureBlackTex,
-            pureWhiteTex
-        )
-
-        val matRed = Material(
-            pureRedTex,
-            pureBlackTex,
-            pureBlackTex
-        )
+//        val matSphere = Material(
+//            pureWhiteTex,
+//            pureBlackTex,
+//            pureWhiteTex
+//        )
+//
+//        val matRed = Material(
+//            pureRedTex,
+//            pureBlackTex,
+//            pureBlackTex
+//        )
 
         //Body
         xBody = ModelLoader.loadModel("assets/models/X_Wing/X_Body.obj",
@@ -130,7 +130,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             Math.toRadians(0f),
             Math.toRadians(0f),
             Math.toRadians(0f))!!
-        waffeOL_Root.renderList[0].material = matSphere //Body
         waffeOL_Root.parent = wingOL
         waffeOL_Root.setPosition(Vector3f(-74f,30f,-23f))
 
@@ -138,7 +137,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             Math.toRadians(0f),
             Math.toRadians(0f),
             Math.toRadians(0f))!!
-        waffeOL_Mid.renderList[0].material = matRed
         waffeOL_Mid.parent = waffeOL_Root
         waffeOL_Mid.setPosition(Vector3f(0f,0.2f,-50f))
 
@@ -146,19 +144,20 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             Math.toRadians(0f),
             Math.toRadians(0f),
             Math.toRadians(0f))!!
-        waffeOL_End.renderList[0].material = matSphere //Body
         waffeOL_End.parent = waffeOL_Mid
         waffeOL_End.setPosition(Vector3f(0f,0.5f,-36f))
         waffeOL_End.rotate(0f,0f,-30f)
 
 
-        wingOR = Renderable(wingOL.renderList, Matrix4f(), xBody)
-        for (each in wingOL.renderList) each.material = matSphere
-        wingOR.mirror(-1f,0f,0f,0f,0f,0f)
+        wingOR = ModelLoader.loadModel("assets/models/X_Wing/WingOR.obj",
+            Math.toRadians(0f),
+            Math.toRadians(0f),
+            Math.toRadians(0f))!!
+        wingOR.parent = xBody
         wingOR.setPosition(Vector3f(15f,3f,24.5f))
 
         waffeOR_Root = Renderable(waffeOL_Root.renderList, Matrix4f(), wingOR)
-        waffeOR_Root.setPosition(Vector3f(-74f,30f,-23f))
+        waffeOR_Root.setPosition(Vector3f(74f,30f,-23f))
 
         waffeOR_Mid = Renderable(waffeOL_Mid.renderList, Matrix4f(), waffeOR_Root)
         waffeOR_Mid.setPosition(Vector3f(0f,0.2f,-50f))
@@ -166,6 +165,23 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         waffeOR_End = Renderable(waffeOL_End.renderList, Matrix4f(), waffeOR_Mid)
         waffeOR_End.setPosition(Vector3f(0f,0.5f,-36f))
         waffeOR_End.rotate(0f,0f,-30f)
+
+
+
+        wingUL = Renderable(wingOR.renderList, Matrix4f(), xBody)
+        wingUL.mirror(1f,0f,0f,0f,0f,0f)
+        wingUL.mirror(0f,1f,0f,0f,0f,0f)
+        wingUL.setPosition(Vector3f(-15f,-2f,24.5f))
+
+        waffeUL_Root = Renderable(waffeOL_Root.renderList, Matrix4f(), wingUL)
+        waffeUL_Root.setPosition(Vector3f(74f,30f,-23f))
+
+        waffeUL_Mid = Renderable(waffeOL_Mid.renderList, Matrix4f(), waffeUL_Root)
+        waffeUL_Mid.setPosition(Vector3f(0f,0.2f,-50f))
+
+        waffeUL_End = Renderable(waffeOL_End.renderList, Matrix4f(), waffeUL_Mid)
+        waffeUL_End.setPosition(Vector3f(0f,0.5f,-36f))
+        waffeUL_End.rotate(0f,0f,-30f)
 
 
 
@@ -185,21 +201,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         waffeUR_End.rotate(0f,0f,-30f)
 
 
-        wingUL = Renderable(wingOL.renderList, Matrix4f(), xBody)
-        wingUL.mirror(0f,-1f,0f,0f,0f,0f)
-        wingUL.setPosition(Vector3f(-15f,-2f,24.5f))
-
-        waffeUL_Root = Renderable(waffeOL_Root.renderList, Matrix4f(), wingUL)
-        waffeUL_Root.setPosition(Vector3f(-74f,30f,-23f))
-
-        waffeUL_Mid = Renderable(waffeOL_Mid.renderList, Matrix4f(), waffeUL_Root)
-        waffeUL_Mid.setPosition(Vector3f(0f,0.2f,-50f))
-
-        waffeUL_End = Renderable(waffeOL_End.renderList, Matrix4f(), waffeUL_Mid)
-        waffeUL_End.setPosition(Vector3f(0f,0.5f,-36f))
-        waffeUL_End.rotate(0f,0f,-30f)
-
-
 
         wingOLoutMat = Matrix4f(wingOL.getModelMatrix())
         wingURoutMat = Matrix4f(wingUR.getModelMatrix())
@@ -210,9 +211,9 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         wingOLinMat = Matrix4f(wingOL.getModelMatrix())
         wingUR.rotate(0f,0f,18f)
         wingURinMat = Matrix4f(wingUR.getModelMatrix())
-        wingOR.rotate(0f,0f,18f)
+        wingOR.rotate(0f,0f,-18f)
         wing0RinMat = Matrix4f(wingOR.getModelMatrix())
-        wingUL.rotate(0f,0f,18f)
+        wingUL.rotate(0f,0f,-18f)
         wingULinMat = Matrix4f(wingUL.getModelMatrix())
 
 

@@ -1,4 +1,4 @@
-# Blender v2.93.1 OBJ File: 'X_Wing_Triangulated_test.blend'
+# Blender v3.0.0 OBJ File: 'X_Wing_Triangulated_test.blend'
 # www.blender.org
 mtllib Waffe_Root.mtl
 o X_Waffe_Root_t-65.022
@@ -20462,7 +20462,7 @@ vn -0.3926 -0.9196 -0.0111
 vn -0.3091 -0.9509 -0.0114
 vn 0.0313 -0.0120 0.9994
 vn 0.0736 0.0199 -0.9971
-usemtl None
+usemtl X_Waffe_Root_Mat
 s off
 f 115/1/1 117/2/1 118/3/1
 f 119/4/2 121/5/2 122/6/2

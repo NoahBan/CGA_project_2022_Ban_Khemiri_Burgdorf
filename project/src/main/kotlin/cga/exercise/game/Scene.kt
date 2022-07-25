@@ -183,23 +183,23 @@ class Scene(private val window: GameWindow) {
 //        lightHandler.addSpotLight(spotLight1)
 
         followCam = TargetCamera(player,20f, 16f/9f, 0.1F, 1000.0F+35F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
-        followCam.translate(Vector3f(0F,2F,35.0F))
+        followCam.translate(Vector3f(0F,2F,40.0F))
         cameraHandler.addCamera(followCam)
 
         thirdPersonCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player)
         thirdPersonCam.translate(Vector3f(0F,1.2F,2.2F))
         thirdPersonCam.rotate(-6F,0F,0F)
-//        cameraHandler.addCamera(thirdPersonCam)
+        cameraHandler.addCamera(thirdPersonCam)
 
         topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player)
         topCam.translate(Vector3f(0F,5F,0F))
         topCam.rotate(-90F,0F,0F)
-        cameraHandler.addCamera(topCam)
+//        cameraHandler.addCamera(topCam)
 
         botCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player)
         botCam.translate(Vector3f(0F,-5F,0F))
         botCam.rotate(90F,0F,0F)
-        cameraHandler.addCamera(botCam)
+//        cameraHandler.addCamera(botCam)
 
     }
 
@@ -244,7 +244,6 @@ class Scene(private val window: GameWindow) {
             waitForButtonPress_ToggleWeapon = t + buttonPressDelay
             player.toggleWingMode()
         }
-
         if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress_CameraSwitch){
             waitForButtonPress_CameraSwitch = t + buttonPressDelay
             cameraHandler.prevCam()
