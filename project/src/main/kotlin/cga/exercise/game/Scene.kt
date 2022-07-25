@@ -35,6 +35,9 @@ class Scene(private val window: GameWindow) {
     private val cameraHandler = CameraHandler()
     private val followCam : TargetCamera
     private val thirdPersonCam : Camera
+    private val topCam : Camera
+    private val botCam : Camera
+
 
     private val light1 : PointLight
     private val light2 : PointLight
@@ -42,7 +45,9 @@ class Scene(private val window: GameWindow) {
 
     private val lightHandler : LightHandler
 
-    var waitForButtonPress = 0f
+    val buttonPressDelay = 0.2f
+    var waitForButtonPress_CameraSwitch = 0f
+    var waitForButtonPress_ToggleWeapon = 0f
 
     private var wingToFlat = false
     private var wingToX = false
@@ -184,7 +189,17 @@ class Scene(private val window: GameWindow) {
         thirdPersonCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player)
         thirdPersonCam.translate(Vector3f(0F,1.2F,2.2F))
         thirdPersonCam.rotate(-6F,0F,0F)
-        cameraHandler.addCamera(thirdPersonCam)
+//        cameraHandler.addCamera(thirdPersonCam)
+
+        topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player)
+        topCam.translate(Vector3f(0F,5F,0F))
+        topCam.rotate(-90F,0F,0F)
+        cameraHandler.addCamera(topCam)
+
+        botCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player)
+        botCam.translate(Vector3f(0F,-5F,0F))
+        botCam.rotate(90F,0F,0F)
+        cameraHandler.addCamera(botCam)
 
     }
 
@@ -209,9 +224,7 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
-        println(t)
-        player.setDT(dt)
-        player.setT(t)
+        player.update(dt,t)
         ground.renderList[0].material!!.movingV += dt.toFloat() * 10f
 
         if(window.getKeyState(GLFW_KEY_W)){
@@ -227,29 +240,17 @@ class Scene(private val window: GameWindow) {
             player.moveRight(dt)
         }
 
-        if(window.getKeyState(GLFW_KEY_T) && !player.wingsMoving()){
-            wingToX = true
-        }
-        if (wingToX){
-            player.rotateAllWings("x")
-            if (!player.wingsMoving()) wingToX = false
+        if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_ToggleWeapon){
+            waitForButtonPress_ToggleWeapon = t + buttonPressDelay
+            player.toggleWingMode()
         }
 
-        if(window.getKeyState(GLFW_KEY_G) && !player.wingsMoving()){
-            wingToFlat = true
-        }
-        if (wingToFlat){
-            player.rotateAllWings("flat")
-            if (!player.wingsMoving()) wingToFlat = false
-        }
-
-
-        if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress){
-            waitForButtonPress = t + 0.2f
+        if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress_CameraSwitch){
+            waitForButtonPress_CameraSwitch = t + buttonPressDelay
             cameraHandler.prevCam()
         }
-        if(window.getKeyState(GLFW_KEY_M) && t >= waitForButtonPress){
-            waitForButtonPress = t + 0.2f
+        if(window.getKeyState(GLFW_KEY_M) && t >= waitForButtonPress_CameraSwitch){
+            waitForButtonPress_CameraSwitch = t + buttonPressDelay
             cameraHandler.nextCam()
         }
 

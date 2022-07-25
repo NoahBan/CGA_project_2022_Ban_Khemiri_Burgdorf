@@ -24,6 +24,8 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
         }
     }
 
+    fun mirror(xNormal : Float, yNormal : Float, zNormal : Float, xPoint : Float, yPoint : Float, zPoint : Float) = modelMatrix.reflect(Vector3f(xNormal,yNormal,zNormal).normalize(), Vector3f(xPoint,yPoint,zPoint))
+
     fun rotate(pitch: Float, yaw: Float, roll: Float) {
         //modelMatrix.rotateXYZ((pitch),(yaw),(roll))
         modelMatrix.rotateXYZ(Math.toRadians(pitch),Math.toRadians(yaw),Math.toRadians(roll))

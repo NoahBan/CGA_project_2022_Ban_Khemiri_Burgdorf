@@ -15,24 +15,6 @@ class TargetCamera(
         var lerpT : Float = 0f
     ): Camera(fov, aspectRatio, nearPlane, farPlane, modelMatrix) {
 
-
-//    fun alignCamera(){
-//        val thisMatrix = Matrix4f(getWorldModelMatrix())
-//
-//        var alignEye = getWorldPosition()
-//        var alignCenter =
-//        var aligUnp  = getWorldYAxis()
-//
-//        thisMatrix.lookAt(alignEye,alignCenter,aligUnp)
-//        thisMatrix.m30(getWorldPosition()[0])
-//        thisMatrix.m31(getWorldPosition()[1])
-//        thisMatrix.m32(getWorldPosition()[2])
-//
-//
-//        this.setModelMatrix(thisMatrix)
-//    }
-
-
     override fun getCalculateViewMatrix(): Matrix4f {
         var eye = getWorldPosition()
         var center = target.getWorldPosition()
