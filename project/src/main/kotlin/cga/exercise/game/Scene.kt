@@ -25,10 +25,10 @@ class Scene(private val window: GameWindow) {
 
     private val staticShader : ShaderProgram
     private val skyboxShader : ShaderProgram
-    private var skyboxVAO = -1
-    private var skyboxIndices = intArrayOf(0)
+//    private var skyboxVAO = -1
+//    private var skyboxIndices = intArrayOf(0)
 
-    private var cubemapTexture : Int
+//    private var cubemapTexture : Int
     private var skybox : Skybox
 
     private val importedGround : Renderable
@@ -172,16 +172,16 @@ class Scene(private val window: GameWindow) {
         //Skybox Geo
 
 
-        var faces = arrayOf(
-            "assets/textures/pureColor/pureWhite.png",
-            "assets/textures/pureColor/pureWhite.png",
-            "assets/textures/pureColor/pureWhite.png",
-            "assets/textures/pureColor/pureWhite.png",
-            "assets/textures/pureColor/pureWhite.png",
-            "assets/textures/pureColor/pureWhite.png")
-
-
-        cubemapTexture = CubeMap(faces,false).cubemapTexture
+//        var faces = arrayOf(
+//            "assets/textures/pureColor/pureWhite.png",
+//            "assets/textures/pureColor/pureWhite.png",
+//            "assets/textures/pureColor/pureWhite.png",
+//            "assets/textures/pureColor/pureWhite.png",
+//            "assets/textures/pureColor/pureWhite.png",
+//            "assets/textures/pureColor/pureWhite.png")
+//
+//
+//        cubemapTexture = CubeMap(faces,false).cubemapTexture
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
         //importedGround.scale(Vector3f(100F,1F,100F))
@@ -194,11 +194,7 @@ class Scene(private val window: GameWindow) {
 
         importedBike = ModelLoader.loadModel("assets/Light Cycle/HQ_Movie cycle.obj",Math.toRadians(-90f),Math.toRadians(90.0f),Math.toRadians(0f))!!
 
-        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
-        val importObjKarimSkyboxData  = importObjKarimSkybox.objects[0].meshes[0]
-        val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matGround)
-        importedKarimSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),importedBike)
-        importedKarimSkySphere.scale(Vector3f(10.0f))
+
 
         sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
@@ -206,10 +202,16 @@ class Scene(private val window: GameWindow) {
         skybox = Skybox(sceneCam)
 //        sceneCam.rotate(-90F,0F,0F)
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
+        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
+        val importObjKarimSkyboxData  = importObjKarimSkybox.objects[0].meshes[0]
+        val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matGround)
+        importedKarimSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),sceneCam)
+        importedKarimSkySphere.scale(Vector3f(4.0f))
+
 
         light1 = PointLight(AttenuationType.LINEAR,Vector3f(1F,0F,0F), 0F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.LINEAR,Vector3f(0F,0F,1F), 0F, Matrix4f(), importedBike)
-        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),0.7F, Vector3f(0.1f,-3f,2f));
+        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),0.4F, Vector3f(0.1f,-1f,-2f))
         spotLight1 = SpotLight(AttenuationType.LINEAR,Vector3f(0F,1F, 0F), 0F, Matrix4f(), 20f,70f, importedBike)
         spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
         spotLight1.rotate(70f,0f,0f)
@@ -220,7 +222,6 @@ class Scene(private val window: GameWindow) {
 
         val test = AttenuationType.QUADRATIC.ordinal
 
-        println(test)
 
         importedSphere.translate(Vector3f(0f,2f,-4f))
         importedSphere1.translate(Vector3f(3f,2f,-4f))
@@ -242,96 +243,69 @@ class Scene(private val window: GameWindow) {
 
 //        importedGround.rotate(0f,0f,90f)
 
-        val skyboxVertices  = floatArrayOf ( //   Coordinates
-            -1.0f, -1.0f, 1.0f,         //        7--------6
-            1.0f, -1.0f, 1.0f,          //       /|       /|
-            1.0f, -1.0f, -1.0f,         //      4--------5 |
-            -1.0f, -1.0f, -1.0f,        //      | |      | |
-            -1.0f, 1.0f, 1.0f,          //      | 3------|-2
-            1.0f, 1.0f, 1.0f,           //      |/       |/
-            1.0f, 1.0f, -1.0f,          //      0--------1
-            -1.0f, 1.0f, -1.0f
-        )
-
-        skyboxIndices = intArrayOf(
-            // Right
-            1, 2, 6,
-            6, 5, 1,
-            // Left
-            0, 4, 7,
-            7, 3, 0,
-            // Top
-            4, 5, 6,
-            6, 7, 4,
-            // Bottom
-            0, 3, 2,
-            2, 1, 0,
-            // Back
-            0, 1, 5,
-            5, 4, 0,
-            // Front
-            3, 7, 6,
-            6, 2, 3
-        )
+//        val skyboxVertices  = floatArrayOf ( //   Coordinates
+//            -1.0f, -1.0f, 1.0f,         //        7--------6
+//            1.0f, -1.0f, 1.0f,          //       /|       /|
+//            1.0f, -1.0f, -1.0f,         //      4--------5 |
+//            -1.0f, -1.0f, -1.0f,        //      | |      | |
+//            -1.0f, 1.0f, 1.0f,          //      | 3------|-2
+//            1.0f, 1.0f, 1.0f,           //      |/       |/
+//            1.0f, 1.0f, -1.0f,          //      0--------1
+//            -1.0f, 1.0f, -1.0f
+//        )
+//
+//        skyboxIndices = intArrayOf(
+//            // Right
+//            1, 2, 6,
+//            6, 5, 1,
+//            // Left
+//            0, 4, 7,
+//            7, 3, 0,
+//            // Top
+//            4, 5, 6,
+//            6, 7, 4,
+//            // Bottom
+//            0, 3, 2,
+//            2, 1, 0,
+//            // Back
+//            0, 1, 5,
+//            5, 4, 0,
+//            // Front
+//            3, 7, 6,
+//            6, 2, 3
+//        )
         //Using my own Skybox-vbo/vao generation, because our mesh requires indexData
-        skyboxVAO = GL30.glGenVertexArrays()
-        var skyboxVBO = GL30.glGenBuffers()
-        var skyboxEBO = GL30.glGenBuffers()
-
-        GL30.glBindVertexArray(skyboxVAO)
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER,skyboxVBO)
-        GL30.glBufferData(GL30.GL_ARRAY_BUFFER,skyboxVertices,GL30.GL_STATIC_DRAW)
-
-        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER,skyboxEBO)
-        GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER,skyboxIndices,GL30.GL_STATIC_DRAW)
-        GL30.glVertexAttribPointer(0,3, GL_FLOAT, false,3 *  4,0) //4 weil glfloat größe
-        GL30.glEnableVertexAttribArray(0)
-
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER,0)
-        GL30.glBindVertexArray(0)
-        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER,0)
-     // GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, 0)
-//        val skybox_att = VertexAttribute (3, GL30.GL_FLOAT,3 * 4, 0)
-//        val cube = Mesh(skyboxVertices,skyboxIndices, arrayOf(skybox_att),false,null)
-//        justACube = Renderable(mutableListOf(cube),Matrix4f())
+//        skyboxVAO = GL30.glGenVertexArrays()
+//        var skyboxVBO = GL30.glGenBuffers()
+//        var skyboxEBO = GL30.glGenBuffers()
+//
+//        GL30.glBindVertexArray(skyboxVAO)
+//        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER,skyboxVBO)
+//        GL30.glBufferData(GL30.GL_ARRAY_BUFFER,skyboxVertices,GL30.GL_STATIC_DRAW)
+//
+//        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER,skyboxEBO)
+//        GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER,skyboxIndices,GL30.GL_STATIC_DRAW)
+//        GL30.glVertexAttribPointer(0,3, GL_FLOAT, false,3 *  4,0) //4 weil glfloat größe
+//        GL30.glEnableVertexAttribArray(0)
+//
+//        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER,0)
+//        GL30.glBindVertexArray(0)
+//        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER,0)
+//     // GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, 0)
+////        val skybox_att = VertexAttribute (3, GL30.GL_FLOAT,3 * 4, 0)
+////        val cube = Mesh(skyboxVertices,skyboxIndices, arrayOf(skybox_att),false,null)
+////        justACube = Renderable(mutableListOf(cube),Matrix4f())
     }
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        glDepthFunc(GL_LEQUAL)
-        skyboxShader.use()
-
-        skyboxShader.setUniform("skybox",0)
-
-        skybox.bind(skyboxShader)
-
-        //justACube.render(skyboxShader)
-
-        GL30.glBindVertexArray(skyboxVAO)
-
-        GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, cubemapTexture)
-        println(cubemapTexture)
-        GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT,0)
-
-        //GL30.glDrawArrays(GL30.GL_TRIANGLES, 0,36)
-        GL30.glBindVertexArray(0)
-
-//
-//
-//
-//
-//
-       glDepthFunc(GL_LESS)
-
-
-
-//        glDepthMask(false)
-//        //importedKarimSkySphere.render(staticShader)
-//        glDepthMask(true)
-
         staticShader.use()
         sceneCam.bind(staticShader)
+
+        GL30.glDepthMask(false)
+        importedKarimSkySphere.render(staticShader)
+        GL30.glDepthMask(true)
 
         lightHandler.bindLights(staticShader, sceneCam, Vector3f(0f))
 
@@ -342,9 +316,12 @@ class Scene(private val window: GameWindow) {
         importedLightSphere2.render(staticShader)
         importedLightSphere3.render(staticShader)
 //        importedGround.setMaterialEmitMult(Vector3f(0f,1f,0f))
+
         importedGround.render(staticShader)
 //        importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
+
+
 
 
 

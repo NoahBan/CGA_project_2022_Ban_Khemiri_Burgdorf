@@ -69,6 +69,7 @@ struct DirectionalLight {
     float intensity;
 };
 uniform DirectionalLight DirectionalLights[MAXDIRECTIONALLIGHTS];
+in vec3 varyDirectionalLight;
 
 out vec4 color;
 
@@ -180,8 +181,8 @@ void main(){
         if(matDiffuse != 0) diffuse += calcSpotLightDiff(SpotLights[j].lightPos,PointToSpotlightDir[j],SpotLights[j].lightColor, SpotLights[j].intensity, SpotLights[j].attenuationType, SpotLights[j].direction,SpotLights[j].cutOff,SpotLights[j].outerCutOff, vertexNormal, matDiffuse);
         if(matSpecular != 0) specular += calcSpotLightSpec(SpotLights[j].lightPos,PointToSpotlightDir[j],SpotLights[j].lightColor, SpotLights[j].intensity, SpotLights[j].attenuationType, SpotLights[j].direction,SpotLights[j].cutOff,SpotLights[j].outerCutOff, vertexNormal, matSpecular);
     }
-    if(matDiffuse != 0) diffuse += calcDirecLightDiff(DirectionalLights[0].direction, DirectionalLights[0].lightColor,DirectionalLights[0].intensity,vertexNormal, matDiffuse);
-    if(matSpecular != 0) specular += calcDirecLightSpec(DirectionalLights[0].direction, DirectionalLights[0].lightColor,DirectionalLights[0].intensity,vertexNormal, matSpecular);
+    if(matDiffuse != 0) diffuse += calcDirecLightDiff(varyDirectionalLight, DirectionalLights[0].lightColor,DirectionalLights[0].intensity,vertexNormal, matDiffuse);
+    if(matSpecular != 0) specular += calcDirecLightSpec(varyDirectionalLight, DirectionalLights[0].lightColor,DirectionalLights[0].intensity,vertexNormal, matSpecular);
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);

@@ -70,7 +70,7 @@ class LightHandler() {
 
     fun bindDirectionalLights(shaderProgram : ShaderProgram, camera : TronCamera){
         directionalLights.forEachIndexed{ index,directionalLight ->
-            shaderProgram.setUniform("DirectionalLights[" + index +"].direction", directionalLight.direction)
+            shaderProgram.setUniform("DirectionalLights[" + index +"].direction", directionalLight.direction) //
             shaderProgram.setUniform("DirectionalLights[" + index +"].lightColor", directionalLight.lightColor)
             shaderProgram.setUniform("DirectionalLights[" + index +"].intensity", directionalLight.intensity)
             if (index == 4) return

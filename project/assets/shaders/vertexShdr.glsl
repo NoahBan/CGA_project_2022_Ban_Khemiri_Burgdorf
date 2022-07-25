@@ -65,6 +65,7 @@ struct DirectionalLight {
     float intensity;
 };
 uniform DirectionalLight DirectionalLights[MAXDIRECTIONALLIGHTS];
+out vec3 varyDirectionalLight;
 
 void main(){
     //transform vertices
@@ -94,5 +95,7 @@ void main(){
     {
         PointToSpotlightDir[j] = (SpotLights[j].lightPos - vertexpos.xyz);
     }
-    //DirectionalLights[0].direction = (DirectionalLights[0].direction);
+
+    varyDirectionalLight = vec3(vec4(mat3(View_matrix) * DirectionalLights[0].direction, 1.0)); //if you want to transform a direction vector, by the view, then you have to multiply it by the upper left 3*3 part of the 4*4 viewMatrix
+
 }
