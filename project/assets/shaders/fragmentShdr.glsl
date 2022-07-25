@@ -134,7 +134,7 @@ vec3 calcSpotLightSpec(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float
 
 //DIRECTIONAL LIGHT CALCULATION
 vec3 calcDirecLightDiff(vec3 direction,vec3 lightColor, float intensity, vec3 vertexNormal, vec3 matDiffuse){
-    vec3 lightDirection = normalize(-direction);
+    vec3 lightDirection = -normalize(direction);
     vec3 normal = normalize (vertexNormal);
     float cosa = max(0.0, dot(normal, lightDirection));
     vec3 diffuseTerm = matDiffuse * (lightColor * intensity);

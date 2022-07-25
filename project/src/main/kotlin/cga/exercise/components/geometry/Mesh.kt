@@ -29,7 +29,6 @@ class Mesh(
         vao = GL30.glGenVertexArrays()
         vbo = GL30.glGenBuffers()
         ibo = GL30.glGenBuffers()
-
         // todo: bind your objects
         GL30.glBindVertexArray(vao)
         GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)

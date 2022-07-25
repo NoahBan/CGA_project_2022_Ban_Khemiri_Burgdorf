@@ -94,8 +94,5 @@ void main(){
     {
         PointToSpotlightDir[j] = (SpotLights[j].lightPos - vertexpos.xyz);
     }
-    for (int j = 0 ; j < MAXSPOTLIGHTS ; j++)
-    {
-        PointToSpotlightDir[j] = (SpotLights[j].lightPos - vertexpos.xyz);
-    }
+    //DirectionalLights[0].direction = (DirectionalLights[0].direction);
 }

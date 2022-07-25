@@ -73,8 +73,6 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         unbind()
     }
 
-
-
     override fun bind(textureUnit: Int) {
         // todo 3.1
         GL30.glActiveTexture(GL30.GL_TEXTURE0 + textureUnit)
