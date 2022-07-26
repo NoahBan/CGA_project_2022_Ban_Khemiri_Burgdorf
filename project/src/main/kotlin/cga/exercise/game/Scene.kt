@@ -1,5 +1,6 @@
 package cga.exercise.game
 
+import cga.exercise.components.Player.PlayerObject
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
@@ -15,6 +16,7 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
 
+val globalLightHandler = LightHandler()
 
 /**
  * Created by Fabian on 16.09.2017.
@@ -44,7 +46,7 @@ class Scene(private val window: GameWindow) {
 
     private val lightHandler : LightHandler
 
-    val buttonPressDelay = 0.2f
+    val buttonPressDelay = 0.5f
     var waitForButtonPress_CameraSwitch = 0f
     var waitForButtonPress_ToggleWeapon = 0f
 
@@ -138,8 +140,8 @@ class Scene(private val window: GameWindow) {
         ground.rotate(0f,90f,0f)
 
 
-        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0.9F), 20F, Matrix4f(), player.rollParent, true)
-        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0.9F), 20F, Matrix4f(), player.rollParent, true)
+        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0F), 20F, Matrix4f(), player.rollParent, true)
+        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,1F,1F), 20F, Matrix4f(), player.rollParent, true)
 
         spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(1F,1F, 1F), 120F, Matrix4f(), 20f,70f, null)
         spotLight1.setPosition(Vector3f(0f,10f,0f))
@@ -157,9 +159,13 @@ class Scene(private val window: GameWindow) {
         light2.translate(Vector3f(5f,1f,0f))
 
         lightHandler = LightHandler()
-//        lightHandler.addPointLight(light2)
-//        lightHandler.addPointLight(light1)
-//        lightHandler.addSpotLight(spotLight1)
+        lightHandler.addPointLight(light2)
+        lightHandler.addPointLight(light1)
+        lightHandler.addSpotLight(spotLight1)
+
+        globalLightHandler.addPointLight(light2)
+        globalLightHandler.addPointLight(light1)
+        globalLightHandler.addSpotLight(spotLight1)
 
 
         //Cameras
@@ -172,12 +178,12 @@ class Scene(private val window: GameWindow) {
         thirdPersonCam.rotate(-6F,0F,0F)
         cameraHandler.addCamera(thirdPersonCam)
 
-        topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
+        topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f())
         topCam.translate(Vector3f(0F,5F,0F))
         topCam.rotate(-90F,0F,0F)
 //        cameraHandler.addCamera(topCam)
 
-        botCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
+        botCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f())
         botCam.translate(Vector3f(0F,-5F,0F))
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
@@ -186,12 +192,9 @@ class Scene(private val window: GameWindow) {
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-
         staticShader.use()
-
         cameraHandler.getActiveCamera().bind(staticShader)
-
-        lightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(1f))
+        globalLightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(1f))
 
 //        importedSphere.render(staticShader)
 //        importedLightSphere.render(staticShader)
@@ -199,9 +202,7 @@ class Scene(private val window: GameWindow) {
 //        importedLightSphere3.render(staticShader)
         ground.render(staticShader)
 
-
         player.render(staticShader)
-
     }
 
     fun update(dt: Float, t: Float) {
@@ -224,6 +225,7 @@ class Scene(private val window: GameWindow) {
             waitForButtonPress_ToggleWeapon = t + buttonPressDelay
             player.toggleWingMode()
         }
+
         if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress_CameraSwitch){
             waitForButtonPress_CameraSwitch = t + buttonPressDelay
             cameraHandler.prevCam()
@@ -233,9 +235,7 @@ class Scene(private val window: GameWindow) {
             cameraHandler.nextCam()
         }
 
-
         player.update(dt,t)
-
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {

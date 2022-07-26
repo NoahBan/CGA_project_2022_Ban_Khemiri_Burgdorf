@@ -5,7 +5,7 @@ import org.joml.Matrix4f
 import org.joml.Vector3f
 
 class Renderable(
-    val renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null)
+    var renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null)
 
     : Transformable(modelMatrix, parent), IRenderable  {
 
