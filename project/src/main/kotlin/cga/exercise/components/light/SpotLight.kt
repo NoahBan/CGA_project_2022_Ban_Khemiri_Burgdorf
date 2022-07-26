@@ -14,9 +14,10 @@ class SpotLight(
         private var cutOff : Float,
         private var outerCutOff : Float,
         parent: Transformable? = null,
+        lightVisible : Boolean = false,
         var target : Transformable = Transformable(Matrix4f()))
         // postion vom
-        : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent)
+        : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent, lightVisible)
 {
         //target ist als Position angegeben. "Richtung" des Spotlights ergibt sich aus Neigung aus Positionsvektor zu Target-Vektor
         init {

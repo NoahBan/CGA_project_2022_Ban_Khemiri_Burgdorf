@@ -38,6 +38,7 @@ class LightHandler() {
             shaderProgram.setUniform("PointLights[" + index +"].lightColor", pointLight.lightColor)
             shaderProgram.setUniform("PointLights[" + index +"].intensity", pointLight.intensity)
             shaderProgram.setUniform("PointLights[" + index +"].attenuationType", pointLight.attenuationType.ordinal)
+            if(pointLight.lightVisible) pointLight.lightSphere.render(shaderProgram)
             if (index == 4) return
         }
     }

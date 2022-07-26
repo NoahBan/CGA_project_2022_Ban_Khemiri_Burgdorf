@@ -33,3 +33,17 @@ fun lerpMatrices(from : Matrix4f, to : Matrix4f, t : Float) : Matrix4f {
     lerpMatrix.m33(lerpf(from.m33(),to.m33(), t))
     return lerpMatrix
 }
+
+fun lerpMatricesRotation(from : Matrix4f, to : Matrix4f, t : Float) : Matrix4f {
+    var lerpMatrix = from
+    lerpMatrix.m00(lerpf(from.m00(),to.m00(), t))
+    lerpMatrix.m01(lerpf(from.m01(),to.m01(), t))
+    lerpMatrix.m02(lerpf(from.m02(),to.m02(), t))
+    lerpMatrix.m10(lerpf(from.m10(),to.m10(), t))
+    lerpMatrix.m11(lerpf(from.m11(),to.m11(), t))
+    lerpMatrix.m12(lerpf(from.m12(),to.m12(), t))
+    lerpMatrix.m20(lerpf(from.m20(),to.m20(), t))
+    lerpMatrix.m21(lerpf(from.m21(),to.m21(), t))
+    lerpMatrix.m22(lerpf(from.m22(),to.m22(), t))
+    return lerpMatrix
+}
