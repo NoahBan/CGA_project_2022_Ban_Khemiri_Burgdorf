@@ -13,10 +13,10 @@ class Game(width: Int,
            GLVersionMajor: Int = 3,
            GLVersionMinor: Int = 3) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 4, 120.0f) {
 
-    private val scene: Scene
+    private val scene: Scene2
     init {
         setCursorVisible(false)
-        scene = Scene(this)
+        scene = Scene2(this)
     }
 
     override fun shutdown() = scene.cleanup()

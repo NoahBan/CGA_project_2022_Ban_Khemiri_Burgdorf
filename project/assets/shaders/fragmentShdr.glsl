@@ -93,7 +93,7 @@ vec3 calcLightSpec(vec3 lightPos, vec3 pointTolightDir, vec3 lightColor, float i
     float cosBetak = pow(cosBeta,Material.shininess);
     vec3 specularTerm = matSpecular * lightColor;
     float attenuation = getAttenuation(attenuationType, VertexData.position, lightPos);
-    return specularTerm * cosBetak;// * intensity / attenuation;
+    return specularTerm * cosBetak * intensity / attenuation ;// * intensity / attenuation;
 }
 
 //SPOT LIGHT CALCULATION
@@ -150,7 +150,7 @@ void main(){
         if(matSpecular != 0) specular += calcSpotLightSpec(SpotLights[j].lightPos,PointToSpotlightDir[j],SpotLights[j].lightColor, SpotLights[j].intensity, SpotLights[j].attenuationType, SpotLights[j].direction,SpotLights[j].cutOff,SpotLights[j].outerCutOff, vertexNormal, matSpecular);
     }
     //add up material inputs
-    vec3 result = emission + diffuse + specular + ambient;
+    vec3 result = emission + diffuse + specular + (ambient);
     toSRGB(result);
     color = vec4(result, 1.0);
 //    color = vec4(PointLights[0].lightColor, 1.0);

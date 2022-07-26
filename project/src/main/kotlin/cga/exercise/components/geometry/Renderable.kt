@@ -1,11 +1,16 @@
 package cga.exercise.components.geometry
 
+
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import org.joml.Vector4f
 
-class Renderable(
-    val renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null)
+open class Renderable(
+    val renderList : MutableList<Mesh>,
+    modelMatrix : Matrix4f = Matrix4f(),
+    parent: Transformable? = null)
+
 
     : Transformable(modelMatrix, parent), IRenderable  {
 
@@ -13,6 +18,7 @@ class Renderable(
         renderList.add(newMesh)
         return true
     }
+
 
     fun setMaterialEmitMult(mult : Vector3f){
         for (each in renderList){
