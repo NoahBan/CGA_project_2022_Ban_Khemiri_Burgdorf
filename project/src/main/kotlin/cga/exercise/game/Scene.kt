@@ -1,12 +1,10 @@
 package cga.exercise.game
 
-import cga.exercise.components.camera.Skybox
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
-import cga.exercise.components.texture.CubeMap
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
@@ -15,7 +13,6 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
-import org.lwjgl.opengl.GLUtil
 
 
 /**
@@ -24,12 +21,7 @@ import org.lwjgl.opengl.GLUtil
 class Scene(private val window: GameWindow) {
 
     private val staticShader : ShaderProgram
-    private val skyboxShader : ShaderProgram
-//    private var skyboxVAO = -1
-//    private var skyboxIndices = intArrayOf(0)
 
-//    private var cubemapTexture : Int
-    private var skybox : Skybox
 
     private val importedGround : Renderable
 
@@ -41,7 +33,7 @@ class Scene(private val window: GameWindow) {
     private val importedLightSphere : Renderable
     private val importedLightSphere2 : Renderable
     private val importedLightSphere3 : Renderable
-    private val importedKarimSkySphere : Renderable
+    private val importedSkySphere : Renderable
     //private val justACube : Renderable
 
     private val sceneCam : TronCamera
@@ -61,8 +53,6 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
         staticShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
-        //staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
-        skyboxShader = ShaderProgram("assets/shaders/Skybox_vertexShdr.glsl", "assets/shaders/Skybox_fragmentShdr.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -78,7 +68,7 @@ class Scene(private val window: GameWindow) {
 
         //define ibo
         val posAndColVaoPos = VertexAttribute (3, GL30.GL_FLOAT,6 * 4, 0)
-        val posAndColVaoCol = VertexAttribute (3, GL30.GL_FLOAT,6 * 4, 3 * 4)       //this one for skybox?
+        val posAndColVaoCol = VertexAttribute (3, GL30.GL_FLOAT,6 * 4, 3 * 4)
         val posAndColAttrArray = arrayOf(posAndColVaoPos, posAndColVaoCol)
 
         val posAndTexcAndNormPos = VertexAttribute (3, GL30.GL_FLOAT,8 * 4, 0)
@@ -116,28 +106,9 @@ class Scene(private val window: GameWindow) {
         sphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
         val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
         lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val skySphereTex = Texture2D("assets/textures/skybox_test.png",true)
+        skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
-        //SkyboxTexture
-
-        //Materials
-//        val matGround = Material(
-//            groundDiffuseTex,
-//            groundEmissionTex,
-//            groundSpecTex,
-//            60.0f,
-//            Vector2f(64.0f,64.0f)
-//        )
-//        val matSphere = Material(
-//            lightSphereEmissionTex,
-//            sphereEmissionTex,
-//            sphereDiffuseTex
-//        )
-//        val matLightSphere = Material(
-//            pureBlackTex,
-//            pureWhiteTex,
-//            pureWhiteTex
-//        )
-//TEST
         val matGround = Material(
             pureWhiteTex,
             groundEmissionTex,
@@ -155,6 +126,11 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex,
             pureWhiteTex
         )
+        val matSkySphere = Material(
+            skySphereTex,
+            skySphereTex,
+            skySphereTex
+        )
 
         //Geometry
 
@@ -170,18 +146,9 @@ class Scene(private val window: GameWindow) {
         val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
 
         //Skybox Geo
-
-
-//        var faces = arrayOf(
-//            "assets/textures/pureColor/pureWhite.png",
-//            "assets/textures/pureColor/pureWhite.png",
-//            "assets/textures/pureColor/pureWhite.png",
-//            "assets/textures/pureColor/pureWhite.png",
-//            "assets/textures/pureColor/pureWhite.png",
-//            "assets/textures/pureColor/pureWhite.png")
-//
-//
-//        cubemapTexture = CubeMap(faces,false).cubemapTexture
+        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
+        val importObjKarimSkyboxData  = importObjKarimSkybox.objects[0].meshes[0]
+        val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
 
         importedGround = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
         //importedGround.scale(Vector3f(100F,1F,100F))
@@ -199,15 +166,12 @@ class Scene(private val window: GameWindow) {
         sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,3.0F))
-        skybox = Skybox(sceneCam)
+
 //        sceneCam.rotate(-90F,0F,0F)
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
-        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
-        val importObjKarimSkyboxData  = importObjKarimSkybox.objects[0].meshes[0]
-        val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matGround)
-        importedKarimSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),sceneCam)
-        importedKarimSkySphere.scale(Vector3f(4.0f))
 
+        importedSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),null)
+        importedSkySphere.scale(Vector3f(4.0f))
 
         light1 = PointLight(AttenuationType.LINEAR,Vector3f(1F,0F,0F), 0F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.LINEAR,Vector3f(0F,0F,1F), 0F, Matrix4f(), importedBike)
@@ -236,65 +200,11 @@ class Scene(private val window: GameWindow) {
 
         lightHandler = LightHandler()
 
-       lightHandler.addDirectionalLight(dirLight1)
+        lightHandler.addDirectionalLight(dirLight1)
         lightHandler.addPointLight(light2)
         lightHandler.addPointLight(light1)
         lightHandler.addSpotLight(spotLight1)
 
-//        importedGround.rotate(0f,0f,90f)
-
-//        val skyboxVertices  = floatArrayOf ( //   Coordinates
-//            -1.0f, -1.0f, 1.0f,         //        7--------6
-//            1.0f, -1.0f, 1.0f,          //       /|       /|
-//            1.0f, -1.0f, -1.0f,         //      4--------5 |
-//            -1.0f, -1.0f, -1.0f,        //      | |      | |
-//            -1.0f, 1.0f, 1.0f,          //      | 3------|-2
-//            1.0f, 1.0f, 1.0f,           //      |/       |/
-//            1.0f, 1.0f, -1.0f,          //      0--------1
-//            -1.0f, 1.0f, -1.0f
-//        )
-//
-//        skyboxIndices = intArrayOf(
-//            // Right
-//            1, 2, 6,
-//            6, 5, 1,
-//            // Left
-//            0, 4, 7,
-//            7, 3, 0,
-//            // Top
-//            4, 5, 6,
-//            6, 7, 4,
-//            // Bottom
-//            0, 3, 2,
-//            2, 1, 0,
-//            // Back
-//            0, 1, 5,
-//            5, 4, 0,
-//            // Front
-//            3, 7, 6,
-//            6, 2, 3
-//        )
-        //Using my own Skybox-vbo/vao generation, because our mesh requires indexData
-//        skyboxVAO = GL30.glGenVertexArrays()
-//        var skyboxVBO = GL30.glGenBuffers()
-//        var skyboxEBO = GL30.glGenBuffers()
-//
-//        GL30.glBindVertexArray(skyboxVAO)
-//        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER,skyboxVBO)
-//        GL30.glBufferData(GL30.GL_ARRAY_BUFFER,skyboxVertices,GL30.GL_STATIC_DRAW)
-//
-//        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER,skyboxEBO)
-//        GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER,skyboxIndices,GL30.GL_STATIC_DRAW)
-//        GL30.glVertexAttribPointer(0,3, GL_FLOAT, false,3 *  4,0) //4 weil glfloat größe
-//        GL30.glEnableVertexAttribArray(0)
-//
-//        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER,0)
-//        GL30.glBindVertexArray(0)
-//        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER,0)
-//     // GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, 0)
-////        val skybox_att = VertexAttribute (3, GL30.GL_FLOAT,3 * 4, 0)
-////        val cube = Mesh(skyboxVertices,skyboxIndices, arrayOf(skybox_att),false,null)
-////        justACube = Renderable(mutableListOf(cube),Matrix4f())
     }
 
     fun render(dt: Float, t: Float) {
@@ -303,13 +213,15 @@ class Scene(private val window: GameWindow) {
         staticShader.use()
         sceneCam.bind(staticShader)
 
-        GL30.glDepthMask(false)
-        importedKarimSkySphere.render(staticShader)
-        GL30.glDepthMask(true)
-
         lightHandler.bindLights(staticShader, sceneCam, Vector3f(0f))
 
+
+        GL30.glDepthMask(false)
+        importedSkySphere.render(staticShader)
+        GL30.glDepthMask(true)
+
         importedSphere.render(staticShader)
+
         importedSphere1.render(staticShader)
         importedSphere2.render(staticShader)
         importedLightSphere.render(staticShader)
@@ -320,9 +232,6 @@ class Scene(private val window: GameWindow) {
         importedGround.render(staticShader)
 //        importedBike.setMaterialEmitMult(Vector3f(Math.abs(Math.sin(t)) + 0.2F,Math.abs(Math.sin(t+0.333f)) + 0.2F,Math.abs(Math.sin(t+0.666f)) + 0.2F))
         importedBike.render(staticShader)
-
-
-
 
 
     }
@@ -347,6 +256,7 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_F)){
             importedBike.translate(Vector3f(0f,-0.1f,0f))
         }
+       importedSkySphere.setPosition(sceneCam.getWorldPosition())
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
@@ -355,6 +265,7 @@ class Scene(private val window: GameWindow) {
     fun onMouseMove(xpos: Double, ypos: Double) {
         var xposNew = xpos.minus(xposBefore) * 0.002f
         sceneCam.rotateAroundPoint(0f,- xposNew.toFloat(),0f,importedBike.getWorldPosition())
+
         xposBefore = xpos
     }
 
