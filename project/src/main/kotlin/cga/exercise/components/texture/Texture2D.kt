@@ -36,7 +36,6 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
             STBImage.stbi_set_flip_vertically_on_load(true)
             val imageData = STBImage.stbi_load(path, x, y, readChannels, 4)
                     ?: throw Exception("Image file \"" + path + "\" couldn't be read:\n" + STBImage.stbi_failure_reason())
-
             try {
                 return Texture2D(imageData, x.get(), y.get(), genMipMaps)
             } catch (ex: java.lang.Exception) {

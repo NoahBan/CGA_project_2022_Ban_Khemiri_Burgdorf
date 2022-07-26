@@ -15,6 +15,7 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
+import org.joml.Math
 
 val globalLightHandler = LightHandler()
 
@@ -32,6 +33,8 @@ class Scene(private val window: GameWindow) {
     private val importedLightSphere : Renderable
     private val importedLightSphere2 : Renderable
     private val importedLightSphere3 : Renderable
+    private val importedSkySphere : Renderable
+
 
     private val cameraHandler = CameraHandler()
     private val followCam : TargetCamera
@@ -43,6 +46,8 @@ class Scene(private val window: GameWindow) {
     private val light1 : PointLight
     private val light2 : PointLight
     private val spotLight1 : SpotLight
+
+    private val dirLight1 : DirectionalLight
 
     private val lightHandler : LightHandler
 
@@ -56,7 +61,6 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
         staticShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
-//        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -102,6 +106,8 @@ class Scene(private val window: GameWindow) {
         sphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
         val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
         lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val skySphereTex = Texture2D("assets/textures/starmap_2020_4k_gal.png",true)
+        skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         player = PlayerObject(Matrix4f())
 
@@ -115,12 +121,18 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex,
             pureWhiteTex
         )
+        val matSkySphere = Material(
+            pureBlackTex,
+            skySphereTex,
+            pureBlackTex
+        )
 
         //Geometry
 
         //Sphere Geo
         val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
         val importedSphereData  = importObjSphere.objects[0].meshes[0]
+        val importedSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matSphere)
         val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
 
         //Ground Geo
@@ -139,10 +151,17 @@ class Scene(private val window: GameWindow) {
         ground.setPosition(Vector3f(0F,-13F,0F))
         ground.rotate(0f,90f,0f)
 
+        //Skybox Geo
+        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
+        val importObjKarimSkyboxData  = importObjKarimSkybox.objects[0].meshes[0]
+        val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
+
+        importedSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),null)
+        importedSkySphere.scale(Vector3f(1.0f))
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0F), 20F, Matrix4f(), player.rollParent, true)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,1F,1F), 20F, Matrix4f(), player.rollParent, true)
-
+        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),0.4F, Vector3f(-5f,-1f,-2f))
         spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(1F,1F, 1F), 120F, Matrix4f(), 20f,70f, null)
         spotLight1.setPosition(Vector3f(0f,10f,0f))
 
@@ -159,10 +178,12 @@ class Scene(private val window: GameWindow) {
         light2.translate(Vector3f(5f,1f,0f))
 
         lightHandler = LightHandler()
+        lightHandler.addDirectionalLight(dirLight1)
         lightHandler.addPointLight(light2)
         lightHandler.addPointLight(light1)
         lightHandler.addSpotLight(spotLight1)
 
+        globalLightHandler.addDirectionalLight(dirLight1)
         globalLightHandler.addPointLight(light2)
         globalLightHandler.addPointLight(light1)
         globalLightHandler.addSpotLight(spotLight1)
@@ -195,6 +216,10 @@ class Scene(private val window: GameWindow) {
         staticShader.use()
         cameraHandler.getActiveCamera().bind(staticShader)
         globalLightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(1f))
+
+        GL30.glDepthMask(false)
+        importedSkySphere.render(staticShader)
+        GL30.glDepthMask(true)
 
 //        importedSphere.render(staticShader)
 //        importedLightSphere.render(staticShader)
@@ -234,8 +259,8 @@ class Scene(private val window: GameWindow) {
             waitForButtonPress_CameraSwitch = t + buttonPressDelay
             cameraHandler.nextCam()
         }
-
         player.update(dt,t)
+        importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
