@@ -1,4 +1,4 @@
-package cga.exercise.components.Player
+package cga.exercise.components.player
 
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram

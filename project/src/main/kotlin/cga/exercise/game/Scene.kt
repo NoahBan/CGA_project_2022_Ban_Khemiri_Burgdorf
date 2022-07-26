@@ -1,6 +1,6 @@
 package cga.exercise.game
 
-import cga.exercise.components.Player.PlayerObject
+import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
@@ -15,7 +15,6 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
-import org.joml.Math
 
 val globalLightHandler = LightHandler()
 
@@ -161,7 +160,7 @@ class Scene(private val window: GameWindow) {
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0F), 20F, Matrix4f(), player.rollParent, true)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,1F,1F), 20F, Matrix4f(), player.rollParent, true)
-        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),0.4F, Vector3f(-5f,-1f,-2f))
+        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),1F, Vector3f(0f,-1f,0f))
         spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(1F,1F, 1F), 120F, Matrix4f(), 20f,70f, null)
         spotLight1.setPosition(Vector3f(0f,10f,0f))
 
@@ -184,9 +183,9 @@ class Scene(private val window: GameWindow) {
         lightHandler.addSpotLight(spotLight1)
 
         globalLightHandler.addDirectionalLight(dirLight1)
-        globalLightHandler.addPointLight(light2)
-        globalLightHandler.addPointLight(light1)
-        globalLightHandler.addSpotLight(spotLight1)
+//        globalLightHandler.addPointLight(light2)
+//        globalLightHandler.addPointLight(light1)
+//        globalLightHandler.addSpotLight(spotLight1)
 
 
         //Cameras
@@ -215,7 +214,7 @@ class Scene(private val window: GameWindow) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         staticShader.use()
         cameraHandler.getActiveCamera().bind(staticShader)
-        globalLightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(1f))
+        globalLightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(0.0f))
 
         GL30.glDepthMask(false)
         importedSkySphere.render(staticShader)

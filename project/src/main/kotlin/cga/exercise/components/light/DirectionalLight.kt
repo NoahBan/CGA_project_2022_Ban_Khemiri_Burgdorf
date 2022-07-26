@@ -1,6 +1,6 @@
 package cga.exercise.components.light
 
-import cga.exercise.components.camera.TronCamera
+import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.Transformable
 import org.joml.Matrix3f
 import org.joml.Matrix4f

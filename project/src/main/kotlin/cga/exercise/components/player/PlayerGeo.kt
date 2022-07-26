@@ -1,10 +1,9 @@
-package cga.exercise.components.Player
+package cga.exercise.components.player
 
 import cga.exercise.components.geometry.Renderable
 import cga.framework.ModelLoader
 import org.joml.Math
 import  org.joml.Math.*
-import org.joml.Vector3f
 
 class PlayerGeo {
 
