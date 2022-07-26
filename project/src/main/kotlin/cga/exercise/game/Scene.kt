@@ -34,7 +34,7 @@ class Scene(private val window: GameWindow) {
     private val importedLightSphere2 : Renderable
     private val importedLightSphere3 : Renderable
     private val importedSkySphere : Renderable
-    //private val justACube : Renderable
+
 
     private val sceneCam : TronCamera
 
@@ -46,7 +46,7 @@ class Scene(private val window: GameWindow) {
 
     private val lightHandler : LightHandler
 
-    private val testMatrix = Transformable();
+
 
     var xposBefore : Double = 0.0
 
@@ -106,7 +106,7 @@ class Scene(private val window: GameWindow) {
         sphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
         val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
         lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
-        val skySphereTex = Texture2D("assets/textures/skybox_test.png",true)
+        val skySphereTex = Texture2D("assets/textures/starmap_2020_4k_gal.png",true)
         skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         val matGround = Material(
@@ -127,9 +127,9 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex
         )
         val matSkySphere = Material(
+            pureBlackTex,
             skySphereTex,
-            skySphereTex,
-            skySphereTex
+            pureBlackTex
         )
 
         //Geometry
@@ -171,11 +171,11 @@ class Scene(private val window: GameWindow) {
 //        sceneCam.setPosition(Vector3f(0f,10f,0f))
 
         importedSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),null)
-        importedSkySphere.scale(Vector3f(4.0f))
+        importedSkySphere.scale(Vector3f(1.0f))
 
         light1 = PointLight(AttenuationType.LINEAR,Vector3f(1F,0F,0F), 0F, Matrix4f(), importedBike)
         light2 = PointLight(AttenuationType.LINEAR,Vector3f(0F,0F,1F), 0F, Matrix4f(), importedBike)
-        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),0.4F, Vector3f(0.1f,-1f,-2f))
+        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),0.4F, Vector3f(-5f,-1f,-2f))
         spotLight1 = SpotLight(AttenuationType.LINEAR,Vector3f(0F,1F, 0F), 0F, Matrix4f(), 20f,70f, importedBike)
         spotLight1.setPosition(Vector3f(0f,1f,-1.8f))
         spotLight1.rotate(70f,0f,0f)
@@ -240,23 +240,29 @@ class Scene(private val window: GameWindow) {
         var i = 0
         if(window.getKeyState(GLFW_KEY_W)){
             importedBike.translate(Vector3f(0f,0f,-10f*dt))
+
         }
         if(window.getKeyState(GLFW_KEY_S)){
             importedBike.translate(Vector3f(0f,0f,10f*dt))
+
         }
         if(window.getKeyState(GLFW_KEY_A)){
             importedBike.rotate(0f,50f*dt,0f)
+
         }
         if(window.getKeyState(GLFW_KEY_D)){
             importedBike.rotate(0f,-50f*dt,0f)
+
         }
         if(window.getKeyState(GLFW_KEY_R)){
             importedBike.translate(Vector3f(0f,0.1f,0f))
+
         }
         if(window.getKeyState(GLFW_KEY_F)){
             importedBike.translate(Vector3f(0f,-0.1f,0f))
+
         }
-       importedSkySphere.setPosition(sceneCam.getWorldPosition())
+        importedSkySphere.setPosition(sceneCam.getWorldPosition())
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
@@ -267,6 +273,7 @@ class Scene(private val window: GameWindow) {
         sceneCam.rotateAroundPoint(0f,- xposNew.toFloat(),0f,importedBike.getWorldPosition())
 
         xposBefore = xpos
+        importedSkySphere.setPosition(sceneCam.getWorldPosition())
     }
 
     fun cleanup() {}
