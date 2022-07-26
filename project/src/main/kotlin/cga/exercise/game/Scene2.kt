@@ -1,7 +1,7 @@
 package cga.exercise.game
 
 import cga.exercise.components.collision.CollisionHandler
-import cga.exercise.components.camera.TronCamera
+import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
@@ -28,7 +28,7 @@ class Scene2(private val window: GameWindow) {
     private val importedCollisionBox1 : Renderable
     private val importedCollisioSphere1 : Renderable
 
-    private val sceneCam : TronCamera
+    private val sceneCam : Camera
     private val collisionHandler : CollisionHandler
     var xposBefore : Double = 0.0
 
@@ -116,7 +116,7 @@ class Scene2(private val window: GameWindow) {
         importedCollisioSphere1 = Renderable(mutableListOf(importedCollisionSphereMesh), Matrix4f(), null)
 
         //Setup Objects
-        sceneCam = TronCamera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
+        sceneCam = Camera(70f, 16f/9f, 0.1F, 100.0F, Matrix4f(), importedBike)
         sceneCam.rotate(-20F,0F,0F)
         sceneCam.translate(Vector3f(0F,1F,10.0F))
 

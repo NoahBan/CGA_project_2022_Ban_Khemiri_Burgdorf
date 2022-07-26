@@ -3,6 +3,6 @@ package cga.exercise
 import cga.exercise.game.Game
 
 fun main() {
-    val game = Game(1440, 600)
+    val game = Game(1920, 1080)
     game.run()
 }
