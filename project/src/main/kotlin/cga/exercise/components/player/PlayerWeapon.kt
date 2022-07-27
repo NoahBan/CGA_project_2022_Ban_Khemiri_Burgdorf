@@ -16,7 +16,6 @@ class PlayerWeapon (rotationDir : Float, playerGeo : PlayerGeo, modelMatrix : Ma
     var weaponRootGeo = Renderable(playerGeo.weaponRoot.renderList, Matrix4f())
     var weaponMidGeo = Renderable(playerGeo.weaponMid.renderList, Matrix4f())
     var weaponEndGeo = Renderable(playerGeo.weaponEnd.renderList, Matrix4f())
-    var schussGeo = Renderable(playerGeo.schuss.renderList, Matrix4f())
 
     private var deltaTime = 0f
     private var time = 0f
@@ -41,9 +40,10 @@ class PlayerWeapon (rotationDir : Float, playerGeo : PlayerGeo, modelMatrix : Ma
         weaponRootGeo.parent = this
         weaponMidGeo.parent = weaponRootGeo
         weaponEndGeo.parent = weaponMidGeo
-        schussGeo.parent = weaponEndGeo
         weaponInOut(0f)
     }
+
+    fun getShotPos() : Matrix4f = weaponEndGeo.getWorldModelMatrix()
 
     fun weaponInOut(t : Float){
         var midMatrix = weaponMidGeo.getModelMatrix()
@@ -63,7 +63,6 @@ class PlayerWeapon (rotationDir : Float, playerGeo : PlayerGeo, modelMatrix : Ma
             weaponOut = false
         }
     }
-
     fun setDT (newDt : Float){
         deltaTime = newDt
     }
@@ -75,7 +74,6 @@ class PlayerWeapon (rotationDir : Float, playerGeo : PlayerGeo, modelMatrix : Ma
         weaponRootGeo.render(shaderProgram)
         weaponMidGeo.render(shaderProgram)
         weaponEndGeo.render(shaderProgram)
-        schussGeo.render(shaderProgram)
     }
 
     fun update(deltaTime: Float, time: Float, wingOut : Boolean){

@@ -1,8 +1,8 @@
 #version 330 core
 
-#define MAXSPOTLIGHTS 5
-#define MAXPOINTLIGHTS 5
-#define MAXDIRECTIONALLIGHTS 5
+#define MAXPOINTLIGHTS 26
+#define MAXSPOTLIGHTS 1
+#define MAXDIRECTIONALLIGHTS 1
 //input from vertex shader
 in struct VertexDataStruct
 {

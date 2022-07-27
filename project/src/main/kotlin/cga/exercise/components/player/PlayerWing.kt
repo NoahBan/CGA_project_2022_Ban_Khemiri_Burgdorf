@@ -10,7 +10,14 @@ import org.joml.Math
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
-class PlayerWing(playerGeo : PlayerGeo, wingType : String, modelMatrix : Matrix4f, parent: Transformable? = null) : PlayerPart(modelMatrix, parent) {
+enum class WingType (val wingType: Int){
+    OL(0),
+    OR(1),
+    UL(2),
+    UR(3)
+}
+
+class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matrix4f, parent: Transformable? = null) : PlayerPart(modelMatrix, parent) {
 
     var wingGeo = Renderable(playerGeo.wingL.renderList, Matrix4f())
 
@@ -18,7 +25,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : String, modelMatrix : Matrix4
     private var time = 0f
 
     private var wingIn = true
-    private var wingOut = false
+    var wingOut = false
 
     private var moveWingOut = false
 
@@ -31,53 +38,57 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : String, modelMatrix : Matrix4
 
     private var rotationDir = 1f
 
-    private lateinit var weapon : PlayerWeapon
+    private var weapon : PlayerWeapon
 
     init {
-        if (wingType == "OL"){
-            rotationDir = -1f
-            weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
-            setPosition(Vector3f(-15f*0.03f,3f*0.03f,24.5f*0.03f))
-            wingGeo.parent = this
-            weapon.mirror(1f,0f,0f,0f,0f,0f)
-            weapon.mirror(0f,1f,0f,0f,0f,0f)
-            weapon.rotate(0f,0f,180f)
-            weapon.setPosition(Vector3f(-74f*0.03f,30f*0.03f,-23f*0.03f))
-            weapon.rotate(0f,0f, 180f)
-        }else
-        if (wingType == "OR"){
-            weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
-            wingGeo.renderList = playerGeo.wingR.renderList
-            setPosition(Vector3f(15f*0.03f,3f*0.03f,24.5f*0.03f))
-            wingGeo.parent = this
-            minRotation *= -1f
-            weapon.setPosition(Vector3f(74f*0.03f,30f*0.03f,-23f*0.03f))
-        }else
-        if (wingType == "UL"){
-            weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
-            wingGeo.renderList = playerGeo.wingR.renderList
-            setPosition(Vector3f(-15f*0.03f,-2f*0.03f,24.5f*0.03f))
-            wingGeo.mirror(1f,0f,0f,0f,0f,0f)
-            wingGeo.mirror(0f,1f,0f,0f,0f,0f)
-            wingGeo.parent = this
-            minRotation *= -1f
-            weapon.rotate(0f,0f,180f)
-            weapon.setPosition(Vector3f(-74f*0.03f,-30f*0.03f,-23f*0.03f))
-        } else
-        if (wingType == "UR"){
-            rotationDir = -1f
-            weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
-            wingGeo.mirror(1f,0f,0f,0f,0f,0f)
-            wingGeo.mirror(0f,1f,0f,0f,0f,0f)
-            setPosition(Vector3f(15f*0.03f,-2f*0.03f,24.5f*0.03f))
-            wingGeo.parent = this
-            weapon.mirror(1f,0f,0f,0f,0f,0f)
-            weapon.mirror(0f,1f,0f,0f,0f,0f)
-            weapon.rotate(0f,0f,180f)
-            weapon.setPosition(Vector3f(74f*0.03f,-30f*0.03f,-23f*0.03f))
+        when(wingType){
+            WingType.OL -> {
+                rotationDir = -1f
+                weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
+                setPosition(Vector3f(-0.45f, 0.09f, 0.735f))
+                wingGeo.parent = this
+                weapon.mirror(1f, 0f, 0f, 0f, 0f, 0f)
+                weapon.mirror(0f, 1f, 0f, 0f, 0f, 0f)
+                weapon.rotate(0f, 0f, 180f)
+                weapon.setPosition(Vector3f(-2.22f, 0.9f, -0.69f))
+                weapon.rotate(0f, 0f, 180f)
+            }
+            WingType.OR -> {
+                weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
+                wingGeo.renderList = playerGeo.wingR.renderList
+                setPosition(Vector3f(0.453f,0.09f,0.735f))
+                wingGeo.parent = this
+                minRotation *= -1f
+                weapon.setPosition(Vector3f(2.22f,0.9f,-0.69f))
+            }
+            WingType.UL -> {
+                weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
+                wingGeo.renderList = playerGeo.wingR.renderList
+                setPosition(Vector3f(-0.45f,-0.09f,0.735f))
+                wingGeo.mirror(1f,0f,0f,0f,0f,0f)
+                wingGeo.mirror(0f,1f,0f,0f,0f,0f)
+                wingGeo.parent = this
+                minRotation *= -1f
+                weapon.rotate(0f,0f,180f)
+                weapon.setPosition(Vector3f(-2.22f,-30f*0.03f,-0.69f))
+            }
+            WingType.UR -> {
+                rotationDir = -1f
+                weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
+                wingGeo.mirror(1f,0f,0f,0f,0f,0f)
+                wingGeo.mirror(0f,1f,0f,0f,0f,0f)
+                setPosition(Vector3f(0.45f,-0.09f,0.735f))
+                wingGeo.parent = this
+                weapon.mirror(1f,0f,0f,0f,0f,0f)
+                weapon.mirror(0f,1f,0f,0f,0f,0f)
+                weapon.rotate(0f,0f,180f)
+                weapon.setPosition(Vector3f(2.22f,-0.9f,-0.69f))
+            }
         }
         wingSetRotation(0f)
     }
+
+    fun getShotPos() : Matrix4f = weapon.getShotPos()
 
     fun toggleWingMode(){
         moveWingOut = !moveWingOut

@@ -4,13 +4,17 @@ import cga.exercise.components.camera.Camera
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Vector3f
 
-class LightHandler() {
+class LightHandler(val maxPointLights : Int, val maxSpotLight : Int, val maxDirectionalLight : Int)  {
     private val pointLights = mutableListOf<PointLight>()
     private val spotLights = mutableListOf<SpotLight>()
     private val directionalLights = mutableListOf<DirectionalLight>()
 
     fun addPointLight (newLight : PointLight){
         pointLights.add(newLight)
+    }
+
+    fun removePointLight (pLight : PointLight){
+        pointLights.remove(pLight)
     }
 
     fun addSpotLight (newLight : SpotLight){
@@ -32,8 +36,9 @@ class LightHandler() {
     }
 
     fun bindPointlights (shaderProgram : ShaderProgram, camera : Camera) {
-        if (pointLights.size > 5) {
-            println("maximum of 10 lights exceeded. Past 5 will be ignored")
+        if (pointLights.size > maxPointLights) {
+            println(pointLights.size)
+            println("maximum of ${maxPointLights} Pointlights exceeded. Past ${maxPointLights} will be ignored")
             return
         }
 
@@ -44,13 +49,13 @@ class LightHandler() {
             shaderProgram.setUniform("PointLights[" + index +"].lightColor", pointLight.lightColor)
             shaderProgram.setUniform("PointLights[" + index +"].intensity", pointLight.intensity)
             shaderProgram.setUniform("PointLights[" + index +"].attenuationType", pointLight.attenuationType.ordinal)
-            if (index == 4) return
+            if (index >= maxPointLights) return
         }
     }
 
     fun bindSpotlights (shaderProgram : ShaderProgram, camera : Camera) {
-        if (spotLights.size > 5) {
-            println("maximum of 10 lights exceeded. Past 5 will be ignored")
+        if (spotLights.size > maxSpotLight) {
+            println("maximum of ${maxSpotLight} Spotlights exceeded. Past ${maxSpotLight} will be ignored")
             return
         }
 
@@ -64,7 +69,7 @@ class LightHandler() {
             shaderProgram.setUniform("SpotLights[" + index + "].direction", spotLight.getSpotLightDirection(camera))
             shaderProgram.setUniform("SpotLights[" + index + "].cutOff", spotLight.getCutOff())
             shaderProgram.setUniform("SpotLights[" + index + "].outerCutOff", spotLight.getOuterCutOff())
-            if (index == 4) return
+            if (index >= maxSpotLight-1) return
         }
     }
 
@@ -73,7 +78,7 @@ class LightHandler() {
             shaderProgram.setUniform("DirectionalLights[" + index +"].direction", directionalLight.direction) //
             shaderProgram.setUniform("DirectionalLights[" + index +"].lightColor", directionalLight.lightColor)
             shaderProgram.setUniform("DirectionalLights[" + index +"].intensity", directionalLight.intensity)
-            if (index == 4) return
+            if (index >= maxDirectionalLight) return
         }
     }
 }

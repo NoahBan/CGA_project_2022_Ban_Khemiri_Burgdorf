@@ -10,13 +10,14 @@ import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
+import cga.framework.ModelLoader
 import cga.framework.OBJLoader
 import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
 
-val globalLightHandler = LightHandler()
+val globalLightHandler = LightHandler(30,1,1)
 
 /**
  * Created by Fabian on 16.09.2017.
@@ -48,11 +49,11 @@ class Scene(private val window: GameWindow) {
 
     private val dirLight1 : DirectionalLight
 
-    private val lightHandler : LightHandler
-
     val buttonPressDelay = 0.5f
+    val shootButtonDelay = 0.125f
     var waitForButtonPress_CameraSwitch = 0f
     var waitForButtonPress_ToggleWeapon = 0f
+    var waitForButtonPress_Shoot = 0f
 
 
     var xposBefore : Double = 0.0
@@ -142,13 +143,18 @@ class Scene(private val window: GameWindow) {
             60.0f,
             Vector2f(64.0f,64.0f)
         )
-        val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
-        val importedGroundData  = importObjGround.objects[0].meshes[0]
-        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
-        ground = Renderable(mutableListOf(importedGroundMesh), Matrix4f(), null)
-        ground.scale(Vector3f(200f,10f,800f))
-        ground.setPosition(Vector3f(0F,-13F,0F))
-        ground.rotate(0f,90f,0f)
+//        val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
+//        val importedGroundData  = importObjGround.objects[0].meshes[0]
+//        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
+        ground = ModelLoader.loadModel("assets/models/Ground/Ground.obj",
+            Math.toRadians(0f),
+            Math.toRadians(0f),
+            Math.toRadians(0f)
+        )!!
+        ground.renderList[0].material!!.tcMultiplier = Vector2f(2000f,2000f)
+//        ground.scale(Vector3f(200f,10f,800f))
+        ground.setPosition(Vector3f(0F,-14010F,0F))
+//        ground.rotate(0f,90f,0f)
 
         //Skybox Geo
         val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
@@ -160,7 +166,7 @@ class Scene(private val window: GameWindow) {
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0F), 20F, Matrix4f(), player.rollParent, true)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,1F,1F), 20F, Matrix4f(), player.rollParent, true)
-        dirLight1 = DirectionalLight(Vector3f(0.8f,0.5f,0.1f),1F, Vector3f(0f,-1f,0f))
+        dirLight1 = DirectionalLight(Vector3f(1f,1f,1f),0.5F, Vector3f(0f,-1f,0f))
         spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(1F,1F, 1F), 120F, Matrix4f(), 20f,70f, null)
         spotLight1.setPosition(Vector3f(0f,10f,0f))
 
@@ -176,17 +182,7 @@ class Scene(private val window: GameWindow) {
         light1.translate(Vector3f(-5f,1f,0f))
         light2.translate(Vector3f(5f,1f,0f))
 
-        lightHandler = LightHandler()
-        lightHandler.addDirectionalLight(dirLight1)
-        lightHandler.addPointLight(light2)
-        lightHandler.addPointLight(light1)
-        lightHandler.addSpotLight(spotLight1)
-
         globalLightHandler.addDirectionalLight(dirLight1)
-//        globalLightHandler.addPointLight(light2)
-//        globalLightHandler.addPointLight(light1)
-//        globalLightHandler.addSpotLight(spotLight1)
-
 
         //Cameras
         followCam = TargetCamera(player,20f, 16f/9f, 0.1F, 1000.0F+35F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
@@ -214,7 +210,7 @@ class Scene(private val window: GameWindow) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         staticShader.use()
         cameraHandler.getActiveCamera().bind(staticShader)
-        globalLightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(0.0f))
+        globalLightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
 
         GL30.glDepthMask(false)
         importedSkySphere.render(staticShader)
@@ -230,7 +226,9 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
-        ground.renderList[0].material!!.movingV += dt.toFloat() * 10f
+
+
+        ground.renderList[0].material!!.movingV += dt * 0f
 
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()
@@ -243,6 +241,11 @@ class Scene(private val window: GameWindow) {
         }
         if(window.getKeyState(GLFW_KEY_D)){
             player.setMoveRight()
+        }
+
+        if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Shoot){
+            waitForButtonPress_Shoot = t + shootButtonDelay
+            player.setShoot()
         }
 
         if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_ToggleWeapon){

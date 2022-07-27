@@ -6,9 +6,9 @@ layout(location = 1) in vec2 TexCoord;
 layout(location = 2) in vec3 Normal;
 
 
-#define MAXPOINTLIGHTS 5
-#define MAXSPOTLIGHTS 5
-#define MAXDIRECTIONALLIGHTS 5
+#define MAXPOINTLIGHTS 26
+#define MAXSPOTLIGHTS 1
+#define MAXDIRECTIONALLIGHTS 1
 
 //vertex data to fragment shader
 out struct VertexDataStruct

@@ -1,8 +1,10 @@
 package cga.exercise.components.player
 
 import cga.exercise.components.geometry.Transformable
+import cga.exercise.components.projectile.PlayerProjectile
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.utility.*
+import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -25,11 +27,14 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private val rotationUpDownSpeed = Math.toRadians(160f)
     private val rotationLeftRightSpeed = Math.toRadians(160f)
 
+    var nextWeaponToShoot = 0
+
     var rollParent = Transformable(Matrix4f(), this)
 
     val playerPartsList : MutableList<PlayerPart>
+    val wingList : MutableList<PlayerWing>
 
-    private val body_Part : PlayerBody
+    private val body : PlayerBody
     private val wingOL : PlayerWing
     private val wingOR : PlayerWing
     private val wingUR : PlayerWing
@@ -40,19 +45,38 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     var moveLeft = false
     var moveRight = false
 
+    var shoot = false
+
+    val playerProjectileList = mutableListOf<PlayerProjectile>()
+
     init {
-        body_Part = PlayerBody(playerGeo,Matrix4f(),rollParent)
-        wingOL = PlayerWing(playerGeo,"OL",Matrix4f(),rollParent)
-        wingOR = PlayerWing(playerGeo,"OR",Matrix4f(),rollParent)
-        wingUR = PlayerWing(playerGeo,"UR",Matrix4f(),rollParent)
-        wingUL = PlayerWing(playerGeo,"UL",Matrix4f(),rollParent)
+        body = PlayerBody(playerGeo,Matrix4f(),rollParent)
+        wingOL = PlayerWing(playerGeo,WingType.OL,Matrix4f(),rollParent)
+        wingOR = PlayerWing(playerGeo,WingType.OR,Matrix4f(),rollParent)
+        wingUL = PlayerWing(playerGeo,WingType.UL,Matrix4f(),rollParent)
+        wingUR = PlayerWing(playerGeo,WingType.UR,Matrix4f(),rollParent)
         playerPartsList = mutableListOf(
-            body_Part, wingOL, wingOR, wingUR, wingUL
+            wingOL, wingOR, wingUR, wingUL, body
         )
+        wingList = mutableListOf(
+            wingOL,wingUR,wingUL,wingOR
+        )
+    }
+
+    fun setShoot(){shoot = true}
+    fun shoot(){
+        val pos = wingList[nextWeaponToShoot].getShotPos()
+
+        val newProjectile = PlayerProjectile(time,playerGeo.schuss.renderList, pos)
+        playerProjectileList.add(newProjectile)
+        nextWeaponToShoot = (nextWeaponToShoot+1) % wingList.size
+
+        println(playerProjectileList.size)
     }
 
     fun render(shaderProgram : ShaderProgram){
         for (each in playerPartsList) each.render(shaderProgram)
+        for (each in playerProjectileList) each.render(shaderProgram)
     }
 
     fun setDT (newDt : Float){
@@ -134,9 +158,13 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         setT(time)
 
         if (moveUp && !moveDown) moveUpDown(deltaTime, 1f)
+        moveUp = false
         if (moveDown && !moveUp) moveUpDown(deltaTime, -1f)
+        moveDown = false
         if (moveLeft && !moveRight) moveLeftRight(deltaTime, 1f)
+        moveLeft = false
         if (moveRight && !moveLeft) moveLeftRight(deltaTime, -1f)
+        moveRight = false
 
         if (!moveDown && !moveUp) {
             vertRotationReset(deltaTime)
@@ -145,12 +173,19 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             horizRotationReset(deltaTime)
         }
 
-        moveUp = false
-        moveDown = false
-        moveLeft = false
-        moveRight = false
-
         for (each in playerPartsList) each.update(deltaTime, time)
+        for (each in playerProjectileList) each.update(deltaTime, time)
+        if (shoot && wingList[nextWeaponToShoot].wingOut) shoot()
+        shoot = false
+
+        val tmp = mutableListOf<Int>()
+        playerProjectileList.forEachIndexed { index, element ->
+            if (element.shouldIdie){
+                tmp.add(index)
+                globalLightHandler.removePointLight(element.light)
+            }
+        }
+        for (each in tmp) playerProjectileList.removeAt(each)
     }
 
 
