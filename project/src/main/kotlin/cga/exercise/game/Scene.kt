@@ -5,6 +5,8 @@ import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
 import cga.exercise.components.collision.Collider
+import cga.exercise.components.collision.ColliderType
+import cga.exercise.components.collision.CollisionHandler
 import cga.exercise.components.geometry.*
 import cga.exercise.components.ground.Ground
 import cga.exercise.components.ground.GroundAniMode
@@ -20,8 +22,9 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
 
 val globalLightHandler = LightHandler(30,1,1)
+val globalCollisionHandler = CollisionHandler()
 
-/**
+        /**
  * Created by Fabian on 16.09.2017.
  */
 class Scene(private val window: GameWindow) {
@@ -50,6 +53,9 @@ class Scene(private val window: GameWindow) {
     private val spotLight1 : SpotLight
 
     private val dirLight1 : DirectionalLight
+
+    private val testCollision : Collider
+
 
     val buttonPressDelay = 0.5f
 
@@ -186,19 +192,18 @@ class Scene(private val window: GameWindow) {
         thirdPersonCam.rotate(-6F,0F,0F)
         cameraHandler.addCamera(thirdPersonCam)
 
-        topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f())
+        topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
         topCam.translate(Vector3f(0F,5F,0F))
         topCam.rotate(-90F,0F,0F)
-//        cameraHandler.addCamera(topCam)
+        cameraHandler.addCamera(topCam)
 
         botCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f())
         botCam.translate(Vector3f(0F,-5F,0F))
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
-        testCollision = Collider(1f,"White","Sphere")
-        testCollision.translate(Vector3f(0f,3f,3f))
-        collisionHandler.addEnemyProjectile(testCollision)
+        testCollision = Collider(ColliderType.ENEMYCOLLIDER,5f)
+        testCollision.translate(Vector3f(0f,5f,-14f))
     }
 
     fun render(dt: Float, t: Float) {
@@ -215,6 +220,8 @@ class Scene(private val window: GameWindow) {
             ground.render(baseShader)
 
             player.render(baseShader)
+            testCollision.render(baseShader)
+//            globalCollisionHandler.render(baseShader)
         }
         if(deferred){
 
@@ -226,11 +233,9 @@ class Scene(private val window: GameWindow) {
 
         ground.update(dt,t)
 
-        player.render(staticShader)
 
-        //Collision
-        collisionHandler.checkCollision()
-        collisionHandler.showCollision(staticShader)
+
+
 
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()
@@ -265,6 +270,8 @@ class Scene(private val window: GameWindow) {
         }
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
+        testCollision.update()
+        globalCollisionHandler.update()
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {

@@ -4,6 +4,7 @@ import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.projectile.PlayerProjectile
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.utility.*
+import cga.exercise.game.globalCollisionHandler
 import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f

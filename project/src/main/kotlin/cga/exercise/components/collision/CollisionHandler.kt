@@ -18,8 +18,8 @@ class CollisionHandler {
     private var allyProjectileList = mutableListOf<Collider>()
     private var wallList = mutableListOf<Collider>()
 
+    val colliderGeo : ColliderGeo = ColliderGeo()
 
-    private var allLists = listOf<List<Collider>>(enemyPartList,playerPartList,enemyProjectileList,allyProjectileList,wallList)
     private var allCollidedObjects = mutableListOf<Collider>()
 
     fun checkListsWith(list1: List<Collider>, list2: List<Collider>, collisionType : String = "Radius", message : String = ""){
@@ -33,58 +33,67 @@ class CollisionHandler {
                     allCollidedObjects.add(objectInList2)
                     objectInList2.collided = true
                 }else{
-                    objectInList1.collided = false
-                    objectInList2.collided = false
                 }
             }
         }
     }
 
     fun checkCollision(){
+
+        for (collider in allCollidedObjects) {
+            collider.collided = false
+        }
+
         allCollidedObjects.removeAll(allCollidedObjects)
 
         checkListsWith(allyProjectileList,enemyPartList,"Radius","Ally Projectile hit Enemy Part")
         checkListsWith(enemyProjectileList,playerPartList,"Radius","Enemy Projectile hit Enemy Part")
     }
 
-    fun showCollision(staticShader : ShaderProgram){
-        for (collider in allCollidedObjects){
-            collider.setCollidedMat()
-        }
-
-        for (List in allLists){
-            for (colliders in List){
-                colliders.showCollision(staticShader)
-                colliders.setStandardMat()
-            }
-        }
-    }
-
     fun addShipPart(shipPart: Collider){
         playerPartList.add(shipPart)
+    }
+
+    fun removeShipPart(shipPart: Collider){
+        playerPartList.remove(shipPart)
     }
 
     fun addEnemyPart(shipPart: Collider){
         enemyPartList.add(shipPart)
     }
 
+    fun removeEnemyPart(shipPart: Collider){
+        enemyPartList.remove(shipPart)
+    }
+
     fun addAllyProjectile(projectile: Collider){
         allyProjectileList.add(projectile)
+    }
+
+    fun removeAllyProjectile(projectile: Collider){
+        allyProjectileList.remove(projectile)
     }
 
     fun addEnemyProjectile(projectile: Collider){
         enemyProjectileList.add(projectile)
     }
 
-    fun addWall(wall: Collider){
-        wallList.add(wall)
+    fun removeEnemyProjectile(projectile: Collider){
+        enemyProjectileList.remove(projectile)
     }
+
+
+
 
     fun inRadiusOf(coordinate1 : Vector3f, range1 : Float, coordinate2 : Vector3f, range2 : Float): Boolean {
         if (coordinate1.sub(coordinate2).length() <= range1+range2 ){
             return true
         }
         return false
+    }
+
+    fun render(shaderProgram : ShaderProgram){
+        for (each in playerPartList) each.render(shaderProgram)
     }
 
     fun inRangeOf(coordinate1 : Vector3f, range1 : Float, coordinate2 : Vector3f, range2 : Float): Boolean {
@@ -101,4 +110,9 @@ class CollisionHandler {
         }
         return false
     }
+
+    fun update(){
+        checkCollision()
+    }
+
 }

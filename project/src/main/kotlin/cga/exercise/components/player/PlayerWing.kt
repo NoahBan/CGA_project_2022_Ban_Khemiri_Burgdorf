@@ -1,5 +1,7 @@
 package cga.exercise.components.player
 
+import cga.exercise.components.collision.Collider
+import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
@@ -39,6 +41,10 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     private var rotationDir = 1f
 
     private var weapon : PlayerWeapon
+
+    val collider1 : Collider
+    val colliderWeapon : Collider
+    val colliderList : List<Collider>
 
     init {
         when(wingType){
@@ -86,6 +92,14 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
             }
         }
         wingSetRotation(0f)
+        collider1 = Collider(ColliderType.PLAYERCOLLIDER,0.3f)
+        collider1.parent = wingGeo
+        collider1.setPosition(Vector3f(0.4f*rotationDir,0.5F,0f))
+
+        colliderWeapon = Collider(ColliderType.PLAYERCOLLIDER,0.1f)
+        colliderWeapon.parent = weapon.weaponEndGeo
+
+        colliderList = listOf(collider1,colliderWeapon)
     }
 
     fun getShotPos() : Matrix4f = weapon.getShotPos()
@@ -97,6 +111,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     override fun render(shaderProgram : ShaderProgram){
         wingGeo.render(shaderProgram)
         weapon.render(shaderProgram)
+        for (each in colliderList) each.render(shaderProgram)
     }
 
     fun wingSetRotation(t : Float){
@@ -137,6 +152,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
             wingSetRotation(wingRotationT)
         }
         weapon.update(deltaTime, time, wingOut)
+        for (each in colliderList) each.update()
     }
 
 }
