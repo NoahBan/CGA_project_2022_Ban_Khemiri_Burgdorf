@@ -67,6 +67,8 @@ class Scene(private val window: GameWindow) {
         //glFrontFace(GL_CCW); GLError.checkThrow()
         //glCullFace(GL_BACK); GLError.checkThrow()
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
         glEnable ( GL_CULL_FACE )
@@ -136,11 +138,14 @@ class Scene(private val window: GameWindow) {
 
         //Ground Geo
         val matGround = Material(
-            pureBlackTex,
+            pureWhiteTex,
             groundEmissionTex,
-            pureBlackTex,
+            pureWhiteTex,
             60.0f,
-            Vector2f(64.0f,64.0f)
+            Vector2f(64.0f,64.0f),
+            Vector3f(1f),
+            0.5f
+
         )
         val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
@@ -211,6 +216,7 @@ class Scene(private val window: GameWindow) {
     }
 
     fun render(dt: Float, t: Float) {
+
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         staticShader.use()
         cameraHandler.getActiveCamera().bind(staticShader)

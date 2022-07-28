@@ -29,6 +29,7 @@ struct MaterialStruct {
     vec2 tcMultiplier;
     float shininess;
     vec3 emitMultiplier;
+    float opacity;
     int movingMat;
     float movingU;
     float movingV;
@@ -193,7 +194,7 @@ void main(){
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);
-    color = vec4(result, 1.0);
-//    color = vec4(PointLights[0].lightColor, 1.0);
+    color = vec4(result, Material.opacity);
+//  color = vec4(PointLights[0].lightColor, 1.0);
 
 }
