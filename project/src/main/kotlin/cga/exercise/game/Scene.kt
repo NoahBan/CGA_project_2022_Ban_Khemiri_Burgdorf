@@ -4,6 +4,7 @@ import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
+import cga.exercise.components.collision.Collider
 import cga.exercise.components.geometry.*
 import cga.exercise.components.ground.Ground
 import cga.exercise.components.ground.GroundAniMode
@@ -195,6 +196,9 @@ class Scene(private val window: GameWindow) {
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
+        testCollision = Collider(1f,"White","Sphere")
+        testCollision.translate(Vector3f(0f,3f,3f))
+        collisionHandler.addEnemyProjectile(testCollision)
     }
 
     fun render(dt: Float, t: Float) {
@@ -220,8 +224,13 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
 
-
         ground.update(dt,t)
+
+        player.render(staticShader)
+
+        //Collision
+        collisionHandler.checkCollision()
+        collisionHandler.showCollision(staticShader)
 
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()

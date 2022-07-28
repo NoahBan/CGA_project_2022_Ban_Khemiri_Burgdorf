@@ -12,84 +12,72 @@ import org.joml.Vector4f
 class CollisionHandler {
 
     //CollisionModels
-    private var enemyList = mutableListOf<Renderable>()
-    var enemyCollision = mutableListOf<Vector4f>(
-        Vector4f(0f,0.7f,0f,1f))
+    private var enemyPartList = mutableListOf<Collider>()
+    private var playerPartList = mutableListOf<Collider>()
+    private var enemyProjectileList = mutableListOf<Collider>()
+    private var allyProjectileList = mutableListOf<Collider>()
+    private var wallList = mutableListOf<Collider>()
 
-    private var allyList = mutableListOf<Renderable>()
-    var allyCollision = mutableListOf<Vector4f>(
-        Vector4f(0f,0.7f,0f,10f))
 
-    private var enemyProjectileList = mutableListOf<Renderable>()
-    var enemyProjectileCollision = mutableListOf<Vector4f>(
-        Vector4f(0f,0f,0f,1f))
+    private var allLists = listOf<List<Collider>>(enemyPartList,playerPartList,enemyProjectileList,allyProjectileList,wallList)
+    private var allCollidedObjects = mutableListOf<Collider>()
 
-    private var allyProjectileList = mutableListOf<Renderable>()
-    var allyProjectileCollision = mutableListOf<Vector4f>(
-        Vector4f(0f,0f,0f,1f))
+    fun checkListsWith(list1: List<Collider>, list2: List<Collider>, collisionType : String = "Radius", message : String = ""){
 
-    private var allObjects = listOf(enemyList,allyList,enemyProjectileList,allyProjectileList)
-
-    fun checkCollision(): MutableList<Renderable> {
-        var collidedList = mutableListOf<Renderable>()
-
-        //Check Ally-Projectile hitting Enemy
-        for (projectile in allyProjectileList) {
-            for (enemy in enemyList){
-                for (projectileHitbox in allyProjectileCollision){
-                    for (enemyCollision in enemyCollision){
-                        if (inRadiusOf(projectile.getWorldPosition(),1f, Vector3f(enemy.getWorldPosition().x+enemyCollision[0],enemy.getWorldPosition().y+enemyCollision[1],enemy.getWorldPosition().z+enemyCollision[2]),enemyCollision[3])){
-                            println("Ally Projectile hit Enemy")
-                            collidedList.add(enemy)
-                            collidedList.add(projectile)
-                            break
-                        }else{
-                        }
-                    }
+        for (objectInList1 in list1){
+            for (objectInList2 in list2){
+                if (inRadiusOf(objectInList1.getWorldPosition(),objectInList1.radius,objectInList2.getWorldPosition(),objectInList2.radius)){
+                    println(message)
+                    allCollidedObjects.add(objectInList1)
+                    objectInList1.collided = true
+                    allCollidedObjects.add(objectInList2)
+                    objectInList2.collided = true
+                }else{
+                    objectInList1.collided = false
+                    objectInList2.collided = false
                 }
             }
         }
-        //Check Enemy-Projectile hitting Ally
-        for (projectile in enemyProjectileList) {
-            for (ally in allyList){
-                for (projectileHitbox in enemyProjectileCollision){
-                    for (allyCollision in allyCollision){
-                        if (inRadiusOf(projectile.getWorldPosition(),1f, Vector3f(ally.getWorldPosition().x+allyCollision[0],ally.getWorldPosition().y+allyCollision[1],ally.getWorldPosition().z+allyCollision[2]),allyCollision[3])){
-                            println("Enemy Projectile hit Ally")
-                            collidedList.add(ally)
-                            collidedList.add(projectile)
-                            break
-                        }else{
-                        }
-                    }
-                }
+    }
+
+    fun checkCollision(){
+        allCollidedObjects.removeAll(allCollidedObjects)
+
+        checkListsWith(allyProjectileList,enemyPartList,"Radius","Ally Projectile hit Enemy Part")
+        checkListsWith(enemyProjectileList,playerPartList,"Radius","Enemy Projectile hit Enemy Part")
+    }
+
+    fun showCollision(staticShader : ShaderProgram){
+        for (collider in allCollidedObjects){
+            collider.setCollidedMat()
+        }
+
+        for (List in allLists){
+            for (colliders in List){
+                colliders.showCollision(staticShader)
+                colliders.setStandardMat()
             }
         }
-        return collidedList
     }
 
-    fun addAlly(ally: Renderable){
-        allyList.add(ally)
+    fun addShipPart(shipPart: Collider){
+        playerPartList.add(shipPart)
     }
 
-    fun addEnemy(enemy: Renderable){
-        enemyList.add(enemy)
+    fun addEnemyPart(shipPart: Collider){
+        enemyPartList.add(shipPart)
     }
 
-    fun addAllyProjectile(projectile: Renderable){
+    fun addAllyProjectile(projectile: Collider){
         allyProjectileList.add(projectile)
     }
 
-    fun addEnemyProjectile(projectile: Renderable){
+    fun addEnemyProjectile(projectile: Collider){
         enemyProjectileList.add(projectile)
     }
 
-    fun inRangeOf(coordinate1 : Float, range1 : Float, coordinate2 : Float, range2 : Float): Boolean {
-        if ((coordinate1-range1 <= coordinate2+range2 && coordinate1-range1 >= coordinate2-range2) ||
-            (coordinate1+range1 >= coordinate2-range2 && coordinate1+range1 <= coordinate2+range2)) {
-            return true
-        }
-        return false
+    fun addWall(wall: Collider){
+        wallList.add(wall)
     }
 
     fun inRadiusOf(coordinate1 : Vector3f, range1 : Float, coordinate2 : Vector3f, range2 : Float): Boolean {
@@ -99,40 +87,18 @@ class CollisionHandler {
         return false
     }
 
-    fun showCollision(staticShader : ShaderProgram, hitBoxObject: Renderable){
+    fun inRangeOf(coordinate1 : Vector3f, range1 : Float, coordinate2 : Vector3f, range2 : Float): Boolean {
 
-        for (list in allObjects){
-            for (ally in allyList){
-                for (Vec in allyCollision){
-                    hitBoxObject.scaling(Vector3f(Vec[3],Vec[3],Vec[3]))
-                    hitBoxObject.translate(Vector3f(ally.getWorldPosition().x+Vec[0],ally.getWorldPosition().y+Vec[1],ally.getWorldPosition().z+Vec[2]))
-                    hitBoxObject.render(staticShader)
+        if ((coordinate1.x-range1 <= coordinate2.x+range2 && coordinate1.x-range1 >= coordinate2.x-range2) ||
+            (coordinate1.x+range1 >= coordinate2.x-range2 && coordinate1.x+range1 <= coordinate2.x+range2)) {
+            if ((coordinate1.y-range1 <= coordinate2.y+range2 && coordinate1.y-range1 >= coordinate2.y-range2) ||
+                (coordinate1.y+range1 >= coordinate2.y-range2 && coordinate1.y+range1 <= coordinate2.y+range2)){
+                if ((coordinate1.z-range1 <= coordinate2.z+range2 && coordinate1.z-range1 >= coordinate2.z-range2) ||
+                    (coordinate1.z+range1 >= coordinate2.z-range2 && coordinate1.z+range1 <= coordinate2.z+range2)){
+                    return true
                 }
             }
         }
-
-        for (enemy in enemyList){
-            for (Vec in enemyCollision){
-                hitBoxObject.scaling(Vector3f(Vec[3],Vec[3],Vec[3]))
-                hitBoxObject.setPosition(Vector3f(enemy.getWorldPosition().x+Vec[0],enemy.getWorldPosition().y+Vec[1],enemy.getWorldPosition().z+Vec[2]))
-                hitBoxObject.render(staticShader)
-            }
-        }
-
-        for (projectile in enemyProjectileList){
-            for (Vec in allyProjectileCollision){
-                hitBoxObject.scaling(Vector3f(Vec[3],Vec[3],Vec[3]))
-                hitBoxObject.setPosition(Vector3f(projectile.getWorldPosition().x+Vec[0],projectile.getWorldPosition().y+Vec[1],projectile.getWorldPosition().z+Vec[2]))
-                hitBoxObject.render(staticShader)
-            }
-        }
-
-        for (projectile in allyProjectileList){
-            for (Vec in enemyProjectileCollision){
-                hitBoxObject.scaling(Vector3f(Vec[3],Vec[3],Vec[3]))
-                hitBoxObject.setPosition(Vector3f(projectile.getWorldPosition().x+Vec[0],projectile.getWorldPosition().y+Vec[1],projectile.getWorldPosition().z+Vec[2]))
-                hitBoxObject.render(staticShader)
-            }
-        }
+        return false
     }
 }
