@@ -1,11 +1,13 @@
 package cga.exercise.components.player
 
+import cga.exercise.components.collision.Collider
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.utility.clampf
 import cga.exercise.components.utility.lerpf
 import cga.exercise.components.utility.setEuler
+import cga.exercise.game.collisionHandler
 import org.joml.Math
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -33,7 +35,11 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : String, modelMatrix : Matrix4
 
     private lateinit var weapon : PlayerWeapon
 
+    var collider1 = Collider(colorType = "Blue", radius = 0.5f)
+    var collisionList = mutableListOf<Collider>()
+
     init {
+
         if (wingType == "OL"){
             rotationDir = -1f
             weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
@@ -77,6 +83,14 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : String, modelMatrix : Matrix4
             weapon.setPosition(Vector3f(74f*0.03f,-30f*0.03f,-23f*0.03f))
         }
         wingSetRotation(0f)
+
+        collider1.translate(Vector3f(0f,0f,1f))
+        collisionList.add(collider1)
+        collider1.parent = wingGeo
+
+        for (hitbox in collisionList){
+            collisionHandler.addShipPart(hitbox)
+        }
     }
 
     fun toggleWingMode(){

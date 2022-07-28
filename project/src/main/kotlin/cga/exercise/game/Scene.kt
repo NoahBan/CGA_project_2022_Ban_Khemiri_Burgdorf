@@ -4,6 +4,7 @@ import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
+import cga.exercise.components.collision.Collider
 import cga.exercise.components.geometry.*
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
@@ -53,6 +54,8 @@ class Scene(private val window: GameWindow) {
     val buttonPressDelay = 0.5f
     var waitForButtonPress_CameraSwitch = 0f
     var waitForButtonPress_ToggleWeapon = 0f
+    
+    val testCollision : Collider
 
 
     var xposBefore : Double = 0.0
@@ -208,6 +211,9 @@ class Scene(private val window: GameWindow) {
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
+        testCollision = Collider(1f,"White","Sphere")
+        testCollision.translate(Vector3f(0f,3f,3f))
+        collisionHandler.addEnemyProjectile(testCollision)
     }
 
     fun render(dt: Float, t: Float) {
@@ -227,6 +233,11 @@ class Scene(private val window: GameWindow) {
         ground.render(staticShader)
 
         player.render(staticShader)
+
+        //Collision
+        collisionHandler.checkCollision()
+        collisionHandler.showCollision(staticShader)
+        //player.setRotation(90f,0f,0f)
     }
 
     fun update(dt: Float, t: Float) {

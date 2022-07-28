@@ -17,6 +17,8 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.glClearColor
 import org.lwjgl.opengl.GL30
 
+var collisionHandler : CollisionHandler = CollisionHandler()
+
 class Scene2(private val window: GameWindow) {
 
     private val staticShader : ShaderProgram
@@ -29,7 +31,6 @@ class Scene2(private val window: GameWindow) {
     private val importedCollisioSphere1 : Renderable
 
     private val sceneCam : Camera
-    private val collisionHandler : CollisionHandler
     var xposBefore : Double = 0.0
 
     //scene setup
@@ -124,11 +125,6 @@ class Scene2(private val window: GameWindow) {
         importedEnemyBike.translate(Vector3f(-5f,0f,-5f))
         importedEnemyBike.rotate(0f,90f,0f)
 
-        //Collision Setup
-        collisionHandler = CollisionHandler()
-        collisionHandler.addAlly(importedBike)
-        collisionHandler.addEnemy(importedEnemyBike)
-        collisionHandler.addEnemyProjectile(importedSphere)
     }
 
     fun render(dt: Float, t: Float) {
@@ -143,8 +139,6 @@ class Scene2(private val window: GameWindow) {
         importedEnemyBike.render(staticShader)
         importedGround.render(staticShader)
 
-        collisionHandler.checkCollision()
-        collisionHandler.showCollision(staticShader, importedCollisioSphere1)
     }
 
     fun update(dt: Float, t: Float) {
