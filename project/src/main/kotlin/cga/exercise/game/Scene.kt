@@ -5,12 +5,13 @@ import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
 import cga.exercise.components.geometry.*
+import cga.exercise.components.ground.Ground
+import cga.exercise.components.ground.GroundAniMode
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
-import cga.framework.ModelLoader
 import cga.framework.OBJLoader
 import org.joml.*
 import org.lwjgl.glfw.GLFW.*
@@ -24,9 +25,9 @@ val globalLightHandler = LightHandler(30,1,1)
  */
 class Scene(private val window: GameWindow) {
 
-    private val staticShader : ShaderProgram
+    private val baseShader : ShaderProgram
 
-    private val ground : Renderable
+    private val ground : Ground
 
     private val player : PlayerObject
 
@@ -50,17 +51,21 @@ class Scene(private val window: GameWindow) {
     private val dirLight1 : DirectionalLight
 
     val buttonPressDelay = 0.5f
-    val shootButtonDelay = 0.125f
-    var waitForButtonPress_CameraSwitch = 0f
-    var waitForButtonPress_ToggleWeapon = 0f
-    var waitForButtonPress_Shoot = 0f
+
+    var waitForButtonPress_N_M = 0f
+    var waitForButtonPress_G = 0f
+
+    val buttonPressDelay_Space = 0.125f
+    var waitForButtonPress_Space = 0f
+
+    var deferred = false
 
 
     var xposBefore : Double = 0.0
 
     //scene setup
     init {
-        staticShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
+        baseShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -135,26 +140,12 @@ class Scene(private val window: GameWindow) {
         val importedSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matSphere)
         val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
 
-        //Ground Geo
-        val matGround = Material(
-            pureBlackTex,
-            groundEmissionTex,
-            pureBlackTex,
-            60.0f,
-            Vector2f(64.0f,64.0f)
-        )
+
 //        val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
 //        val importedGroundData  = importObjGround.objects[0].meshes[0]
 //        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
-        ground = ModelLoader.loadModel("assets/models/Ground/Ground.obj",
-            Math.toRadians(0f),
-            Math.toRadians(0f),
-            Math.toRadians(0f)
-        )!!
-        ground.renderList[0].material!!.tcMultiplier = Vector2f(2000f,2000f)
-//        ground.scale(Vector3f(200f,10f,800f))
-        ground.setPosition(Vector3f(0F,-14010F,0F))
-//        ground.rotate(0f,90f,0f)
+
+        ground = Ground(GroundAniMode.ROTATION)
 
         //Skybox Geo
         val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
@@ -207,28 +198,30 @@ class Scene(private val window: GameWindow) {
     }
 
     fun render(dt: Float, t: Float) {
-        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-        staticShader.use()
-        cameraHandler.getActiveCamera().bind(staticShader)
-        globalLightHandler.bindLights(staticShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+        if(!deferred) {
+            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+            baseShader.use()
+            cameraHandler.getActiveCamera().bind(baseShader)
+            globalLightHandler.bindLights(baseShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
 
-        GL30.glDepthMask(false)
-        importedSkySphere.render(staticShader)
-        GL30.glDepthMask(true)
+            GL30.glDepthMask(false)
+            importedSkySphere.render(baseShader)
+            GL30.glDepthMask(true)
 
-//        importedSphere.render(staticShader)
-//        importedLightSphere.render(staticShader)
-//        importedLightSphere2.render(staticShader)
-//        importedLightSphere3.render(staticShader)
-        ground.render(staticShader)
+            ground.render(baseShader)
 
-        player.render(staticShader)
+            player.render(baseShader)
+        }
+        if(deferred){
+
+        }
     }
+
 
     fun update(dt: Float, t: Float) {
 
 
-        ground.renderList[0].material!!.movingV += dt * 0f
+        ground.update(dt,t)
 
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()
@@ -243,22 +236,22 @@ class Scene(private val window: GameWindow) {
             player.setMoveRight()
         }
 
-        if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Shoot){
-            waitForButtonPress_Shoot = t + shootButtonDelay
+        if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Space){
+            waitForButtonPress_Space = t + buttonPressDelay_Space
             player.setShoot()
         }
 
-        if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_ToggleWeapon){
-            waitForButtonPress_ToggleWeapon = t + buttonPressDelay
+        if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_G){
+            waitForButtonPress_G = t + buttonPressDelay
             player.toggleWingMode()
         }
 
-        if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress_CameraSwitch){
-            waitForButtonPress_CameraSwitch = t + buttonPressDelay
+        if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress_N_M){
+            waitForButtonPress_N_M = t + buttonPressDelay
             cameraHandler.prevCam()
         }
-        if(window.getKeyState(GLFW_KEY_M) && t >= waitForButtonPress_CameraSwitch){
-            waitForButtonPress_CameraSwitch = t + buttonPressDelay
+        if(window.getKeyState(GLFW_KEY_M) && t >= waitForButtonPress_N_M){
+            waitForButtonPress_N_M = t + buttonPressDelay
             cameraHandler.nextCam()
         }
         player.update(dt,t)

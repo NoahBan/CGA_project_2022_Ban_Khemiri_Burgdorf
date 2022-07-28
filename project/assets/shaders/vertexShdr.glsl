@@ -86,12 +86,12 @@ void main(){
 
     vec4 vertexpos = View_matrix * Model_matrix * vec4(Vertex_Position, 1.0f);
     //point light direction
-    for (int i = 0 ; i < MAXPOINTLIGHTS ; i++)
+    for (int i = 0 ; i < PointLightsLength ; i++)
     {
         PointToPointlightDir[i] = (PointLights[i].lightPos - vertexpos.xyz);
     }
 
-    for (int j = 0 ; j < MAXSPOTLIGHTS ; j++)
+    for (int j = 0 ; j < SpotLightsLength ; j++)
     {
         PointToSpotlightDir[j] = (SpotLights[j].lightPos - vertexpos.xyz);
     }

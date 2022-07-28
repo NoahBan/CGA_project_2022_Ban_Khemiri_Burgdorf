@@ -13,7 +13,8 @@ class Mesh(
     indexdata: IntArray,
     attributes: Array<VertexAttribute>,
     private val normalized: Boolean = false,
-    var material : Material? = null
+    var material : Material? = null,
+    var drawPrimitivesAs : Int = GL30.GL_TRIANGLES
     ) {
 
     //private data
@@ -52,7 +53,7 @@ class Mesh(
     fun render() {
         // todo: place your code here
         GL30.glBindVertexArray(vao)
-        GL30.glDrawElements(GL30.GL_TRIANGLES, indexcount, GL30.GL_UNSIGNED_INT, 0)
+        GL30.glDrawElements(drawPrimitivesAs, indexcount, GL30.GL_UNSIGNED_INT, 0)
         GL30.glBindVertexArray(0)
         // call the rendering method every frame
     }

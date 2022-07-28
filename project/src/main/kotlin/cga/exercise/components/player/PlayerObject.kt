@@ -14,7 +14,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private var deltaTime = 0f
     private var time = 0f
 
-    private val playerGeo = PlayerGeo()
+    private val playerGeo : PlayerGeo
 
     private val maxUpDownRotation = Math.toRadians(30f)
     private val maxLeftRightRotation = Math.toRadians(70f)
@@ -50,6 +50,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     val playerProjectileList = mutableListOf<PlayerProjectile>()
 
     init {
+        playerGeo = PlayerGeo()
+
         body = PlayerBody(playerGeo,Matrix4f(),rollParent)
         wingOL = PlayerWing(playerGeo,WingType.OL,Matrix4f(),rollParent)
         wingOR = PlayerWing(playerGeo,WingType.OR,Matrix4f(),rollParent)

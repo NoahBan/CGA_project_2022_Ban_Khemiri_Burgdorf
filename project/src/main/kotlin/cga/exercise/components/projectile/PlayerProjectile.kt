@@ -12,7 +12,7 @@ import cga.exercise.game.globalLightHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
-class PlayerProjectile(creationTime : Float, renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null) : Renderable (renderList, modelMatrix, parent){
+class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null) : Renderable (renderList, modelMatrix, parent){
 
     val lifeTime = 2.5f
     val deathTime : Float
@@ -33,7 +33,7 @@ class PlayerProjectile(creationTime : Float, renderList : MutableList<Mesh>, mod
     fun update(deltaTime: Float, time: Float){
         translate(Vector3f(0f,0f, -speed))
         light.setPosition(this.getPosition())
-        if(deathTime-time < 2f) light.intensity -= deltaTime * 3
+        if (deathTime-time < 2f) light.intensity -= deltaTime * 3
         if (deathTime <= time) shouldIdie = true
 //        if (getPosition()[1] < -7f) shouldIdie = true
     }

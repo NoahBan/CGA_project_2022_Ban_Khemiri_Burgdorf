@@ -17,24 +17,15 @@ class Material(var diff: Texture2D,
                ){
 
     fun bind(shaderProgram: ShaderProgram) {
-        // todo 3.2
-
-
         diff.bind(0)
         shaderProgram.setUniform("Material.texdDiff", 0)
-
-
         emit.bind(1)
         shaderProgram.setUniform("Material.texEmit", 1)
-
-
         specular.bind(2)
         shaderProgram.setUniform("Material.texSpec", 2)
-
         shaderProgram.setUniform("Material.tcMultiplier", tcMultiplier)
         shaderProgram.setUniform("Material.shininess", shininess)
         shaderProgram.setUniform("Material.emitMultiplier", emitMultiplier)
-
         if (movingU == 0f && movingV == 0f)  shaderProgram.setUniform("Material.movingMat", 0)
         else shaderProgram.setUniform("Material.movingMat", 1)
         shaderProgram.setUniform("Material.movingU", movingU)
