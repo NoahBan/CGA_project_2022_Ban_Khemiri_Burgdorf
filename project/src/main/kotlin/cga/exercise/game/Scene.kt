@@ -144,7 +144,7 @@ class Scene(private val window: GameWindow) {
             60.0f,
             Vector2f(64.0f,64.0f),
             Vector3f(1f),
-            0.5f
+            1f
 
         )
         val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
