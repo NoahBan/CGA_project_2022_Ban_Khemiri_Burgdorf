@@ -19,7 +19,7 @@ enum class ColliderType (val colliderType: Int){
     ENEMYPROJECTILECOLLIDER(3)
 }
 
-class Collider (val colliderType : ColliderType,var radius : Float = 1f, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable ?= null) : Transformable(modelMatrix, parent){
+class Collider (colliderType : ColliderType,var radius : Float = 1f, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable ?= null) : Transformable(modelMatrix, parent){
 
     var collisionObject : Renderable
 

@@ -4,9 +4,8 @@ import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
-import cga.exercise.components.collision.Collider
-import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.collision.CollisionHandler
+import cga.exercise.components.enemy.EnemyHandler
 import cga.exercise.components.geometry.*
 import cga.exercise.components.ground.Ground
 import cga.exercise.components.ground.GroundAniMode
@@ -54,7 +53,7 @@ class Scene(private val window: GameWindow) {
 
     private val dirLight1 : DirectionalLight
 
-    private val testCollision : Collider
+    private val enemyHandler : EnemyHandler
 
 
     val buttonPressDelay = 0.5f
@@ -66,6 +65,11 @@ class Scene(private val window: GameWindow) {
     var waitForButtonPress_Space = 0f
 
     var deferred = false
+
+    var testBool = true
+            var testBool1 = true
+            var testBool2 = true
+
 
 
     var xposBefore : Double = 0.0
@@ -195,15 +199,17 @@ class Scene(private val window: GameWindow) {
         topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
         topCam.translate(Vector3f(0F,5F,0F))
         topCam.rotate(-90F,0F,0F)
-        cameraHandler.addCamera(topCam)
+//        cameraHandler.addCamera(topCam)
 
         botCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f())
         botCam.translate(Vector3f(0F,-5F,0F))
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
-        testCollision = Collider(ColliderType.ENEMYCOLLIDER,5f)
-        testCollision.translate(Vector3f(0f,5f,-14f))
+//        testCollision = Collider(ColliderType.ENEMYCOLLIDER,5f)
+//        testCollision.translate(Vector3f(0f,5f,-14f))
+
+        enemyHandler = EnemyHandler()
     }
 
     fun render(dt: Float, t: Float) {
@@ -220,8 +226,9 @@ class Scene(private val window: GameWindow) {
             ground.render(baseShader)
 
             player.render(baseShader)
-            testCollision.render(baseShader)
+//            testCollision.render(baseShader)
 //            globalCollisionHandler.render(baseShader)
+            enemyHandler.render(baseShader)
         }
         if(deferred){
 
@@ -231,11 +238,25 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
 
+        if (testBool && t >= 3f){
+            println("create")
+            enemyHandler.createEnemy()
+            testBool = false
+        }
+
+        if (testBool1 && t >= 9f){
+            println("create")
+            enemyHandler.createEnemy()
+            testBool1 = false
+        }
+
+        if (testBool2 && t >= 15f){
+            println("create")
+            enemyHandler.createEnemy()
+            testBool2 = false
+        }
+
         ground.update(dt,t)
-
-
-
-
 
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()
@@ -270,7 +291,7 @@ class Scene(private val window: GameWindow) {
         }
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
-        testCollision.update()
+        enemyHandler.update(dt,t)
         globalCollisionHandler.update()
     }
 

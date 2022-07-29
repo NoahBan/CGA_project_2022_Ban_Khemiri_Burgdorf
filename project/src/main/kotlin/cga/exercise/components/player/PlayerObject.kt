@@ -74,7 +74,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         playerProjectileList.add(newProjectile)
         nextWeaponToShoot = (nextWeaponToShoot+1) % wingList.size
 
-        println(playerProjectileList.size)
+//        println(playerProjectileList.size)
     }
 
     fun render(shaderProgram : ShaderProgram){
@@ -188,7 +188,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
                 globalLightHandler.removePointLight(element.light)
             }
         }
-        for (each in tmp) playerProjectileList.removeAt(each)
+        for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
     }
 
 

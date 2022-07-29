@@ -5,6 +5,19 @@ layout(location = 0) in vec3 Vertex_Position;
 layout(location = 1) in vec2 TexCoord;
 layout(location = 2) in vec3 Normal;
 
+struct MaterialStruct {
+    sampler2D texEmit;
+    sampler2D texDiff;
+    sampler2D texSpec;
+    vec2 tcMultiplier;
+    float shininess;
+    vec3 emitMultiplier;
+    int movingMat;
+    float movingU;
+    float movingV;
+};
+uniform MaterialStruct Material;
+
 
 #define MAXPOINTLIGHTS 26
 #define MAXSPOTLIGHTS 1
