@@ -2,6 +2,7 @@ package cga.exercise.components.geometry
 
 import org.joml.Math
 import org.joml.Matrix4f
+import org.joml.Vector3d
 import org.joml.Vector3f
 
 open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var parent: Transformable? = null) {

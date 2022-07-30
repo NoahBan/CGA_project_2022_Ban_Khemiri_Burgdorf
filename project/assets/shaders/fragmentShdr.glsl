@@ -29,6 +29,8 @@ struct MaterialStruct {
     vec2 tcMultiplier;
     float shininess;
     vec3 emitMultiplier;
+    float opacityMultiplier;
+    int flatOpacity;
     float opacity;
     int movingMat;
     float movingU;
@@ -176,6 +178,9 @@ void main(){
     vec3 specular = vec3(0);
     vec3 emission = matEmissive * Material.emitMultiplier;
     vec3 ambient = AmbientColor * matDiffuse;
+    vec4 colorAlpha;
+    float alpha = texture(Material.texDiff,texCoord).a;
+    float alphaMultiplier = Material.opacityMultiplier;
 
     //add point lights
 //    calcLightDiff(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 vertexNormal, vec3 matDiffuse)
@@ -194,7 +199,16 @@ void main(){
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);
-    color = vec4(result, Material.opacity);
+
+
+
+    if(Material.flatOpacity == 1){
+        colorAlpha = vec4(result,Material.opacity);
+    }else{
+        colorAlpha = vec4(result,alpha * alphaMultiplier);
+    }
+
+    color = colorAlpha;
 //  color = vec4(PointLights[0].lightColor, 1.0);
 
 }

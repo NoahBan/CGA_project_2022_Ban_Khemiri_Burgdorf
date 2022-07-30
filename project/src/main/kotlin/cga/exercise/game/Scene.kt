@@ -4,6 +4,7 @@ import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
+import cga.exercise.components.effects.ParticleSystem
 import cga.exercise.components.geometry.*
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
@@ -17,6 +18,7 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
 
 val globalLightHandler = LightHandler()
+val cameraHandler = CameraHandler()
 
 /**
  * Created by Fabian on 16.09.2017.
@@ -34,8 +36,6 @@ class Scene(private val window: GameWindow) {
     private val importedLightSphere3 : Renderable
     private val importedSkySphere : Renderable
 
-
-    private val cameraHandler = CameraHandler()
     private val followCam : TargetCamera
     private val thirdPersonCam : Camera
     private val topCam : Camera
@@ -54,6 +54,7 @@ class Scene(private val window: GameWindow) {
     var waitForButtonPress_CameraSwitch = 0f
     var waitForButtonPress_ToggleWeapon = 0f
 
+    val particleSystem1 : ParticleSystem
 
     var xposBefore : Double = 0.0
 
@@ -97,7 +98,7 @@ class Scene(private val window: GameWindow) {
         pureWhiteTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Ground Texture
-        val groundEmissionTex = Texture2D("assets/models/Ground/ground_emit.png", true)
+        val groundEmissionTex = Texture2D("assets/models/Ground/ground_emit2.png", true)
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Sphere Texture
@@ -138,14 +139,14 @@ class Scene(private val window: GameWindow) {
 
         //Ground Geo
         val matGround = Material(
-            pureWhiteTex,
             groundEmissionTex,
+            pureBlackTex,
             pureWhiteTex,
             60.0f,
             Vector2f(64.0f,64.0f),
             Vector3f(1f),
-            0.5f
-
+            1f,
+            0.95f
         )
         val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
@@ -213,6 +214,15 @@ class Scene(private val window: GameWindow) {
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
+
+        val matMaterial = Material(
+            pureWhiteTex,
+            pureWhiteTex,
+            pureWhiteTex
+        )
+
+        particleSystem1 = ParticleSystem(0f,0f,-10f,matMaterial)
+
     }
 
     fun render(dt: Float, t: Float) {
@@ -233,6 +243,8 @@ class Scene(private val window: GameWindow) {
         ground.render(staticShader)
 
         player.render(staticShader)
+
+        particleSystem1.render(staticShader)
     }
 
     fun update(dt: Float, t: Float) {
@@ -266,6 +278,8 @@ class Scene(private val window: GameWindow) {
         }
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
+
+        particleSystem1.update()
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
