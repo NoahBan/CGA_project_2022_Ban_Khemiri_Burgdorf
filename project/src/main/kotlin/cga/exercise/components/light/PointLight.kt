@@ -23,7 +23,7 @@ open class PointLight (
         var lightVisible : Boolean = false)
         : Transformable(modelMatrix, parent) {
 
-        val lightSphere : Renderable
+//        val lightSphere : Renderable
 
         init {
                 val posAndTexcAndNormPos = VertexAttribute (3, GL30.GL_FLOAT,8 * 4, 0)
@@ -41,11 +41,11 @@ open class PointLight (
                         pureWhiteTex,
                         pureBlackTex
                 )
-                val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
-                val importedSphereData  = importObjSphere.objects[0].meshes[0]
-                val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
-                lightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
-                lightSphere.scale(Vector3f(0.05F))
+//                val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
+//                val importedSphereData  = importObjSphere.objects[0].meshes[0]
+//                val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
+//                lightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
+//                lightSphere.scale(Vector3f(0.05F))
         }
 
 fun getPremultLightPos(viewMatrix : Matrix4f) : Vector3f {

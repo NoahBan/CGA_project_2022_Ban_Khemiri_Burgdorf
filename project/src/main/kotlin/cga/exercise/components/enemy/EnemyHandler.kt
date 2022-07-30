@@ -4,7 +4,6 @@ import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 //enum class ENEMIES(val enemy : Enemy){
 //    SPHERE(EnemySphere(this, EnemyGeo())),
@@ -27,13 +26,13 @@ class EnemyHandler {
     }
 
     fun createEnemy(){
-        val randomType = Random.nextInt(0,2)
+        val randomType = 0//Random.nextInt(0,2)
         var pos = Matrix4f()
         val randomX = Random.nextInt(-10*10,10*10)/10f
         val randomY = Random.nextInt(-10*10,10*10)/10f
         pos.setTranslation(Vector3f(randomX, randomY, -10f))
         when (randomType){
-            0 -> {addEnemy(EnemySphere(this, enemyGeo, pos))}
+            0 -> {addEnemy(EnemyAsteroid(this, enemyGeo, pos))}
             1 -> {addEnemy(EnemyShuttle(this, enemyGeo, pos))}
         }
     }
@@ -72,6 +71,9 @@ class EnemyHandler {
             if (element.shouldIdie) tmp.add(index)
         }
         for (each in tmp.asReversed()) destroy(each)
+        println(enemyList.size)
     }
+
+
 
 }

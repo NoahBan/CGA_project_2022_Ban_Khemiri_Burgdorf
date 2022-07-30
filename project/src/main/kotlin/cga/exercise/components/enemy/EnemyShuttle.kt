@@ -20,18 +20,18 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     val movementCurve : BezierCurve
 
     init {
-        for (each in enemyGeo.shuttle.renderList) thisGeo.renderList.add(each)
+        thisGeo.renderList = enemyGeo.shuttle.renderList
         collider1 = Collider(ColliderType.ENEMYCOLLIDER, 3f, Matrix4f(), this)
         addCollider(collider1)
 
         var pos = Matrix4f()
-        val randomStartX = Random.nextInt(-15*1000,15*1000)/1000f
-        val randomStartY = Random.nextInt(-7*1000,10*1000)/1000f
+        val randomStartX = Random.nextInt(-15,15).toFloat()
+        val randomStartY = Random.nextInt(-7,10).toFloat()
 
-        val randomMidY = Random.nextInt(-7*1000,10*10000)/1000f
+        val randomMidY = Random.nextInt(-7,10).toFloat()
 
-        val randomEndX = Random.nextInt(-12*1000,125*1000)/1000f
-        val randomEndY = Random.nextInt(-7*1000,8*1000)/1000f
+        val randomEndX = Random.nextInt(-12,125).toFloat()
+        val randomEndY = Random.nextInt(-7,8).toFloat()
 
 //        private val maxUp = 8f
 //        private val maxRight = 12.5f
@@ -40,7 +40,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
         movementCurve = BezierCurve(
             Vector3f(randomStartX, randomStartY, -1000f),
             Vector3f(-randomStartX*1.5f, randomMidY, -500f),
-            Vector3f(-randomStartX, randomEndY, 5f)
+            Vector3f(randomEndX, randomEndY, 5f)
         )
 
         this.setModelMatrix(movementCurve.calcPosAndRota(posOnCurve))
@@ -54,7 +54,6 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
         }
         if (absturz) translate(Vector3f(0f, 0f,-1f))
         if(posOnCurve == 1f){
-            println("stirb!")
             shouldIdie = true
             for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
         }

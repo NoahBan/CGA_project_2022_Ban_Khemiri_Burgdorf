@@ -34,9 +34,6 @@ class Scene(private val window: GameWindow) {
 
     private val player : PlayerObject
 
-    private val importedLightSphere : Renderable
-    private val importedLightSphere2 : Renderable
-    private val importedLightSphere3 : Renderable
     private val importedSkySphere : Renderable
 
 
@@ -139,21 +136,11 @@ class Scene(private val window: GameWindow) {
 
         //Geometry
 
-        //Sphere Geo
-        val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
-        val importedSphereData  = importObjSphere.objects[0].meshes[0]
-        val importedSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matSphere)
-        val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
-
-
-//        val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
-//        val importedGroundData  = importObjGround.objects[0].meshes[0]
-//        val importedGroundMesh = Mesh (importedGroundData.vertexData, importedGroundData.indexData, posAndTexcAndNormAttrArray,false, matGround)
 
         ground = Ground(GroundAniMode.ROTATION)
 
         //Skybox Geo
-        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/SkySphere.obj", true)
+        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/sky/SkySphere.obj", true)
         val importObjKarimSkyboxData  = importObjKarimSkybox.objects[0].meshes[0]
         val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
 
@@ -166,14 +153,6 @@ class Scene(private val window: GameWindow) {
         spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(1F,1F, 1F), 120F, Matrix4f(), 20f,70f, null)
         spotLight1.setPosition(Vector3f(0f,10f,0f))
 
-        importedLightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), light1)
-        importedLightSphere2 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), light2)
-        importedLightSphere3 = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), spotLight1)
-
-
-        importedLightSphere.scale(Vector3f(0.05F))
-        importedLightSphere2.scale(Vector3f(0.05F))
-        importedLightSphere3.scale(Vector3f(0.05F))
 
         light1.translate(Vector3f(-5f,1f,0f))
         light2.translate(Vector3f(5f,1f,0f))

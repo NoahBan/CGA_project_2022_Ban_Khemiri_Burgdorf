@@ -34,7 +34,7 @@ class Collider (colliderType : ColliderType,var radius : Float = 1f, modelMatrix
             ColliderType.PLAYERCOLLIDER -> {
                 globalCollisionHandler.addShipPart(this)
                 collidedMesh = globalCollisionHandler.colliderGeo.redCollisionSphereGeo
-                notCollidedMesh = globalCollisionHandler.colliderGeo.greenCollisionSphereGeo
+                notCollidedMesh = globalCollisionHandler.colliderGeo.blueCollisionSphereGeo
             }
             ColliderType.PLAYERPROJICTILECOLLIDER -> {
                 globalCollisionHandler.addAllyProjectile(this)
@@ -52,10 +52,8 @@ class Collider (colliderType : ColliderType,var radius : Float = 1f, modelMatrix
                 notCollidedMesh = globalCollisionHandler.colliderGeo.greenCollisionSphereGeo
             }
         }
-        collisionObject = Renderable(mutableListOf(notCollidedMesh))
-        collisionObject.scaling(Vector3f(radius))
-        collisionObject.parent = this
-
+        collisionObject = Renderable(mutableListOf(notCollidedMesh),Matrix4f(),this)
+        collisionObject.scaling(Vector3f(radius,radius,radius))
     }
 
     fun showCollision(){

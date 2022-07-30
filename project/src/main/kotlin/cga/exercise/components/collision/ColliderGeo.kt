@@ -72,33 +72,17 @@ class ColliderGeo {
             pureBlackTex
         )
 
-//        if(colorType == "White")
-//            startMaterial = matWhite
-//        if(colorType == "Blue")
-//            startMaterial = matBlue
-//        if(colorType == "Red")
-//            startMaterial = matRed
-//        if(colorType == "Green")
-//            startMaterial = matGreen
 
-
-        val importObj = OBJLoader.loadOBJ("assets/models/CollisionSphere.obj", true)
+        val importObj = OBJLoader.loadOBJ("assets/models/collision/CollisionSphere.obj", true)
         val importedData  = importObj.objects[0].meshes[0]
         whiteCollisionSphereGeo = Mesh (importedData.vertexData, importedData.indexData, posAndTexcAndNormAttrArray,false, matWhite, GL30.GL_LINES)
         blueCollisionSphereGeo = Mesh (importedData.vertexData, importedData.indexData, posAndTexcAndNormAttrArray,false, matBlue, GL30.GL_LINES)
         greenCollisionSphereGeo = Mesh (importedData.vertexData, importedData.indexData, posAndTexcAndNormAttrArray,false, matGreen, GL30.GL_LINES)
         redCollisionSphereGeo = Mesh (importedData.vertexData, importedData.indexData, posAndTexcAndNormAttrArray,false, matRed, GL30.GL_LINES)
 
-        val importObj2 = OBJLoader.loadOBJ("assets/models/CollisionObject.obj", true)
+        val importObj2 = OBJLoader.loadOBJ("assets/models/collision/CollisionObject.obj", true)
         val importedData2  = importObj2.objects[0].meshes[0]
         collisionBoxGeo = Mesh (importedData2.vertexData, importedData2.indexData, posAndTexcAndNormAttrArray,false, startMaterial)
 
-//        if (collisionType == "Sphere") {
-//            collisionObject = Renderable(mutableListOf(importedMesh), Matrix4f(), this)
-//            collisionObject.scaling(Vector3f(radius))
-//        }else if (collisionType == "Box") {
-//            collisionObject = Renderable(mutableListOf(importedMesh2), Matrix4f(), this)
-//            collisionObject.scaling(Vector3f(radius))
-//        }
     }
 }
