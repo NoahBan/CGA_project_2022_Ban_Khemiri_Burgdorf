@@ -68,6 +68,7 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
         baseShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
+//        baseShader = ShaderProgram("assets/shaders/vertexTestShdr.glsl", "assets/shaders/fragmentTestShdr.glsl", "assets/shaders/geometryTestShdr.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -131,7 +132,12 @@ class Scene(private val window: GameWindow) {
         val matSkySphere = Material(
             pureBlackTex,
             skySphereTex,
-            pureBlackTex
+            pureBlackTex,
+            0f,
+            Vector2f(1f,1f),Vector3f(1f,1f,1f),
+            0f,
+            0f,
+            1
         )
 
         //Geometry
@@ -202,6 +208,9 @@ class Scene(private val window: GameWindow) {
 //            testCollision.render(baseShader)
 //            globalCollisionHandler.render(baseShader)
             enemyHandler.render(baseShader)
+
+
+
         }
         if(deferred){
 

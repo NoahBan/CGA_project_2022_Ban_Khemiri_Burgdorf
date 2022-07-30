@@ -32,6 +32,7 @@ struct MaterialStruct {
     int movingMat;
     float movingU;
     float movingV;
+    int skySphere;
 };
 uniform MaterialStruct Material;
 
@@ -154,7 +155,6 @@ vec3 calcDirecLightSpec(vec3 direction,vec3 lightColor, float intensity, vec3 ve
     return specularTerm * cosBetak;
 }
 void main(){
-
     //get tex color on uv coordinate
     vec2 texCoord = VertexData.texCoord * Material.tcMultiplier;
     if (Material.movingMat == 1){

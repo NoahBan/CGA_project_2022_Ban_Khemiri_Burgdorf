@@ -15,6 +15,7 @@ struct MaterialStruct {
     int movingMat;
     float movingU;
     float movingV;
+    int skySphere;
 };
 uniform MaterialStruct Material;
 

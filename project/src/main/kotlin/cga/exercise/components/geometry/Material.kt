@@ -13,7 +13,8 @@ class Material(var diff: Texture2D,
                var tcMultiplier : Vector2f = Vector2f(1.0f),
                var emitMultiplier : Vector3f = Vector3f(1F),
                var movingU : Float = 0.0f,
-               var movingV : Float = 0.0f
+               var movingV : Float = 0.0f,
+               var skySphere : Int = 0
                ){
 
     fun bind(shaderProgram: ShaderProgram) {
@@ -30,5 +31,6 @@ class Material(var diff: Texture2D,
         else shaderProgram.setUniform("Material.movingMat", 1)
         shaderProgram.setUniform("Material.movingU", movingU)
         shaderProgram.setUniform("Material.movingV", movingV)
+        shaderProgram.setUniform("Material.skySphere", movingV)
     }
 }

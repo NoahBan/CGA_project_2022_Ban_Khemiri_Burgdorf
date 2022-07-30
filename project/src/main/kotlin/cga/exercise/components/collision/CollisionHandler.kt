@@ -112,6 +112,7 @@ class CollisionHandler {
     }
 
     fun update(){
+        println(allyProjectileList.size)
         checkCollision()
     }
 

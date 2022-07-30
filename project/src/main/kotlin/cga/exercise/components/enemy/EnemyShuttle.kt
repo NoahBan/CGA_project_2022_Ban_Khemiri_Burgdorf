@@ -3,6 +3,7 @@ package cga.exercise.components.enemy
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.geometry.Transformable
+import cga.exercise.components.utility.BezierCurve
 import cga.exercise.components.utility.QuadraticBezierCurve
 import cga.exercise.components.utility.clampf
 import cga.exercise.game.globalCollisionHandler
@@ -37,19 +38,22 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
 //        private val maxRight = 12.5f
 //        private val maxDown = -7f
 
-        movementCurve = QuadraticBezierCurve(
-            Vector3f(randomStartX, randomStartY, -1000f),
-            Vector3f(-randomStartX*1.5f, randomMidY, -500f),
-            Vector3f(randomEndX, randomEndY, 5f)
+        var pList = mutableListOf<Vector3f>(
+            Vector3f(-20f, 0f, -500f),
+            Vector3f(40f, 0f, -250f),
+            Vector3f(0f, 0f, 0f)
         )
-
-        this.setModelMatrix(movementCurve.calcPosAndRota(posOnCurve))
-
+        movementCurve = QuadraticBezierCurve(Vector3f(
+            -20f, 0f, -500f),
+            Vector3f(40f, 0f, -250f),
+            Vector3f(0f, 0f, 0f)
+        )
+        this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))
     }
 
     override fun update(deltaTime: Float, time: Float) {
         if(!absturz){
-            this.setModelMatrix(movementCurve.calcPosAndRota(posOnCurve))
+            this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))
             posOnCurve = clampf(posOnCurve + deltaTime * shuttleSpeed, 0f,1f)
         }
         if (absturz) translate(Vector3f(0f, 0f,-1f))
