@@ -3,7 +3,7 @@ package cga.exercise.components.enemy
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.utility.BezierCurve
+import cga.exercise.components.utility.QuadraticBezierCurve
 import cga.exercise.components.utility.clampf
 import cga.exercise.game.globalCollisionHandler
 import org.joml.Matrix4f
@@ -17,7 +17,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     val shuttleSpeed = 0.1f
 
     var posOnCurve = 0.005f
-    val movementCurve : BezierCurve
+    val movementCurve : QuadraticBezierCurve
 
     init {
         thisGeo.renderList = enemyGeo.shuttle.renderList
@@ -37,7 +37,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
 //        private val maxRight = 12.5f
 //        private val maxDown = -7f
 
-        movementCurve = BezierCurve(
+        movementCurve = QuadraticBezierCurve(
             Vector3f(randomStartX, randomStartY, -1000f),
             Vector3f(-randomStartX*1.5f, randomMidY, -500f),
             Vector3f(randomEndX, randomEndY, 5f)

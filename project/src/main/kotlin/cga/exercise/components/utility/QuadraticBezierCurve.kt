@@ -1,10 +1,9 @@
 package cga.exercise.components.utility
 
-import cga.exercise.components.geometry.Transformable
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
-class BezierCurve (val start : Vector3f,val mid : Vector3f,val end : Vector3f) {
+class QuadraticBezierCurve (val start : Vector3f, val mid : Vector3f, val end : Vector3f) {
 
     fun calcPos(t: Float): Vector3f {
         var lerpP1 = lerpV3f(start, mid, t)

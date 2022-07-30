@@ -44,6 +44,7 @@ class Ground(var mode : GroundAniMode) {
     fun update(deltaTime: Float, time: Float){
         if (mode == GroundAniMode.ROTATION) groundGeo.rotate(deltaTime+0f,0f,0f)
         if (mode == GroundAniMode.TEXTURE) groundGeo.renderList[0].material!!.tcMultiplier.x += deltaTime
+        println(groundGeo.getPosition())
     }
 
     fun render(shaderProgram : ShaderProgram){
