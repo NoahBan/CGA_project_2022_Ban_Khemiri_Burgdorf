@@ -7,7 +7,6 @@ import cga.exercise.components.utility.clampf
 import cga.exercise.components.utility.lerpV3f
 import cga.exercise.components.utility.lerpf
 import cga.exercise.components.utility.setEuler
-import cga.exercise.game.globalLightHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
@@ -79,8 +78,7 @@ class PlayerWeapon (rotationDir : Float, playerGeo : PlayerGeo, modelMatrix : Ma
     fun update(deltaTime: Float, time: Float, wingOut : Boolean){
         setDT(deltaTime)
         setT(time)
-
-        globalLightHandler
+        setT(time)
 
         if(wingOut && !weaponOut){
             weaponPosT = clampf(weaponPosT + deltaTime * weaponMoveSpeed, 0f, 1f)

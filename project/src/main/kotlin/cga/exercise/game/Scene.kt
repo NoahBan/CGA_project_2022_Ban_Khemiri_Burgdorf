@@ -66,12 +66,6 @@ class Scene(private val window: GameWindow) {
 
     var deferred = false
 
-    var testBool = true
-            var testBool1 = true
-            var testBool2 = true
-
-
-
     var xposBefore : Double = 0.0
 
     //scene setup
@@ -237,25 +231,6 @@ class Scene(private val window: GameWindow) {
 
 
     fun update(dt: Float, t: Float) {
-
-        if (testBool && t >= 3f){
-            println("create")
-            enemyHandler.createEnemy()
-            testBool = false
-        }
-
-        if (testBool1 && t >= 9f){
-            println("create")
-            enemyHandler.createEnemy()
-            testBool1 = false
-        }
-
-        if (testBool2 && t >= 15f){
-            println("create")
-            enemyHandler.createEnemy()
-            testBool2 = false
-        }
-
         ground.update(dt,t)
 
         if(window.getKeyState(GLFW_KEY_W)){

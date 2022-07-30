@@ -11,7 +11,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
     }
 
     fun setModelMatrix(matrix : Matrix4f){
-        modelMatrix = matrix
+        modelMatrix.set(matrix)
     }
 
     fun getWorldModelMatrix(): Matrix4f {
@@ -33,6 +33,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
     fun setRotation(pitch: Float, yaw: Float, roll: Float){
         modelMatrix.setRotationXYZ(Math.toRadians(pitch),Math.toRadians(yaw),Math.toRadians(roll))
     }
+
 
     fun rotateAroundPoint(pitch: Float, yaw: Float, roll: Float, altMidpoint: Vector3f) {
         val temp = Matrix4f().translate(altMidpoint)

@@ -17,14 +17,14 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
 
         var shouldIdie = false
 
-        var hp = 12
+        var hp = 6
 
         var absturz = false
         var fallSpeed = 0f
         var fallAcceleration = 0.15f
 
         var deathTime = 0f
-        var despawnTime = 2f
+        var despawnTime = 1f
 
         var collided = false
 
@@ -39,7 +39,7 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
 
         fun addCollider(newCollider : Collider) = colliderList.add(newCollider)
 
-        fun update(deltaTime : Float, time : Float){
+        open fun update(deltaTime : Float, time : Float){
             if(hp > 0){
                 for (each in colliderList) {
                     each.update()
@@ -48,6 +48,7 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
             }
             if (collided) hp--
             collided = false
+            if(getPosition()[2] <= -10f)
             if (hp <= 0 && !absturz){
                 absturz = true
                 deathTime = time + despawnTime
