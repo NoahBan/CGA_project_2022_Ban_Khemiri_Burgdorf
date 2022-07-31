@@ -34,16 +34,17 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
         colliderFront = Collider(ColliderType.PLAYERPROJICTILECOLLIDER, 0.15f)
         colliderFront.parent = this
         colliderFront.setPosition(Vector3f(0f,0f,-1.8f))
-
+        println("Yep")
         colliderMid = Collider(ColliderType.PLAYERPROJICTILECOLLIDER, 0.15f)
         colliderMid.parent = this
         colliderMid.setPosition(Vector3f(0f,0f,-1.8f-2))
-
+        println("Yep")
         colliderBack = Collider(ColliderType.PLAYERPROJICTILECOLLIDER, 0.15f)
         colliderBack.parent = this
         colliderBack.setPosition(Vector3f(0f,0f,-1.8f+2))
-
-        colliderList = mutableListOf(colliderFront)//,colliderMid,colliderBack)
+        println("Yep")
+        colliderList = mutableListOf(colliderFront,colliderMid,colliderBack)
+        //colliderList = mutableListOf(colliderFront)
     }
 
     var shouldIdie = false

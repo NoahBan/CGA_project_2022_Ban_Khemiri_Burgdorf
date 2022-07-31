@@ -6,7 +6,7 @@ import org.joml.*
 
 
 open class Camera (
-    val fov : Float = 90F,
+    var fov : Float = 90F,
     val aspectRatio : Float = 9f/9f,
     val nearPlane: Float = 0.1F,
     val farPlane: Float = 100.0F,

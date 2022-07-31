@@ -252,6 +252,7 @@ class Scene(private val window: GameWindow) {
             waitForButtonPress_N_M = t + buttonPressDelay
             cameraHandler.nextCam()
         }
+        
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
         enemyHandler.update(dt,t)
