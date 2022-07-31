@@ -53,7 +53,7 @@ class EnemyHandler {
 
 //         if (test) addEnemy(EnemyShuttle(this, enemyGeo, Matrix4f()))
 //        test = false
-
+        println(enemyList.size)
         if (nextSpawntime <= time){
             nextSpawntime = time + Random.nextInt(newSpawnMin,newSpawnMax).toFloat()
             createEnemy()

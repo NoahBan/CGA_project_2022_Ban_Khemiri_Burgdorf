@@ -56,7 +56,10 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
         if (deathTime <= time) shouldIdie = true
         for (each in colliderList) if (each.collided) shouldIdie = true
 //        if (getPosition()[1] < -7f) shouldIdie = true
-        if (shouldIdie) for (each in colliderList) globalCollisionHandler.removeAllyProjectile(each)
+        if (shouldIdie) for (each in colliderList) {
+
+            globalCollisionHandler.removeAllyProjectile(each)
+        }
     }
 
     override fun render(shaderProgram : ShaderProgram) {
