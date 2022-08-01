@@ -22,6 +22,7 @@ enum class WingType (val wingType: Int){
 class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matrix4f, parent: Transformable? = null) : PlayerPart(modelMatrix, parent) {
 
     var wingGeo = Renderable(playerGeo.wingL.renderList, Matrix4f())
+    var wingType = wingType
 
     private var deltaTime = 0f
     private var time = 0f

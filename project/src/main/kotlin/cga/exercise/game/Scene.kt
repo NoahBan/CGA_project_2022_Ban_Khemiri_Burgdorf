@@ -57,6 +57,7 @@ class Scene(private val window: GameWindow) {
 
     var waitForButtonPress_N_M = 0f
     var waitForButtonPress_G = 0f
+    var waitForButtonPress_I_O = 0.2f
 
     val buttonPressDelay_Space = 0.125f
     var waitForButtonPress_Space = 0f
@@ -208,9 +209,6 @@ class Scene(private val window: GameWindow) {
 //            testCollision.render(baseShader)
 //            globalCollisionHandler.render(baseShader)
             enemyHandler.render(baseShader)
-
-
-
         }
         if(deferred){
 
@@ -233,10 +231,22 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_D)){
             player.setMoveRight()
         }
-
+        if (window.getKeyState(GLFW_KEY_I)&& t >= waitForButtonPress_I_O){
+            var newfov = 0.1f
+            if (cameraHandler.getActiveCamera().fov > 20f) {
+                cameraHandler.getActiveCamera().fov -= t * newfov
+            }
+        }
+        if (window.getKeyState(GLFW_KEY_O)&& t >= waitForButtonPress_I_O){
+            var newfov = 0.1f
+            if (cameraHandler.getActiveCamera().fov < 60f) {
+                cameraHandler.getActiveCamera().fov += t * newfov
+            }
+        }
         if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Space){
             waitForButtonPress_Space = t + buttonPressDelay_Space
             player.setShoot()
+
         }
 
         if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_G){
@@ -252,7 +262,7 @@ class Scene(private val window: GameWindow) {
             waitForButtonPress_N_M = t + buttonPressDelay
             cameraHandler.nextCam()
         }
-        
+
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
         enemyHandler.update(dt,t)

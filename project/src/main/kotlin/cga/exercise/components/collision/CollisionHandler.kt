@@ -108,7 +108,7 @@ class CollisionHandler {
     }
 
     fun update(){
-        println("AllyProjectile List:  " + allyProjectileList.size)
+        //println("AllyProjectile List:  " + allyProjectileList.size)
         checkCollision()
     }
 }
