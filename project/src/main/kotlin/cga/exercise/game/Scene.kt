@@ -16,6 +16,7 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
+import java.util.Vector
 
 val globalLightHandler = LightHandler()
 val cameraHandler = CameraHandler()
@@ -221,7 +222,19 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex
         )
 
-        particleSystem1 = ParticleSystem(0f,0f,-10f,matMaterial,1000,0.10f,0.30f)
+        particleSystem1 = ParticleSystem(
+            0f,0f,-10f,
+            matMaterial,
+            1000,
+            1f,
+            0.1f,
+            Vector3f(0f,0.05f,0f),
+            Vector3f(0f,0.05f,0f),
+            180f,
+            1.01f,
+            Vector3f(0f,-0.01f,0f),
+            1.0f
+        )
 
     }
 
