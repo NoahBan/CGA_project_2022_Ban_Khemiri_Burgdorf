@@ -21,6 +21,8 @@ class Particle (
     spreadRadius : Float = 10f,
     acceleration : Float = 1.0f,
     accelerationVector: Vector3f = Vector3f(0f,0f,0f),
+    var minDeathTime : Float = 1.0f,
+    var maxDeathTime : Float = 1.0f,
     parent: Transformable ?= null)
     : Renderable(renderList,modelMatrix, parent) {
 
@@ -28,6 +30,8 @@ class Particle (
     var scalingVec = Vector3f()
     var spreadAccelVec = Vector3f(accelerationVector)
     var accel = Vector3f(acceleration,acceleration,acceleration)
+    var death = 10f
+    var firstUpdate = true
 
     init {
         val randomScale = minScale + Math.random() * (maxScale-minScale)
@@ -87,8 +91,17 @@ class Particle (
         this.setPosition(Vector3f(particleX+spreadVec.x+spreadAccelVec.x,particleY+spreadVec.y+spreadAccelVec.y,particleZ+spreadVec.z+spreadAccelVec.z))
     }
 
-    fun update(){
+    fun update(t : Float){
         setCorrectRotation()
         spreadTo()
+
+        if (firstUpdate == true){
+            firstUpdate = false
+
+            var deathTime = minDeathTime + Math.random() * (maxDeathTime-minDeathTime)
+
+            death = (deathTime+t).toFloat()
+        }
+
     }
 }

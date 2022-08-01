@@ -24,7 +24,8 @@ class ParticleSystem (
     spreadRadius : Float = 45f,
     acceleration : Float = 1.0f,
     accelerationVector: Vector3f = Vector3f(0f,0f,0f),
-    deathTime : Float = 1.0f,
+    minDeathTime : Float = 1.0f,
+    maxDeathTime : Float = 1.0f,
     alphaOverLife : Float = 1.0f,
     colorOverLife : Float = 1.0f,
     sizeOverLife : Float = 1.0f)
@@ -44,15 +45,24 @@ class ParticleSystem (
             val importedData  = importObj.objects[0].meshes[0]
             val importedMesh = Mesh (importedData.vertexData, importedData.indexData, posAndTexcAndNormAttrArray,false, material)
 
-            val importedPlane = Particle(mutableListOf(importedMesh), Matrix4f(), x, y, z, minScale, maxScale, minSpreadVec,maxSpreadVec,spreadRadius,acceleration,accelerationVector)
+            val importedPlane = Particle(mutableListOf(importedMesh), Matrix4f(), x, y, z, minScale, maxScale, minSpreadVec,maxSpreadVec,spreadRadius,acceleration,accelerationVector,minDeathTime,maxDeathTime)
             allParticles.add(importedPlane)
         }
-
     }
 
-    fun update(){
+    fun update(t : Float){
+        var temp = mutableListOf<Int>()
+
+        allParticles.forEachIndexed{index,particle->
+            if (t >= particle.death) temp.add(index)
+        }
+
+        for (each in temp.reversed()){
+            allParticles.removeAt(each)
+        }
+
         for (particle in allParticles){
-            particle.update()
+            particle.update(t)
         }
     }
 

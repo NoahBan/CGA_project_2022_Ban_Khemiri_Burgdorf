@@ -215,25 +215,28 @@ class Scene(private val window: GameWindow) {
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
+        val explosiveTex = Texture2D("assets/textures/TestTex.png",true)
+        skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
-        val matMaterial = Material(
+        val explosiveMaterial = Material(
             pureWhiteTex,
-            pureWhiteTex,
+            pureRedTex,
             pureWhiteTex
         )
 
         particleSystem1 = ParticleSystem(
             0f,0f,-10f,
-            matMaterial,
+            explosiveMaterial,
             1000,
-            1f,
             0.1f,
+            0.3f,
             Vector3f(0f,0.05f,0f),
-            Vector3f(0f,0.05f,0f),
+            Vector3f(0f,0.010f,0f),
             180f,
-            1.01f,
-            Vector3f(0f,-0.01f,0f),
-            1.0f
+            1.00f,
+            Vector3f(0f,-0.000f,0f),
+            1f,
+            1.5f
         )
 
     }
@@ -292,7 +295,7 @@ class Scene(private val window: GameWindow) {
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
 
-        particleSystem1.update()
+        particleSystem1.update(t)
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
