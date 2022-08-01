@@ -221,7 +221,7 @@ class Scene(private val window: GameWindow) {
             pureWhiteTex
         )
 
-        particleSystem1 = ParticleSystem(0f,0f,-10f,matMaterial)
+        particleSystem1 = ParticleSystem(0f,0f,-10f,matMaterial,1000,0.10f,0.30f)
 
     }
 
