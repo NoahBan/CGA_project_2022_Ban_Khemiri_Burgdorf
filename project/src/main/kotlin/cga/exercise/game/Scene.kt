@@ -19,6 +19,7 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
+import java.nio.ByteBuffer
 
 val globalLightHandler = LightHandler(30,1,1)
 val globalCollisionHandler = CollisionHandler()
@@ -29,6 +30,15 @@ val globalCollisionHandler = CollisionHandler()
 class Scene(private val window: GameWindow) {
 
     private val baseShader : ShaderProgram
+
+    var deferred = true
+    private val deferredBufferShader : ShaderProgram
+    private val deferredLightingShader : ShaderProgram
+    var gBuffer : Int
+    var gPosition : Int
+    var gNormal : Int
+    var gColorSpec : Int
+    var gEmission : Int
 
     private val ground : Ground
 
@@ -57,18 +67,19 @@ class Scene(private val window: GameWindow) {
 
     var waitForButtonPress_N_M = 0f
     var waitForButtonPress_G = 0f
+    var waitForButtonPress_P = 0f
+
 
     val buttonPressDelay_Space = 0.125f
     var waitForButtonPress_Space = 0f
-
-    var deferred = false
 
     var xposBefore : Double = 0.0
 
     //scene setup
     init {
-        baseShader = ShaderProgram("assets/shaders/vertexShdr.glsl", "assets/shaders/fragmentShdr.glsl")
-//        baseShader = ShaderProgram("assets/shaders/vertexTestShdr.glsl", "assets/shaders/fragmentTestShdr.glsl", "assets/shaders/geometryTestShdr.glsl")
+        baseShader = ShaderProgram("assets/shaders/baseVertexShdr.glsl", "assets/shaders/baseFragmentShdr.glsl")
+        deferredBufferShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
+        deferredLightingShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -81,6 +92,55 @@ class Scene(private val window: GameWindow) {
         glEnable ( GL_CULL_FACE )
         glFrontFace ( GL_CCW )
         glCullFace ( GL_BACK )
+
+
+        ///Deff
+            gBuffer = GL30.glGenFramebuffers()
+
+            gPosition = GL30.glGenTextures()
+            gNormal = GL30.glGenTextures()
+            gColorSpec = GL30.glGenTextures()
+            gEmission = GL30.glGenTextures()
+
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
+            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGB16F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGB, GL30.GL_FLOAT, null as ByteBuffer?)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
+            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL30.GL_TEXTURE_2D, gPosition, 0)
+
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
+            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGB16F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGB, GL30.GL_FLOAT, null as ByteBuffer?)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
+            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, GL30.GL_TEXTURE_2D, gNormal, 0)
+
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gColorSpec)
+            GL30.glTexImage2D(GL30.GL_TEXTURE_2D,0,GL30.GL_RGBA, window.windowWidth, window.windowHeight,0, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, null as ByteBuffer?)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
+            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL30.GL_TEXTURE_2D, gColorSpec, 0)
+
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
+            GL30.glTexImage2D(GL30.GL_TEXTURE_2D,0,GL30.GL_RGB, window.windowWidth, window.windowHeight,0, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE, null as ByteBuffer?)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
+            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
+            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT3, GL30.GL_TEXTURE_2D, gEmission, 0)
+
+            var attachements = intArrayOf(GL30.GL_COLOR_ATTACHMENT0, GL30.GL_COLOR_ATTACHMENT1, GL30.GL_COLOR_ATTACHMENT2, GL30.GL_COLOR_ATTACHMENT3)
+            GL30.glDrawBuffers(attachements)
+
+            var rboDepth = GL30.glGenRenderbuffers()
+            GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rboDepth)
+            GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT, window.windowWidth, window.windowHeight)
+            GL30.glFramebufferRenderbuffer(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, rboDepth)
+            if(GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) print("Framebuffer not complete")
+
+            GL30.glBindRenderbuffer(GL30.GL_FRAMEBUFFER, 0)
+        ///DEFF
+
+
+
+
 
         //define ibo
         val posAndTexcAndNormPos = VertexAttribute (3, GL30.GL_FLOAT,8 * 4, 0)
@@ -208,12 +268,52 @@ class Scene(private val window: GameWindow) {
 //            testCollision.render(baseShader)
 //            globalCollisionHandler.render(baseShader)
             enemyHandler.render(baseShader)
-
-
-
         }
-        if(deferred){
 
+        if(deferred){
+            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+
+            //BUFFER PASS
+            deferredBufferShader.use()
+            cameraHandler.getActiveCamera().bind(deferredBufferShader)
+            globalLightHandler.bindLights(deferredBufferShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+
+            GL30.glDepthMask(false)
+            importedSkySphere.render(deferredBufferShader)
+            GL30.glDepthMask(true)
+
+            ground.render(deferredBufferShader)
+
+            player.render(deferredBufferShader)
+//            testCollision.render(baseShader)
+//            globalCollisionHandler.render(baseShader)
+            enemyHandler.render(deferredBufferShader)
+
+            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+
+            //LIGHTING PASS
+//            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+            GL30.glActiveTexture(GL30.GL_TEXTURE0)
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
+            GL30.glActiveTexture(GL30.GL_TEXTURE1)
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
+            GL30.glActiveTexture(GL30.GL_TEXTURE2)
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gColorSpec)
+            GL30.glActiveTexture(GL30.GL_TEXTURE3)
+            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
+            deferredLightingShader.use()
+
+//
+//            GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, gBuffer)
+//            GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0)
+//
+//
+//
+//
+//            GL30.glBlitFramebuffer(0, 0, window.windowWidth, window.windowHeight, 0, 0, window.windowWidth, window.windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+
+//            glfwSwapBuffers()
         }
     }
 
@@ -242,6 +342,11 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_G){
             waitForButtonPress_G = t + buttonPressDelay
             player.toggleWingMode()
+        }
+
+        if(window.getKeyState(GLFW_KEY_P) && t >= waitForButtonPress_P){
+            waitForButtonPress_P = t + buttonPressDelay
+            deferred = !deferred
         }
 
         if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress_N_M){
