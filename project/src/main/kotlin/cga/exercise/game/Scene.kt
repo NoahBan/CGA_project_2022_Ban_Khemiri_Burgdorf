@@ -34,11 +34,14 @@ class Scene(private val window: GameWindow) {
     var deferred = true
     private val deferredBufferShader : ShaderProgram
     private val deferredLightingShader : ShaderProgram
+    private val last : ShaderProgram
     var gBuffer : Int
     var gPosition : Int
     var gNormal : Int
     var gColorSpec : Int
     var gEmission : Int
+    var attachements : IntArray
+    var rboDepth : Int
 
     private val ground : Ground
 
@@ -80,14 +83,14 @@ class Scene(private val window: GameWindow) {
         baseShader = ShaderProgram("assets/shaders/baseVertexShdr.glsl", "assets/shaders/baseFragmentShdr.glsl")
         deferredBufferShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
         deferredLightingShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
+        last = ShaderProgram("assets/shaders/hoffnungV.glsl", "assets/shaders/hoffnungF.glsl")
 
         //initial opengl state
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
-        glDisable(GL_CULL_FACE); GLError.checkThrow()
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         //glFrontFace(GL_CCW); GLError.checkThrow()
         //glCullFace(GL_BACK); GLError.checkThrow()
-        glEnable(GL_DEPTH_TEST); GLError.checkThrow()
-        glDepthFunc(GL_LESS); GLError.checkThrow()
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LESS)
 
         glEnable ( GL_CULL_FACE )
         glFrontFace ( GL_CCW )
@@ -126,16 +129,24 @@ class Scene(private val window: GameWindow) {
             GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
             GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT3, GL30.GL_TEXTURE_2D, gEmission, 0)
 
-            var attachements = intArrayOf(GL30.GL_COLOR_ATTACHMENT0, GL30.GL_COLOR_ATTACHMENT1, GL30.GL_COLOR_ATTACHMENT2, GL30.GL_COLOR_ATTACHMENT3)
+            attachements = intArrayOf(GL30.GL_COLOR_ATTACHMENT0, GL30.GL_COLOR_ATTACHMENT1, GL30.GL_COLOR_ATTACHMENT2, GL30.GL_COLOR_ATTACHMENT3)
             GL30.glDrawBuffers(attachements)
 
-            var rboDepth = GL30.glGenRenderbuffers()
+            rboDepth = GL30.glGenRenderbuffers()
             GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rboDepth)
             GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT, window.windowWidth, window.windowHeight)
             GL30.glFramebufferRenderbuffer(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, rboDepth)
             if(GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) print("Framebuffer not complete")
 
             GL30.glBindRenderbuffer(GL30.GL_FRAMEBUFFER, 0)
+
+        deferredLightingShader.use()
+        deferredLightingShader.setUniform("gPosition",0)
+        deferredLightingShader.setUniform("gNormal",1)
+        deferredLightingShader.setUniform("gColorSpec",2)
+        deferredLightingShader.setUniform("gEmission",3)
+
+
         ///DEFF
 
 
@@ -271,49 +282,46 @@ class Scene(private val window: GameWindow) {
         }
 
         if(deferred){
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
             //BUFFER PASS
-            deferredBufferShader.use()
-            cameraHandler.getActiveCamera().bind(deferredBufferShader)
-            globalLightHandler.bindLights(deferredBufferShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, gBuffer)
+                glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+                deferredBufferShader.use()
+                cameraHandler.getActiveCamera().bind(deferredBufferShader)
 
-            GL30.glDepthMask(false)
-            importedSkySphere.render(deferredBufferShader)
-            GL30.glDepthMask(true)
-
-            ground.render(deferredBufferShader)
-
-            player.render(deferredBufferShader)
-//            testCollision.render(baseShader)
-//            globalCollisionHandler.render(baseShader)
-            enemyHandler.render(deferredBufferShader)
+//                GL30.glDepthMask(false)
+//                importedSkySphere.render(deferredBufferShader)
+//                GL30.glDepthMask(true)
+                ground.render(deferredBufferShader)
+                player.render(deferredBufferShader)
+                enemyHandler.render(deferredBufferShader)
 
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
 
             //LIGHTING PASS
-//            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-            GL30.glActiveTexture(GL30.GL_TEXTURE0)
-            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
-            GL30.glActiveTexture(GL30.GL_TEXTURE1)
-            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
-            GL30.glActiveTexture(GL30.GL_TEXTURE2)
-            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gColorSpec)
-            GL30.glActiveTexture(GL30.GL_TEXTURE3)
-            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
-            deferredLightingShader.use()
-
+                glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+                deferredLightingShader.use()
+                GL30.glActiveTexture(GL30.GL_TEXTURE0)
+                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
+                GL30.glActiveTexture(GL30.GL_TEXTURE1)
+                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
+                GL30.glActiveTexture(GL30.GL_TEXTURE2)
+                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gColorSpec)
+                GL30.glActiveTexture(GL30.GL_TEXTURE3)
+                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
+//
+//                globalLightHandler.bindLights(deferredBufferShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+//
+//                cameraHandler.getActiveCamera().bind(baseShader)
+//
 //
 //            GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, gBuffer)
 //            GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0)
 //
-//
-//
-//
-//            GL30.glBlitFramebuffer(0, 0, window.windowWidth, window.windowHeight, 0, 0, window.windowWidth, window.windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-
-//            glfwSwapBuffers()
+//            GL30.glBlitFramebuffer(0, 0, window.windowWidth, window.windowHeight, 0, 0, window.windowWidth, window.windowHeight, GL30.GL_DEPTH_BUFFER_BIT, GL30.GL_NEAREST)
+//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
         }
     }
 

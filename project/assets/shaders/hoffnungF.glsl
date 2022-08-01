@@ -46,6 +46,4 @@ void main(){
     gEmission = texture(Material.texEmit, texCoord).rgb;
     gColorSpec.rgb = texture(Material.texDiff, texCoord).rgb;
     gColorSpec.a = texture(Material.texSpec, texCoord).r;
-
-    color = vec4(gPosition,1.0);
 }

@@ -16,7 +16,7 @@ import java.util.Arrays
 /**
  * Created by Fabian on 16.09.2017.
  */
-class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String, geometryShaderPath: String? = null, deferred : Boolean = false) {
+class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String, geometryShaderPath: String? = null) {
     private var programID: Int = 0
     //Matrix buffers for setting matrix uniforms. Prevents allocation for each uniform
     private val m4x4buf: FloatBuffer = BufferUtils.createFloatBuffer(16)
@@ -230,53 +230,6 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String, geomet
                 GL20.glDeleteShader(fShader)
                 GL20.glDeleteShader(gShader)
             }
-
-        }
-
-        if(deferred){
-
-//            var gBuffer : IntBuffer = IntBuffer.allocate(1)
-//            GL30.glGenFramebuffers(gBuffer)
-//
-//            var gPosition : IntBuffer = IntBuffer.allocate(1)
-//            var gNormal : IntBuffer = IntBuffer.allocate(1)
-//            var gColorSpec : IntBuffer = IntBuffer.allocate(1)
-//
-//            GL30.glGenTextures(gPosition)
-//            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
-
-//            var gBuffer = GL30.glGenFramebuffers()
-//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, gBuffer)
-//
-//
-//            var gPosition = GL30.glGenTextures()
-//            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
-//            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGB16F, 1920, 1080, 0, GL30.GL_RGB, GL30.GL_FLOAT, null)
-//            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
-//            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
-//            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL30.GL_TEXTURE_2D, gPosition, 0);
-//
-//            var gNormal = GL30.glGenTextures()
-//            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
-//            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGB16F, 1920, 1080, 0, GL30.GL_RGB, GL30.GL_FLOAT, null)
-//            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
-//            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
-//            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, GL30.GL_TEXTURE_2D, gNormal, 0);
-//
-//            var gColorSpec = GL30.glGenTextures()
-//            GL30.glBindTexture(GL30.GL_TEXTURE_2D, gColorSpec)
-//            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA, 1920, 1080, 0, GL30.GL_RGBA, GL30.GL_FLOAT, null)
-//            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
-//            GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
-//            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL30.GL_TEXTURE_2D, gColorSpec, 0);
-//
-//            var attachments = intArrayOf(GL30.GL_COLOR_ATTACHMENT0, GL30.GL_COLOR_ATTACHMENT1, GL30.GL_COLOR_ATTACHMENT2)
-//            GL30.glDrawBuffers(attachments)
-
-
-
-//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, "gBuffer")
         }
     }
-
 }

@@ -2,10 +2,10 @@
 
 out vec4 color;
 
-layout (location = 0) out vec3 gPosition;
-layout (location = 1) out vec3 gNormal;
-layout (location = 2) out vec4 gColorSpec;
-layout (location = 3) out vec3 gEmission;
+//layout (location = 0) out vec3 gPosition;
+//layout (location = 1) out vec3 gNormal;
+//layout (location = 2) out vec4 gColorSpec;
+//layout (location = 3) out vec3 gEmission;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
@@ -22,6 +22,6 @@ void main(){
     float Specular = texture(gColorSpec, TexCoords).a;
     vec3 Emission = texture(gEmission, TexCoords).rgb;
 
-    gPosition = vec4(Diffuse,1.0);
+    color = vec4(Diffuse,1.0);
 
 }
