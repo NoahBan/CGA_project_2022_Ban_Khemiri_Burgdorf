@@ -6,8 +6,8 @@ in vec2 vertexTexCoord;
 
 layout (binding = 0) uniform sampler2D gPosition;
 layout (binding = 1) uniform sampler2D gNormal;
-layout (binding = 2)uniform sampler2D gColorSpec;
-layout (binding = 3)uniform sampler2D gEmission;
+layout (binding = 2) uniform sampler2D gColorSpec;
+layout (binding = 3) uniform sampler2D gEmission;
 
 
 void main(){
@@ -17,5 +17,5 @@ void main(){
     float Specular = texture(gColorSpec, vertexTexCoord).a;
     vec3 Emission = texture(gEmission, vertexTexCoord).rgb;
 
-    color = vec4(FragPos,1.0);
+    color = vec4(Diffuse,1.0);
 }
