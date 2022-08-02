@@ -1,11 +1,6 @@
-#version 330 core
+#version 440
 
 out vec4 color;
-
-//layout (location = 0) out vec3 gPosition;
-//layout (location = 1) out vec3 gNormal;
-//layout (location = 2) out vec4 gColorSpec;
-//layout (location = 3) out vec3 gEmission;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
@@ -16,12 +11,12 @@ in vec2 vertexTexCoord;
 
 void main(){
 
-    vec3 FragPos = texture(gPosition, TexCoords).rgb;
-    vec3 Normal = texture(gNormal, TexCoords).rgb;
-    vec3 Diffuse = texture(gColorSpec, TexCoords).rgb;
-    float Specular = texture(gColorSpec, TexCoords).a;
-    vec3 Emission = texture(gEmission, TexCoords).rgb;
+    vec3 FragPos = texture(gPosition, vertexTexCoord).rgb;
+    vec3 Normal = texture(gNormal, vertexTexCoord).rgb;
+    vec3 Diffuse = texture(gColorSpec, vertexTexCoord).rgb;
+    float Specular = texture(gColorSpec, vertexTexCoord).a;
+    vec3 Emission = texture(gEmission, vertexTexCoord).rgb;
 
-    color = vec4(Diffuse,1.0);
+    color = vec4(FragPos, 1.0);
 
 }

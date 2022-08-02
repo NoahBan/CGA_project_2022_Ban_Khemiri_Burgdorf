@@ -95,6 +95,16 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String, geomet
         return false
     }
 
+    fun bindFragDataLoc(name : String, value : Int) : Boolean{
+        if (programID == 0) return false
+        val loc = GL30.glGetFragDataLocation(programID, name)
+        if (loc != -1) {
+            GL30.glBindFragDataLocation(programID,value,name)
+            return true
+        }
+        return false
+    }
+
 
     /**
      * Creates a shader object from vertex and fragment shader paths

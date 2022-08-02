@@ -19,6 +19,7 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL46
 import java.nio.ByteBuffer
 
 val globalLightHandler = LightHandler(30,1,1)
@@ -80,6 +81,7 @@ class Scene(private val window: GameWindow) {
 
     //scene setup
     init {
+        glEnable(GL_DEPTH_TEST)
         baseShader = ShaderProgram("assets/shaders/baseVertexShdr.glsl", "assets/shaders/baseFragmentShdr.glsl")
         deferredBufferShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
         deferredLightingShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
@@ -89,30 +91,33 @@ class Scene(private val window: GameWindow) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         //glFrontFace(GL_CCW); GLError.checkThrow()
         //glCullFace(GL_BACK); GLError.checkThrow()
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LESS)
 
-        glEnable ( GL_CULL_FACE )
-        glFrontFace ( GL_CCW )
-        glCullFace ( GL_BACK )
+//        glDepthFunc(GL_LESS)
+
+//        glEnable ( GL_CULL_FACE )
+//        glFrontFace ( GL_CCW )
+//        glCullFace ( GL_BACK )
 
 
         ///Deff
             gBuffer = GL30.glGenFramebuffers()
+
 
             gPosition = GL30.glGenTextures()
             gNormal = GL30.glGenTextures()
             gColorSpec = GL30.glGenTextures()
             gEmission = GL30.glGenTextures()
 
+            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, gBuffer)
+
             GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
-            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGB16F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGB, GL30.GL_FLOAT, null as ByteBuffer?)
+            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA32F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGBA, GL30.GL_FLOAT, null as ByteBuffer?)
             GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
             GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
             GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL30.GL_TEXTURE_2D, gPosition, 0)
 
             GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
-            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGB16F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGB, GL30.GL_FLOAT, null as ByteBuffer?)
+            GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA32F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGBA, GL30.GL_FLOAT, null as ByteBuffer?)
             GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
             GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
             GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, GL30.GL_TEXTURE_2D, gNormal, 0)
@@ -124,7 +129,7 @@ class Scene(private val window: GameWindow) {
             GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL30.GL_TEXTURE_2D, gColorSpec, 0)
 
             GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
-            GL30.glTexImage2D(GL30.GL_TEXTURE_2D,0,GL30.GL_RGB, window.windowWidth, window.windowHeight,0, GL30.GL_RGB, GL30.GL_UNSIGNED_BYTE, null as ByteBuffer?)
+            GL30.glTexImage2D(GL30.GL_TEXTURE_2D,0,GL30.GL_RGBA, window.windowWidth, window.windowHeight,0, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, null as ByteBuffer?)
             GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
             GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
             GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT3, GL30.GL_TEXTURE_2D, gEmission, 0)
@@ -134,17 +139,16 @@ class Scene(private val window: GameWindow) {
 
             rboDepth = GL30.glGenRenderbuffers()
             GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, rboDepth)
-            GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT, window.windowWidth, window.windowHeight)
-            GL30.glFramebufferRenderbuffer(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, rboDepth)
+            GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH_COMPONENT32F, window.windowWidth, window.windowHeight)
+            GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, rboDepth)
             if(GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) print("Framebuffer not complete")
 
-            GL30.glBindRenderbuffer(GL30.GL_FRAMEBUFFER, 0)
+            deferredLightingShader.bindFragDataLoc("gPosition",0)
+            deferredLightingShader.bindFragDataLoc("gNormal",1)
+            deferredLightingShader.bindFragDataLoc("gColorSpec",2)
+            deferredLightingShader.bindFragDataLoc("gEmission",3)
 
-        deferredLightingShader.use()
-        deferredLightingShader.setUniform("gPosition",0)
-        deferredLightingShader.setUniform("gNormal",1)
-        deferredLightingShader.setUniform("gColorSpec",2)
-        deferredLightingShader.setUniform("gEmission",3)
+            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
 
 
         ///DEFF
@@ -264,6 +268,7 @@ class Scene(private val window: GameWindow) {
 
     fun render(dt: Float, t: Float) {
         if(!deferred) {
+            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
             baseShader.use()
             cameraHandler.getActiveCamera().bind(baseShader)
@@ -300,28 +305,39 @@ class Scene(private val window: GameWindow) {
 
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
 
-            //LIGHTING PASS
-                glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-                deferredLightingShader.use()
-                GL30.glActiveTexture(GL30.GL_TEXTURE0)
-                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
-                GL30.glActiveTexture(GL30.GL_TEXTURE1)
-                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
-                GL30.glActiveTexture(GL30.GL_TEXTURE2)
-                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gColorSpec)
-                GL30.glActiveTexture(GL30.GL_TEXTURE3)
-                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
-//
-//                globalLightHandler.bindLights(deferredBufferShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
-//
-//                cameraHandler.getActiveCamera().bind(baseShader)
-//
-//
-//            GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, gBuffer)
-//            GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0)
-//
+            GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, gBuffer)
+            GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0)
+
+            GL46.glBlitNamedFramebuffer(gBuffer, 0,0, 0, window.windowWidth, window.windowHeight, 0, 0, window.windowWidth, window.windowHeight, GL30.GL_DEPTH_BUFFER_BIT, GL30.GL_NEAREST)
+
 //            GL30.glBlitFramebuffer(0, 0, window.windowWidth, window.windowHeight, 0, 0, window.windowWidth, window.windowHeight, GL30.GL_DEPTH_BUFFER_BIT, GL30.GL_NEAREST)
-//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+
+////
+////            //LIGHTING PASS
+////                glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+////                deferredLightingShader.use()
+////                GL30.glActiveTexture(GL30.GL_TEXTURE0)
+////                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
+////                GL30.glActiveTexture(GL30.GL_TEXTURE1)
+////                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gNormal)
+////                GL30.glActiveTexture(GL30.GL_TEXTURE2)
+////                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gColorSpec)
+////                GL30.glActiveTexture(GL30.GL_TEXTURE3)
+////                GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
+////
+////                globalLightHandler.bindLights(deferredBufferShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+////
+////                cameraHandler.getActiveCamera().bind(baseShader)
+////
+////
+
+//
+////                last.use()
+////
+////                globalLightHandler.bindLights(deferredBufferShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+////
+////                cameraHandler.getActiveCamera().bind(baseShader)
         }
     }
 

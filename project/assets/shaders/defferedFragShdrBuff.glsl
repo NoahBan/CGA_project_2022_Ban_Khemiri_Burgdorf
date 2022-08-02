@@ -1,9 +1,9 @@
-#version 330 core
+#version 440
 
-layout (location = 0) out vec3 gPosition;
-layout (location = 1) out vec3 gNormal;
+layout (location = 0) out vec4 gPosition;
+layout (location = 1) out vec4 gNormal;
 layout (location = 2) out vec4 gColorSpec;
-layout (location = 3) out vec3 gEmission;
+layout (location = 3) out vec4 gEmission;
 
 //input from vertex shader
 in vec3 vertexPosition;
@@ -41,11 +41,11 @@ void main(){
         texCoord[1] += Material.movingV;
     };
 
-    gPosition = vertexPosition;
-    gNormal = normalize(vertexNormal);
-    gEmission = texture(Material.texEmit, texCoord).rgb;
+    gPosition = vec4(vertexPosition,1.0);
+    gNormal = vec4(normalize(vertexNormal),1.0);
+    gEmission = texture(Material.texEmit, texCoord);
     gColorSpec.rgb = texture(Material.texDiff, texCoord).rgb;
     gColorSpec.a = texture(Material.texSpec, texCoord).r;
 
-    color = vec4(gPosition,1.0);
+    color = gColorSpec;
 }
