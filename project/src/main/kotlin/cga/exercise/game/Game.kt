@@ -10,20 +10,19 @@ class Game(width: Int,
            fullscreen: Boolean = false,
            vsync: Boolean = false,
            title: String = "Testgame",
-           GLVersionMajor: Int = 3,
-           GLVersionMinor: Int = 3) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 4, 120.0f) {
+           GLVersionMajor: Int = 4,
+           GLVersionMinor: Int = 4) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 0, 120.0f) {
 
     private val scene: Scene
     init {
         setCursorVisible(true)
         scene = Scene(this)
     }
-
     override fun shutdown() = scene.cleanup()
 
     override fun update(dt: Float, t: Float) = scene.update(dt, t)
 
-    override fun render(dt: Float, t: Float) = scene.render(dt, t)
+    override fun render(dt: Float, t: Float) = scene.render(dt, t, m_window)
 
     override fun onMouseMove(xpos: Double, ypos: Double) = scene.onMouseMove(xpos, ypos)
 

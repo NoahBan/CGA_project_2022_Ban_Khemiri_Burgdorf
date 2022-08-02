@@ -1,12 +1,11 @@
-#version 440
+#version 420 core
 
 //Vertex Attributes
-layout (location = 0) in vec3 Vertex_Position;
-layout (location = 1) in vec2 TexCoord;
+layout (location = 0) in vec2 Vertex_Position;
 
 out vec2 vertexTexCoord;
 
 void main(){
-    vertexTexCoord = TexCoord;
-    gl_Position = vec4(Vertex_Position, 1.0);
+    vertexTexCoord = Vertex_Position * 0.5 + 0.5;
+    gl_Position = vec4(Vertex_Position, 0.0, 1.0);
 }

@@ -1,4 +1,4 @@
-#version 440
+#version 330 core
 
 layout (location = 0) out vec4 gPosition;
 layout (location = 1) out vec4 gNormal;
@@ -25,8 +25,6 @@ struct MaterialStruct {
 };
 uniform MaterialStruct Material;
 
-out vec4 color;
-
 void toSRGB (inout vec3 linearCol){
     linearCol = pow(linearCol, vec3 (2.2));
 }
@@ -40,12 +38,9 @@ void main(){
         texCoord[0] += Material.movingU;
         texCoord[1] += Material.movingV;
     };
-
-    gPosition = vec4(vertexPosition,1.0);
-    gNormal = vec4(normalize(vertexNormal),1.0);
+    gPosition = vec4(vertexPosition, 1.0);
+    gNormal = vec4(normalize(vertexNormal), 1.0);
     gEmission = texture(Material.texEmit, texCoord);
     gColorSpec.rgb = texture(Material.texDiff, texCoord).rgb;
     gColorSpec.a = texture(Material.texSpec, texCoord).r;
-
-    color = gColorSpec;
 }

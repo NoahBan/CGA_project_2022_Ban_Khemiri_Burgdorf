@@ -75,10 +75,15 @@ task(fatJar, type: Jar) {
         attributes('Main-Class': 'cga.exercise.MainKt')
     }
     from sourceSets.main.output
+    baseName("Spiel-All")
 
     dependsOn configurations.runtimeClasspath
     from {
-        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+//        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+        configurations.runtimeClasspath.findAll {true }.collect { zipTree(it) }
+    }
+    build{
+        dependsOn(fatJar)
     }
 }
 

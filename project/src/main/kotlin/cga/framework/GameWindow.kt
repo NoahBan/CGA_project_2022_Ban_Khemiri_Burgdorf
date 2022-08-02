@@ -41,7 +41,7 @@ abstract class GameWindow(
     class MousePosition(var xpos: Double, var ypos: Double)
 
     //private data
-    private var m_window: Long = 0
+    protected var m_window: Long = 0
     /**
      * Returns the current width of the default frame buffer
      * @return width of the default frame buffer
@@ -307,7 +307,6 @@ abstract class GameWindow(
                 accum -= timedelta
             }
             render((frametime.toDouble() * 1e-9).toFloat(), (m_currentTime * 1e-9).toFloat())
-            GLFW.glfwSwapBuffers(m_window)
         }
         shutdown()
         // Free the window callbacks and destroy the window
