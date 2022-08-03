@@ -7,6 +7,7 @@ import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.light.AttenuationType
 import cga.exercise.components.light.PointLight
+import cga.exercise.components.player.WingType
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.game.globalCollisionHandler
 import cga.exercise.game.globalLightHandler
@@ -31,7 +32,7 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
         light = PointLight(AttenuationType.LINEAR,Vector3f(1f,0f,0f), 10f, this.getWorldModelMatrix())
         globalLightHandler.addPointLight(light)
 
-        colliderFront = Collider(ColliderType.PLAYERPROJICTILECOLLIDER, 0.15f)
+        colliderFront = Collider(ColliderType.PLAYERPROJICTILECOLLIDER, 0.4f)
         colliderFront.parent = this
         colliderFront.setPosition(Vector3f(0f,0f,-1.8f))
 

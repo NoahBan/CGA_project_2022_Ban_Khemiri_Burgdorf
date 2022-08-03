@@ -32,7 +32,6 @@ class Scene(private val window: GameWindow) {
 
     private val baseShader : ShaderProgram
 
-    var deferred = true
     private val deferredBufferShader : ShaderProgram
     private val deferredLightingShader : ShaderProgram
 //    private val last : ShaderProgram
@@ -72,12 +71,15 @@ class Scene(private val window: GameWindow) {
     var waitForButtonPress_N_M = 0f
     var waitForButtonPress_G = 0f
     var waitForButtonPress_P = 0f
+    var waitForButtonPress_I_O = 0.2f
 
 
     val buttonPressDelay_Space = 0.125f
     var waitForButtonPress_Space = 0f
 
+
     val renderQuad : Mesh
+    var deferred = false
 
     var xposBefore : Double = 0.0
 
@@ -238,7 +240,6 @@ class Scene(private val window: GameWindow) {
         spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(1F,1F, 1F), 120F, Matrix4f(), 20f,70f, null)
         spotLight1.setPosition(Vector3f(0f,10f,0f))
 
-
         light1.translate(Vector3f(-5f,1f,0f))
         light2.translate(Vector3f(5f,1f,0f))
 
@@ -266,6 +267,22 @@ class Scene(private val window: GameWindow) {
 
 //        testCollision = Collider(ColliderType.ENEMYCOLLIDER,5f)
 //        testCollision.translate(Vector3f(0f,5f,-14f))
+
+        var turbineOL = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2f, Matrix4f(), player.playerPartsList[0])
+        turbineOL.setPosition(Vector3f(-0.32f, 0.54f, 0.548f))
+        globalLightHandler.addPointLight(turbineOL)
+
+        var turbineOR = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2F, Matrix4f(), player.playerPartsList[1])
+        turbineOR.setPosition(Vector3f(0.32f, 0.54f, 0.548f))
+        globalLightHandler.addPointLight(turbineOR)
+
+        var turbineUL = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2F, Matrix4f(), player.playerPartsList[3])
+        turbineUL.setPosition(Vector3f(-0.32f, -0.54f, 0.548f))
+        globalLightHandler.addPointLight(turbineUL)
+
+        var turbineUR = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2F, Matrix4f(), player.playerPartsList[2])
+        turbineUR.setPosition(Vector3f(0.32f, -0.54f, 0.548f))
+        globalLightHandler.addPointLight(turbineUR)
 
         enemyHandler = EnemyHandler()
     }
@@ -321,18 +338,6 @@ class Scene(private val window: GameWindow) {
                 globalLightHandler.bindLights(deferredLightingShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
                 renderQuad.render()
 
-
-//            GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, gBuffer)
-//            GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0)
-//
-//            GL30.glBlitFramebuffer(0, 0, window.windowHeight, window.windowHeight, 0, 0, window.windowWidth, window.windowHeight, GL30.GL_DEPTH_BUFFER_BIT, GL30.GL_NEAREST)
-//            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
-//
-//            last.use()
-//
-//            globalLightHandler.bindLights(last, cameraHandler.getActiveCamera(), Vector3f(0.5f))
-//
-//            cameraHandler.getActiveCamera().bind(last)
         }
         glfwSwapBuffers(gameWindow)
     }
@@ -341,6 +346,7 @@ class Scene(private val window: GameWindow) {
     fun update(dt: Float, t: Float) {
         ground.update(dt,t)
 
+        //Move
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()
         }
@@ -354,21 +360,7 @@ class Scene(private val window: GameWindow) {
             player.setMoveRight()
         }
 
-        if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Space){
-            waitForButtonPress_Space = t + buttonPressDelay_Space
-            player.setShoot()
-        }
-
-        if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_G){
-            waitForButtonPress_G = t + buttonPressDelay
-            player.toggleWingMode()
-        }
-
-        if(window.getKeyState(GLFW_KEY_P) && t >= waitForButtonPress_P){
-            waitForButtonPress_P = t + buttonPressDelay
-            deferred = !deferred
-        }
-
+        //Switch Camera/Perspective
         if(window.getKeyState(GLFW_KEY_N) && t >= waitForButtonPress_N_M){
             waitForButtonPress_N_M = t + buttonPressDelay
             cameraHandler.prevCam()
@@ -376,6 +368,39 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_M) && t >= waitForButtonPress_N_M){
             waitForButtonPress_N_M = t + buttonPressDelay
             cameraHandler.nextCam()
+        }
+
+        //CameraZoom
+        if (window.getKeyState(GLFW_KEY_I)&& t >= waitForButtonPress_I_O){
+            var newfov = 0.1f
+            if (cameraHandler.getActiveCamera().fov > 20f) {
+                cameraHandler.getActiveCamera().fov -= t * newfov
+            }
+        }
+        //CameraZoom
+        if (window.getKeyState(GLFW_KEY_O)&& t >= waitForButtonPress_I_O){
+            var newfov = 0.1f
+            if (cameraHandler.getActiveCamera().fov < 60f) {
+                cameraHandler.getActiveCamera().fov += t * newfov
+            }
+        }
+
+        //Shoot
+        if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Space){
+            waitForButtonPress_Space = t + buttonPressDelay_Space
+            player.setShoot()
+        }
+
+        //WingsOut
+        if(window.getKeyState(GLFW_KEY_G) && t >= waitForButtonPress_G){
+            waitForButtonPress_G = t + buttonPressDelay
+            player.toggleWingMode()
+        }
+
+        //Switch Shaderprogram
+        if(window.getKeyState(GLFW_KEY_P) && t >= waitForButtonPress_P){
+            waitForButtonPress_P = t + buttonPressDelay
+            deferred = !deferred
         }
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())

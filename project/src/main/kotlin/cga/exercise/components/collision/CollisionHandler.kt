@@ -8,7 +8,6 @@ import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.joml.Vector4f
 
-
 class CollisionHandler {
 
     //CollisionModels
@@ -82,9 +81,6 @@ class CollisionHandler {
         enemyProjectileList.remove(projectile)
     }
 
-
-
-
     fun inRadiusOf(coordinate1 : Vector3f, range1 : Float, coordinate2 : Vector3f, range2 : Float): Boolean {
         if (coordinate1.sub(coordinate2).length() <= range1+range2 ){
             return true
@@ -112,8 +108,7 @@ class CollisionHandler {
     }
 
     fun update(){
-        println(allyProjectileList.size)
+        //println("AllyProjectile List:  " + allyProjectileList.size)
         checkCollision()
     }
-
 }

@@ -1,6 +1,7 @@
 package cga.exercise.components.player
 
 import cga.exercise.components.geometry.Transformable
+import cga.exercise.components.light.PointLight
 import cga.exercise.components.projectile.PlayerProjectile
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.utility.*
@@ -64,6 +65,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         wingList = mutableListOf(
             wingOL,wingUR,wingUL,wingOR
         )
+
     }
 
     fun setShoot(){shoot = true}
@@ -71,6 +73,13 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         val pos = wingList[nextWeaponToShoot].getShotPos()
 
         val newProjectile = PlayerProjectile(time,playerGeo.schuss.renderList, pos)
+        when(wingList[nextWeaponToShoot].wingType){
+            WingType.OL -> newProjectile.setRotation(0f,0f,270f)
+            WingType.OR -> newProjectile.setRotation(0f,0f,180f)
+            WingType.UR -> newProjectile.setRotation(0f,0f,90f)
+            WingType.UL -> newProjectile.setRotation(0f,0f,0f)
+        }
+
         playerProjectileList.add(newProjectile)
         nextWeaponToShoot = (nextWeaponToShoot+1) % wingList.size
 

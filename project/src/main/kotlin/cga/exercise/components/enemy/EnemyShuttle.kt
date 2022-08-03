@@ -57,6 +57,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
             posOnCurve = clampf(posOnCurve + deltaTime * shuttleSpeed, 0f,1f)
         }
         if (absturz) translate(Vector3f(0f, 0f,-1f))
+
         if(posOnCurve == 1f){
             shouldIdie = true
             for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
