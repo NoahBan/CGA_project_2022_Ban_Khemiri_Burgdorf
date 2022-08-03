@@ -236,7 +236,8 @@ class Scene(private val window: GameWindow) {
         val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
 
         importedSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),null)
-        importedSkySphere.scale(Vector3f(1.0f))
+
+        importedSkySphere.rotate(0.0f,94.0f,3.0f)
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0F), 20F, Matrix4f(), player.rollParent, true)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,1F,1F), 20F, Matrix4f(), player.rollParent, true)
@@ -305,7 +306,7 @@ class Scene(private val window: GameWindow) {
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, gBuffer)
                 glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
                 deferredBufferShader.use()
-                renderAllGeometry()
+            renderAllGeometry()
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0) //RGBA 32F
                 deferredLightingShader.use()
                 GL30.glActiveTexture(GL30.GL_TEXTURE0)
@@ -318,6 +319,7 @@ class Scene(private val window: GameWindow) {
                 GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
                 cameraHandler.getActiveCamera().bind(deferredLightingShader)
                 globalLightHandler.bindLights(deferredLightingShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+
                 renderQuad.render()
         }
         glfwSwapBuffers(gameWindow)
