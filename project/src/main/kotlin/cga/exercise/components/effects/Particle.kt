@@ -33,8 +33,8 @@ class Particle (
     var sizeOverLifeVec = Vector3f(sizeOverLife)
     var death = 5f
     var firstUpdate = true
-    var newAlpha = 1f
-    var newColorScaling = 1f
+    var newAlpha = 1.0
+    var newColorScaling = 1.0
 
     init {
         //Scale between min and max
@@ -80,7 +80,7 @@ class Particle (
     }
 
     fun spreadTo(dt : Float){
-        val dtMultiplier = dt*144
+        val dtMultiplier = dt*144.toDouble()
 
         //Spread To
         val particleX = this.getWorldPosition().x
@@ -92,21 +92,20 @@ class Particle (
             spreadVec.mul(acceleration)
         }else{
             this.setPosition(Vector3f(
-                particleX+(spreadVec.x+spreadAccelVec.x)*dtMultiplier,
-                particleY+(spreadVec.y+spreadAccelVec.y)*dtMultiplier,
-                particleZ+(spreadVec.z+spreadAccelVec.z)*dtMultiplier))
-            spreadAccelVec = spreadAccelVec.mul(accel.mul(dtMultiplier))
+                particleX+(spreadVec.x+spreadAccelVec.x)/dtMultiplier.toFloat(),
+                particleY+(spreadVec.y+spreadAccelVec.y)/dtMultiplier.toFloat(),
+                particleZ+(spreadVec.z+spreadAccelVec.z)/dtMultiplier.toFloat()))
+            spreadAccelVec = spreadAccelVec.mul(accel.div(dtMultiplier.toFloat()))
         }
     }
 
     fun update(t : Float, dt : Float, camera: Camera){
-        val dtMultiplier = dt*144
-
+        val dtMultiplier = 144*dt
         setCorrectRotation(camera)
         spreadTo(dt)
 
         this.scale(Vector3f(sizeOverLifeVec))
-        sizeOverLifeVec.mul(sizeOverLife * dtMultiplier)
+        sizeOverLifeVec.mul(Vector3f(sizeOverLife))
 
         if (firstUpdate){
             firstUpdate = false
@@ -115,11 +114,11 @@ class Particle (
         }
 
         if (alphaOverLife != 1f){
-            newAlpha = newAlpha * alphaOverLife * dtMultiplier
+            newAlpha = newAlpha * alphaOverLife / dtMultiplier
         }
 
         if (alphaOverLife != 1f){
-            newColorScaling = newColorScaling * colorLife * dtMultiplier
+            newColorScaling = newColorScaling * colorLife / dtMultiplier
         }
     }
 

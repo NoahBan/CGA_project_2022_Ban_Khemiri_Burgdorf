@@ -117,11 +117,11 @@ class Emitter (
             lonelyParticle.scale(particle.getScale())
             //Apply Alpha Change
             if (alphaOverLife != 1f){
-                importedMesh.material?.opacityMultiplier = particle.newAlpha
+                importedMesh.material?.opacityMultiplier = particle.newAlpha.toFloat()
             }
             //Apply Color Change
             if (colorLife != 1f){
-                importedMesh.material?.colorScaling = particle.newColorScaling
+                importedMesh.material?.colorScaling = particle.newColorScaling.toFloat()
             }
             if (colorOverLife != Vector3f(1f,1f,1f)){
                 importedMesh.material?.scalingColor = colorOverLife

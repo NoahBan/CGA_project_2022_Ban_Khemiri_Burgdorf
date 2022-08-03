@@ -11,7 +11,7 @@ class Game(width: Int,
            vsync: Boolean = false,
            title: String = "Testgame",
            GLVersionMajor: Int = 4,
-           GLVersionMinor: Int = 4) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 0, 120.0f) {
+           GLVersionMinor: Int = 4) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 0, 144.0f) {
 
     private val scene: Scene
     init {

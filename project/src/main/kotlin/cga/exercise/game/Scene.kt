@@ -100,16 +100,17 @@ class Scene(private val window: GameWindow) {
         deferredLightingShader = ShaderProgram("assets/shaders/deferredVertShdrLight.glsl", "assets/shaders/defferedFragShdrLight.glsl")
 //        last = ShaderProgram("assets/shaders/hoffnungV.glsl", "assets/shaders/hoffnungF.glsl")
 
-        //initial opengl state
-//        glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
+        glDisable(GL_CULL_FACE); GLError.checkThrow()
         //glFrontFace(GL_CCW); GLError.checkThrow()
         //glCullFace(GL_BACK); GLError.checkThrow()
-
-//        glDepthFunc(GL_LESS)
-
-//        glEnable ( GL_CULL_FACE )
-//        glFrontFace ( GL_CCW )
-//        glCullFace ( GL_BACK )
+        glEnable(GL_DEPTH_TEST); GLError.checkThrow()
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthFunc(GL_LESS); GLError.checkThrow()
+        glEnable ( GL_CULL_FACE )
+        glFrontFace ( GL_CCW )
+        glCullFace ( GL_BACK )
 
 
         ///Deff
