@@ -29,10 +29,14 @@ struct MaterialStruct {
     vec2 tcMultiplier;
     float shininess;
     vec3 emitMultiplier;
+    float opacityMultiplier;
+    int flatOpacity;
+    float opacity;
     int movingMat;
     float movingU;
     float movingV;
-    int skySphere;
+    vec3 scalingColor;
+    float colorScaling;
 };
 uniform MaterialStruct Material;
 
@@ -174,6 +178,9 @@ void main(){
     vec3 specular = vec3(0);
     vec3 emission = matEmissive * Material.emitMultiplier;
     vec3 ambient = AmbientColor * matDiffuse;
+    vec4 colorAlpha;
+    float alpha = texture(Material.texDiff,texCoord).a;
+    float alphaMultiplier = Material.opacityMultiplier;
 
     //add point lights
 //    calcLightDiff(vec3 lightPos,vec3 pointTolightDir,vec3 lightColor, float intensity, int attenuationType, vec3 vertexNormal, vec3 matDiffuse)
@@ -192,7 +199,18 @@ void main(){
     //add up material inputs
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);
-    color = vec4(result, 1.0);
-//    color = vec4(PointLights[0].lightColor, 1.0);
+
+    vec3 newResult =   vec3((result.x * Material.colorScaling) + Material.scalingColor.x * (1-Material.colorScaling),
+                            (result.y * Material.colorScaling) + Material.scalingColor.y * (1-Material.colorScaling),
+                            (result.z * Material.colorScaling) + Material.scalingColor.z * (1-Material.colorScaling));
+
+    if(Material.flatOpacity == 1){
+        colorAlpha = vec4(newResult,Material.opacity);
+    }else{
+        colorAlpha = vec4(newResult,alpha * alphaMultiplier);
+    }
+
+    color = colorAlpha;
+//  color = vec4(PointLights[0].lightColor, 1.0);
 
 }
