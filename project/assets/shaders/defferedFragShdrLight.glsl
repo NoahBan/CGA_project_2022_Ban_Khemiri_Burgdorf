@@ -14,6 +14,14 @@ layout (binding = 2) uniform sampler2D gColorSpec;
 layout (binding = 3) uniform sampler2D gEmission;
 
 uniform vec3 AmbientColor;
+
+struct DirectionalLight {
+    vec3 direction;
+    vec3 lightColor;
+    float intensity;
+};
+uniform DirectionalLight DirectionalLights[MAXDIRECTIONALLIGHTS];
+
 struct PointLightStruct
 {
     vec3 lightPos;
@@ -45,17 +53,14 @@ float getAttenuation(int inAttenuationType,vec3 fragPosition,vec3 lightPos){
     return attenuation;
 }
 
-//vec3 calcLightDiff(){
+//vec3 calcLightDiff(vec3 lightDirection){
+//    vec3 outDiff = vec3(0.0);
+//
+//    vec3 directionToLight = normalize(-DirectionalLights[i].direction);
 //
 //
-//    vec3 pointToPointlightDir = normalize(pointTolightDir);
-//    float cosa = max(0.0, dot(vertexNormal, pointToPointlightDir));
-//    vec3 diffuseTerm = matDiffuse * (lightColor * intensity);
-//    float attenuation = getAttenuation(attenuationType, VertexData.position,lightPos);
-//    return diffuseTerm * cosa / attenuation;
+//    return outDiff;
 //}
-
-
 
 void main(){
     vec3 FragPos = texture(gPosition, vertexTexCoord).rgb;
@@ -75,16 +80,16 @@ void main(){
 
     vec3 fragToViewDir = normalize(CameraPosition - FragPos);
 
+    for (int i = 0 ; i < 1 ; i++){
+        vec3 lightDirection = normalize(-DirectionalLights[i].direction);
+        vec3 diffuseTerm = max(dot(FragNormal, lightDirection), 0.0) * FragDiffuse * DirectionalLights[i].lightColor * DirectionalLights[i].intensity;
+        outDiffuse += diffuseTerm;
+    }
+
     for (int i = 0 ; i < PointLightsLength ; i++){
         vec3 fragToLightDir = normalize(PointLights[i].lightPos - FragPos);
         float attenuation = getAttenuation(PointLights[i].attenuationType, FragPos, PointLights[i].lightPos);
         vec3 diffuseTerm = max(dot(FragNormal, fragToLightDir), 0.0) * FragDiffuse * PointLights[i].lightColor * PointLights[i].intensity / attenuation;
-
-//
-//
-//        outDiffuse += diffuseTerm();
-//        specular += calcLightSpec(PointLights[i].lightPos,PointToPointlightDir[i], PointLights[i].lightColor, PointLights[i].intensity, PointLights[i].attenuationType, vertexNormal, matSpecular);
-
         outDiffuse += diffuseTerm;
     }
 

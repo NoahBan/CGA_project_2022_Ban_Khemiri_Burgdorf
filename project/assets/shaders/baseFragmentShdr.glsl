@@ -67,7 +67,6 @@ in vec3 PointToSpotlightDir[MAXSPOTLIGHTS];
 
 //DirectionalLight
 struct DirectionalLight {
-
     vec3 direction;
     vec3 lightColor;
     float intensity;
