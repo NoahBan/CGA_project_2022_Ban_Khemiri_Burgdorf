@@ -49,8 +49,6 @@ class EnemyHandler {
 //    var test = true
 
     fun update(deltaTime : Float, time : Float){
-
-
 //         if (test) addEnemy(EnemyShuttle(this, enemyGeo, Matrix4f()))
 //        test = false
         //println(enemyList.size)
@@ -69,7 +67,4 @@ class EnemyHandler {
         }
         for (each in tmp.asReversed()) destroy(each)
     }
-
-
-
 }
