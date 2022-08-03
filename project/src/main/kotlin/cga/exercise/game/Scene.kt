@@ -4,7 +4,8 @@ import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
-import cga.exercise.components.effects.ParticleSystem
+import cga.exercise.components.effects.Emitter
+import cga.exercise.components.effects.EmitterHandler
 import cga.exercise.components.geometry.*
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
@@ -20,6 +21,7 @@ import java.util.Vector
 
 val globalLightHandler = LightHandler()
 val cameraHandler = CameraHandler()
+val emitterHandler = EmitterHandler()
 
 /**
  * Created by Fabian on 16.09.2017.
@@ -55,7 +57,7 @@ class Scene(private val window: GameWindow) {
     var waitForButtonPress_CameraSwitch = 0f
     var waitForButtonPress_ToggleWeapon = 0f
 
-    val particleSystem1 : ParticleSystem
+    val emitter1 : Emitter
 
     var xposBefore : Double = 0.0
 
@@ -146,8 +148,7 @@ class Scene(private val window: GameWindow) {
             60.0f,
             Vector2f(64.0f,64.0f),
             Vector3f(1f),
-            1f,
-            0.95f
+            1f
         )
         val importObjGround = OBJLoader.loadOBJ("assets/models/Ground/Ground.obj", true)
         val importedGroundData  = importObjGround.objects[0].meshes[0]
@@ -215,30 +216,61 @@ class Scene(private val window: GameWindow) {
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
-        val explosiveTex = Texture2D("assets/textures/TestTex.png",true)
+        val explosiveTex = Texture2D("assets/textures/explosive2.png",true)
         skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         val explosiveMaterial = Material(
-            pureWhiteTex,
             pureRedTex,
-            pureWhiteTex
+            pureRedTex,
+            pureWhiteTex,
+            60.0f,
+            Vector2f(1f,1f),
+            Vector3f(1f),
+            0.7f
         )
 
-        particleSystem1 = ParticleSystem(
+        emitter1 = Emitter(
             0f,0f,-10f,
             explosiveMaterial,
             1000,
+            1f,
+            0.3f,
+            Vector3f(0f,0.3f,0f),
+            Vector3f(0f,0.5f,0f),
+            180f,
+            0.96f,
+            Vector3f(0f,0f,0f),
+            0.7f,
+            1.3f,
+            0.993f,
+            0.98f,
+            Vector3f(0f,0f,1f),
+            0.98f,
+            1.5f,
+            1
+        )
+        emitterHandler.addEmitter(emitter1)
+
+        var emitter2 = Emitter(
+            -5f, 0f, -10f,
+            explosiveMaterial,
+            10,
             0.1f,
             0.3f,
-            Vector3f(0f,0.05f,0f),
-            Vector3f(0f,0.010f,0f),
-            180f,
-            1.00f,
-            Vector3f(0f,-0.000f,0f),
-            1f,
-            1.5f
+            Vector3f(0f, 0.3f, 0f),
+            Vector3f(0f, 0.35f, 0f),
+            10f,
+            0.98f,
+            Vector3f(0f, 0f, 0f),
+            0.7f,
+            1.3f,
+            0.993f,
+            0.97f,
+            Vector3f(0.1f, 0.1f, 0.1f),
+            0.9f,
+            0.05f
         )
-
+        emitterHandler.addEmitter(emitter2)
     }
 
     fun render(dt: Float, t: Float) {
@@ -257,10 +289,9 @@ class Scene(private val window: GameWindow) {
 //        importedLightSphere2.render(staticShader)
 //        importedLightSphere3.render(staticShader)
         ground.render(staticShader)
-
         player.render(staticShader)
 
-        particleSystem1.render(staticShader)
+        emitterHandler.renderAllEmitter(staticShader)
     }
 
     fun update(dt: Float, t: Float) {
@@ -295,7 +326,7 @@ class Scene(private val window: GameWindow) {
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
 
-        particleSystem1.update(t)
+        emitterHandler.updateAllEmitter(t,dt)
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {

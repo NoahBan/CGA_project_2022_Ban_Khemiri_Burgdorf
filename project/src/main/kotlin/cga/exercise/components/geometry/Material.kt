@@ -18,6 +18,8 @@ class Material(var diff: Texture2D,
                var movingV : Float = 0.0f
                ){
 
+    var scalingColor = Vector3f(1f)
+    var colorScaling = 1.0f
     var flatOpacity = 0
     init {
         if (opacity != 1.0f){
@@ -46,6 +48,8 @@ class Material(var diff: Texture2D,
         shaderProgram.setUniform("Material.opacity", opacity)
         shaderProgram.setUniform("Material.flatOpacity", flatOpacity)
         shaderProgram.setUniform("Material.emitMultiplier", emitMultiplier)
+        shaderProgram.setUniform("Material.scalingColor", scalingColor)
+        shaderProgram.setUniform("Material.colorScaling", colorScaling)
 
         if (movingU == 0f && movingV == 0f)  shaderProgram.setUniform("Material.movingMat", 0)
         else shaderProgram.setUniform("Material.movingMat", 1)

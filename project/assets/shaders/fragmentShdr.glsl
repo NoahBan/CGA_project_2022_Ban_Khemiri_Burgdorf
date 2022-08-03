@@ -35,6 +35,8 @@ struct MaterialStruct {
     int movingMat;
     float movingU;
     float movingV;
+    vec3 scalingColor;
+    float colorScaling;
 };
 uniform MaterialStruct Material;
 
@@ -200,12 +202,14 @@ void main(){
     vec3 result = emission + diffuse + specular + ambient;
     toSRGB(result);
 
-
+    vec3 newResult =   vec3((result.x * Material.colorScaling) + Material.scalingColor.x * (1-Material.colorScaling),
+                            (result.y * Material.colorScaling) + Material.scalingColor.y * (1-Material.colorScaling),
+                            (result.z * Material.colorScaling) + Material.scalingColor.z * (1-Material.colorScaling));
 
     if(Material.flatOpacity == 1){
-        colorAlpha = vec4(result,Material.opacity);
+        colorAlpha = vec4(newResult,Material.opacity);
     }else{
-        colorAlpha = vec4(result,alpha * alphaMultiplier);
+        colorAlpha = vec4(newResult,alpha * alphaMultiplier);
     }
 
     color = colorAlpha;

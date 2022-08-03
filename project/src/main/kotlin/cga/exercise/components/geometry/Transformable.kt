@@ -35,6 +35,12 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
         modelMatrix.setRotationXYZ(Math.toRadians(pitch),Math.toRadians(yaw),Math.toRadians(roll))
     }
 
+    fun getScale(): Vector3f {
+        var x = Vector3f()
+        modelMatrix.getScale(x)
+        return x
+    }
+
     fun rotateAroundPoint(pitch: Float, yaw: Float, roll: Float, altMidpoint: Vector3f) {
         val temp = Matrix4f().translate(altMidpoint)
         var mMatrix = Matrix4f(modelMatrix)
