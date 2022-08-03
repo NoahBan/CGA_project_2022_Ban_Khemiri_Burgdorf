@@ -275,16 +275,17 @@ class Scene(private val window: GameWindow) {
         enemyHandler = EnemyHandler()
     }
 
-    fun renderAllGeometry(){
+    fun renderAllGeometry(shaderProgram: ShaderProgram){
+
         GL30.glDepthMask(false)
-        importedSkySphere.render(baseShader)
+        importedSkySphere.render(shaderProgram)
         GL30.glDepthMask(true)
+        ground.render(shaderProgram)
 
-        ground.render(baseShader)
+        player.render(shaderProgram)
+        if (renderCollision) globalCollisionHandler.render(shaderProgram)
+        enemyHandler.render(shaderProgram)
 
-        player.render(baseShader)
-        if (renderCollision) globalCollisionHandler.render(baseShader)
-        enemyHandler.render(baseShader)
     }
 
     fun render(dt: Float, t: Float, gameWindow : Long) {
@@ -296,7 +297,7 @@ class Scene(private val window: GameWindow) {
             baseShader.use()
             cameraHandler.getActiveCamera().bind(baseShader)
             globalLightHandler.bindLights(baseShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
-            renderAllGeometry()
+            renderAllGeometry(baseShader)
         }
 
         if(deferred){
@@ -305,7 +306,8 @@ class Scene(private val window: GameWindow) {
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, gBuffer)
                 glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
                 deferredBufferShader.use()
-                renderAllGeometry()
+                cameraHandler.getActiveCamera().bind(deferredBufferShader)
+                renderAllGeometry(deferredBufferShader)
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0) //RGBA 32F
                 deferredLightingShader.use()
                 GL30.glActiveTexture(GL30.GL_TEXTURE0)

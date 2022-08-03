@@ -29,6 +29,7 @@ open class Camera (
         val calculateProjectionMatrix = getCalculateProjectionMatrix();
         shader.setUniform("View_matrix",calculateViewMatrix,false);
         shader.setUniform("Projection_matrix",calculateProjectionMatrix,false);
+        shader.setUniform("CameraPosition",getWorldPosition());
 
     }
 }

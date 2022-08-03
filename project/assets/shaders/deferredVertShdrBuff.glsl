@@ -23,9 +23,8 @@ void main(){
     vertexTexCoord = TexCoord;
 
     vec4 n = vec4(Normal,0);
-    mat4 normalMat = transpose(inverse(View_matrix * Model_matrix));
-    //VertexData.normal = (normalMat * n).xyz;
-    vertexNormal = Normal;
+    mat4 normalMat = transpose(inverse(Model_matrix));
+    vertexNormal = (normalMat * n).xyz;
 
     gl_Position = Projection_matrix * View_matrix * worldPos;
 }
