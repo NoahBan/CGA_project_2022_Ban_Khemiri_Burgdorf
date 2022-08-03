@@ -4,7 +4,7 @@ import cga.exercise.components.camera.Camera
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Vector3f
 
-class LightHandler(val maxPointLights : Int, val maxSpotLight : Int, val maxDirectionalLight : Int)  {
+class LightHandler(val maxPointLights : Int, val maxSpotLights : Int, val maxDirectionalLights : Int)  {
     private val pointLights = mutableListOf<PointLight>()
     private val spotLights = mutableListOf<SpotLight>()
     private val directionalLights = mutableListOf<DirectionalLight>()
@@ -54,8 +54,8 @@ class LightHandler(val maxPointLights : Int, val maxSpotLight : Int, val maxDire
     }
 
     fun bindSpotlights (shaderProgram : ShaderProgram, camera : Camera) {
-        if (spotLights.size > maxSpotLight) {
-            println("maximum of ${maxSpotLight} Spotlights exceeded. Past ${maxSpotLight} will be ignored")
+        if (spotLights.size > maxSpotLights) {
+            println("maximum of ${maxSpotLights} Spotlights exceeded. Past ${maxSpotLights} will be ignored")
             return
         }
 
@@ -69,7 +69,7 @@ class LightHandler(val maxPointLights : Int, val maxSpotLight : Int, val maxDire
             shaderProgram.setUniform("SpotLights[" + index + "].direction", spotLight.getSpotLightDirection(camera))
             shaderProgram.setUniform("SpotLights[" + index + "].cutOff", spotLight.getCutOff())
             shaderProgram.setUniform("SpotLights[" + index + "].outerCutOff", spotLight.getOuterCutOff())
-            if (index >= maxSpotLight-1) return
+            if (index >= maxSpotLights) return
         }
     }
 
@@ -78,7 +78,7 @@ class LightHandler(val maxPointLights : Int, val maxSpotLight : Int, val maxDire
             shaderProgram.setUniform("DirectionalLights[" + index +"].direction", directionalLight.direction) //
             shaderProgram.setUniform("DirectionalLights[" + index +"].lightColor", directionalLight.lightColor)
             shaderProgram.setUniform("DirectionalLights[" + index +"].intensity", directionalLight.intensity)
-            if (index >= maxDirectionalLight) return
+            if (index >= maxDirectionalLights) return
         }
     }
 }

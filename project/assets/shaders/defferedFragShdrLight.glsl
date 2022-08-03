@@ -53,13 +53,52 @@ float getAttenuation(int inAttenuationType,vec3 fragPosition,vec3 lightPos){
     return attenuation;
 }
 
-//vec3 calcLightDiff(vec3 lightDirection){
-//    vec3 outDiff = vec3(0.0);
+vec3 calcLightDiff(vec3 lightPos, int attenuationType, vec3 lightColor, float intensity, vec3 FragPos, vec3 FragNormal, vec3 FragDiffuse){
+    vec3 outDiff = vec3(0.0);
+
+    vec3 fragToLightDir = normalize(lightPos - FragPos);
+    float attenuation = getAttenuation(attenuationType, FragPos, lightPos);
+    outDiff = max(dot(FragNormal, fragToLightDir), 0.0) * FragDiffuse * lightColor * intensity / attenuation;
+
+    return outDiff;
+}
+
+vec3 calcLightSpec(vec3 lightPos, int attenuationType, vec3 lightColor, float intensity, vec3 fragToCamDir, vec3 FragPos, vec3 FragNormal, float FragSpecular){
+    vec3 outSpec = vec3(0.0);
+
+    vec3 fragToLightDir = (lightPos - FragPos);
+
+    vec3 V = fragToCamDir;
+    vec3 R = normalize(reflect(-fragToLightDir, FragNormal));
+
+    float cosBeta = max(0.0,dot(R,V));
+    float cosBetak = pow(cosBeta,60f);
+
+    vec3 specularTerm = FragSpecular * lightColor;
+    float attenuation = getAttenuation(attenuationType, FragPos, lightPos);
+
+    outSpec = specularTerm * cosBetak * intensity / attenuation;
+
+
+//    vec3 fragToLightDir = normalize(lightPos - FragPos);
+//    float attenuation = getAttenuation(attenuationType, FragPos, lightPos);
 //
-//    vec3 directionToLight = normalize(-DirectionalLights[i].direction);
+//    vec3 halfwayDir = normalize(fragToLightDir + fragToCamDir);
+//    float specAngle = pow(max(dot(FragNormal, halfwayDir), 0.0), 16.0);
+//    outSpec = lightColor * specAngle * FragSpecular * intensity / attenuation;
+
+    return outSpec;
+}
+
+//vec3 calcLightSpec(vec3 lightPos, vec3 pointTolightDir, vec3 lightColor, float intensity, int attenuationType,vec3 vertexNormal, vec3 matSpecular){
+//    vec3 V = normalize(PointToCamDir);
+//    vec3 R = normalize(reflect(-pointTolightDir, vertexNormal));
 //
-//
-//    return outDiff;
+//    float cosBeta = max(0.0,dot(R,V));
+//    float cosBetak = pow(cosBeta,Material.shininess);
+//    vec3 specularTerm = matSpecular * lightColor;
+//    float attenuation = getAttenuation(attenuationType, VertexData.position, lightPos);
+//    return specularTerm * cosBetak * intensity / attenuation;
 //}
 
 void main(){
@@ -78,7 +117,7 @@ void main(){
     vec3 outAmbient = AmbientColor * FragDiffuse;
 
 
-    vec3 fragToViewDir = normalize(CameraPosition - FragPos);
+    vec3 fragToCamDir = normalize(CameraPosition - FragPos);
 
     for (int i = 0 ; i < 1 ; i++){
         vec3 lightDirection = normalize(-DirectionalLights[i].direction);
@@ -87,15 +126,14 @@ void main(){
     }
 
     for (int i = 0 ; i < PointLightsLength ; i++){
-        vec3 fragToLightDir = normalize(PointLights[i].lightPos - FragPos);
-        float attenuation = getAttenuation(PointLights[i].attenuationType, FragPos, PointLights[i].lightPos);
-        vec3 diffuseTerm = max(dot(FragNormal, fragToLightDir), 0.0) * FragDiffuse * PointLights[i].lightColor * PointLights[i].intensity / attenuation;
-        outDiffuse += diffuseTerm;
+        outDiffuse += calcLightDiff(PointLights[i].lightPos, PointLights[i].attenuationType, PointLights[i].lightColor, PointLights[i].intensity, FragPos, FragNormal, FragDiffuse);
+        outSpecular += calcLightSpec(PointLights[i].lightPos, PointLights[i].attenuationType, PointLights[i].lightColor, PointLights[i].intensity, fragToCamDir, FragPos, FragNormal, FragSpecular);
     }
 
 
-    vec3 result = outDiffuse + outEmission + outAmbient;
+    vec3 result = outDiffuse + outEmission + outAmbient + outSpecular;
     toSRGB(result);
 
     color = vec4(result,1.0);
 }
+

@@ -24,7 +24,7 @@ import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL46
 import java.nio.ByteBuffer
 
-val globalLightHandler = LightHandler(30,1,1)
+val globalLightHandler = LightHandler(26,1,1)
 val globalCollisionHandler = CollisionHandler()
 val emitterHandler = EmitterHandler()
 
@@ -342,7 +342,7 @@ class Scene(private val window: GameWindow) {
         player.render(shaderProgram)
         if (renderCollision) globalCollisionHandler.render(shaderProgram)
         enemyHandler.render(shaderProgram)
-        emitterHandler.renderAllEmitter(shaderProgram)
+//        emitterHandler.renderAllEmitter(shaderProgram)
     }
 
     fun render(dt: Float, t: Float, gameWindow : Long) {
@@ -359,7 +359,6 @@ class Scene(private val window: GameWindow) {
 
         if(deferred){
             //BUFFER PASS
-
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, gBuffer)
                 glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
                 deferredBufferShader.use()
