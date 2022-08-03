@@ -65,27 +65,27 @@ vec3 calcLightDiff(vec3 lightPos, int attenuationType, vec3 lightColor, float in
 
 vec3 calcLightSpec(vec3 lightPos, int attenuationType, vec3 lightColor, float intensity, vec3 fragToCamDir, vec3 FragPos, vec3 FragNormal, float FragSpecular){
     vec3 outSpec = vec3(0.0);
-
-    vec3 fragToLightDir = (lightPos - FragPos);
-
-    vec3 V = fragToCamDir;
-    vec3 R = normalize(reflect(-fragToLightDir, FragNormal));
-
-    float cosBeta = max(0.0,dot(R,V));
-    float cosBetak = pow(cosBeta,60f);
-
-    vec3 specularTerm = FragSpecular * lightColor;
-    float attenuation = getAttenuation(attenuationType, FragPos, lightPos);
-
-    outSpec = specularTerm * cosBetak * intensity / attenuation;
-
-
-//    vec3 fragToLightDir = normalize(lightPos - FragPos);
+//
+//    vec3 fragToLightDir = (lightPos - FragPos);
+//
+//    vec3 V = fragToCamDir;
+//    vec3 R = normalize(reflect(-fragToLightDir, FragNormal));
+//
+//    float cosBeta = max(0.0,dot(R,V));
+//    float cosBetak = pow(cosBeta,60f);
+//
+//    vec3 specularTerm = FragSpecular * lightColor;
 //    float attenuation = getAttenuation(attenuationType, FragPos, lightPos);
 //
-//    vec3 halfwayDir = normalize(fragToLightDir + fragToCamDir);
-//    float specAngle = pow(max(dot(FragNormal, halfwayDir), 0.0), 16.0);
-//    outSpec = lightColor * specAngle * FragSpecular * intensity / attenuation;
+//    outSpec = specularTerm * cosBetak * intensity / attenuation;
+
+
+    vec3 fragToLightDir = normalize(lightPos - FragPos);
+    float attenuation = getAttenuation(attenuationType, FragPos, lightPos);
+
+    vec3 halfwayDir = normalize(fragToLightDir + fragToCamDir);
+    float specAngle = pow(max(dot(FragNormal, halfwayDir), 0.0), 16.0);
+    outSpec = lightColor * specAngle * FragSpecular * intensity / attenuation;
 
     return outSpec;
 }

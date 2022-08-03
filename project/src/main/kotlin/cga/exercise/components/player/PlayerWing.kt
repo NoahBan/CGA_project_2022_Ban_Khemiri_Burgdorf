@@ -65,7 +65,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.rotate(0f, 0f, 180f)
                 weapon.setPosition(Vector3f(-2.22f, 0.9f, -0.69f))
                 weapon.rotate(0f, 0f, 180f)
-                turbineLight = PointLight(AttenuationType.QUADRATIC,turbineLightColor, 0.2f, Matrix4f(), this)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), wingGeo)
                 turbineLight.setPosition(Vector3f(-0.32f, 0.54f, 0.548f))
             }
             WingType.OR -> {
@@ -75,7 +75,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 wingGeo.parent = this
                 minRotation *= -1f
                 weapon.setPosition(Vector3f(2.22f,0.9f,-0.69f))
-                turbineLight = PointLight(AttenuationType.QUADRATIC,turbineLightColor, 0.2f, Matrix4f(), this)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), this)
                 turbineLight.setPosition(Vector3f(0.32f, 0.54f, 0.548f))
             }
             WingType.UL -> {
@@ -88,7 +88,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 minRotation *= -1f
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(-2.22f,-30f*0.03f,-0.69f))
-                turbineLight = PointLight(AttenuationType.QUADRATIC,turbineLightColor, 0.2f, Matrix4f(), this)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), this)
                 turbineLight.setPosition(Vector3f(-0.32f, -0.54f, 0.548f))
             }
             WingType.UR -> {
@@ -102,7 +102,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.mirror(0f,1f,0f,0f,0f,0f)
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(2.22f,-0.9f,-0.69f))
-                turbineLight = PointLight(AttenuationType.QUADRATIC,turbineLightColor, 0.2f, Matrix4f(), this)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), this)
                 turbineLight.setPosition(Vector3f(0.32f, -0.54f, 0.548f))
             }
         }
