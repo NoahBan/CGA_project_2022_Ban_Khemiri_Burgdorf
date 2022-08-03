@@ -251,8 +251,8 @@ class Scene(private val window: GameWindow) {
         globalLightHandler.addDirectionalLight(dirLight1)
 
         //Cameras
-        followCam = TargetCamera(player,20f, 16f/9f, 0.1F, 1000.0F+35F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
-        followCam.translate(Vector3f(0F,2F,40.0F))
+        followCam = TargetCamera(player,50f, 16f/9f, 0.1F, 1000.0F+35F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
+        followCam.translate(Vector3f(0F,2F,15.0F))
         cameraHandler.addCamera(followCam)
 
         thirdPersonCam = Camera(60f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
