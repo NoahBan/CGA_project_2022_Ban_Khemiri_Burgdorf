@@ -17,10 +17,10 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
-import java.util.Vector
 
 val globalLightHandler = LightHandler()
 val cameraHandler = CameraHandler()
+val emitterHandler = EmitterHandler()
 
 /**
  * Created by Fabian on 16.09.2017.
@@ -272,6 +272,7 @@ class Scene(private val window: GameWindow) {
             0.05f
         )
         emitterHandler.addEmitter(emitter2)
+
     }
 
     fun render(dt: Float, t: Float) {
@@ -328,7 +329,7 @@ class Scene(private val window: GameWindow) {
         player.update(dt,t)
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
 
-        emitterHandler.updateAllEmitter(t,dt)
+        emitterHandler.updateAllEmitter(t,dt,cameraHandler.getActiveCamera())
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {

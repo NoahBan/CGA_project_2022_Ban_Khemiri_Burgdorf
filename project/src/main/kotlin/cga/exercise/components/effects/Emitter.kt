@@ -1,7 +1,9 @@
 package cga.exercise.components.effects
 
+import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.game.cameraHandler
 import cga.framework.OBJLoader
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -57,7 +59,7 @@ class Emitter (
         }
     }
 
-    fun update(t : Float, dt : Float){
+    fun update(t : Float, dt : Float, camera : Camera){
         //Delete all dead particles
         var temp = mutableListOf<Int>()
         allParticles.forEachIndexed{index,particle-> if (t >= particle.death) temp.add(index)}
@@ -73,8 +75,6 @@ class Emitter (
         }else if (t >= delayTime){
             isDead = true
         }
-
-
 
         //Add new particles in delay interval
         if (updateAllowed == true){
@@ -103,11 +103,9 @@ class Emitter (
                 allParticles.add(newParticle)
             }
         }
-
-
         //Update Particles
         for (particle in allParticles){
-            particle.update(t, dt)
+            particle.update(t, dt, camera)
         }
     }
 

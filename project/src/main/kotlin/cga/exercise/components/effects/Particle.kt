@@ -1,5 +1,6 @@
 package cga.exercise.components.effects
 
+import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.game.cameraHandler
 import org.joml.Matrix4f
@@ -56,8 +57,6 @@ class Particle (
         spreadVec.rotateY(Math.toRadians(randomYInRange).toFloat())
         spreadVec.rotateZ(Math.toRadians(randomZInRange).toFloat())
 
-        //Align Cam
-        setCorrectRotation()
         //Random Roll
         val randomRoll = randomBetween(0f,360f)
         val currentRota = this.getRotation()
@@ -65,11 +64,11 @@ class Particle (
         this.setPosition(Vector3f(x, y, z))
     }
 
-    fun setCorrectRotation(){
+    fun setCorrectRotation(camera : Camera){
         this.rotate(0f,0f,0f)
 
         val eye = this.getPosition()
-        val center = cameraHandler.getActiveCamera().getWorldPosition()
+        val center = camera.getWorldPosition()
         val up  = this.getYAxis()
 
         var matrix = Matrix4f()
@@ -101,10 +100,10 @@ class Particle (
         }
     }
 
-    fun update(t : Float, dt : Float){
+    fun update(t : Float, dt : Float, camera: Camera){
         val dtMultiplier = dt*144
 
-        setCorrectRotation()
+        setCorrectRotation(camera)
         spreadTo(dt)
 
         this.scale(Vector3f(sizeOverLifeVec))

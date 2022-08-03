@@ -1,5 +1,6 @@
 package cga.exercise.components.effects
 
+import cga.exercise.components.camera.Camera
 import cga.exercise.components.shader.ShaderProgram
 
 class EmitterHandler {
@@ -25,11 +26,11 @@ class EmitterHandler {
         }
     }
 
-    fun updateAllEmitter(t : Float, dt : Float){
+    fun updateAllEmitter(t: Float, dt: Float, camera : Camera){
         var temp = mutableListOf<Int>()
 
         for (emitter in emitterList){
-            emitter.update(t,dt)
+            emitter.update(t,dt, camera)
             if (emitter.isDead){
                 temp.add(emitterList.indexOf(emitter))
             }
