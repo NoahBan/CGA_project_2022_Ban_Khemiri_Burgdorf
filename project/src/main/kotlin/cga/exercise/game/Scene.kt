@@ -188,22 +188,21 @@ class Scene(private val window: GameWindow) {
 //        testCollision = Collider(ColliderType.ENEMYCOLLIDER,5f)
 //        testCollision.translate(Vector3f(0f,5f,-14f))
 
-        var turbineOL = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.3f, Matrix4f(), player.playerPartsList[0])
+        var turbineOL = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2f, Matrix4f(), player.playerPartsList[0])
         turbineOL.setPosition(Vector3f(-0.32f, 0.54f, 0.548f))
         globalLightHandler.addPointLight(turbineOL)
 
-        var turbineOR = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.3F, Matrix4f(), player.playerPartsList[1])
+        var turbineOR = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2F, Matrix4f(), player.playerPartsList[1])
         turbineOR.setPosition(Vector3f(0.32f, 0.54f, 0.548f))
         globalLightHandler.addPointLight(turbineOR)
 
-        var turbineUL = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.3F, Matrix4f(), player.playerPartsList[3])
+        var turbineUL = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2F, Matrix4f(), player.playerPartsList[3])
         turbineUL.setPosition(Vector3f(-0.32f, -0.54f, 0.548f))
         globalLightHandler.addPointLight(turbineUL)
 
-        var turbineUR = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.3F, Matrix4f(), player.playerPartsList[2])
+        var turbineUR = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2F, Matrix4f(), player.playerPartsList[2])
         turbineUR.setPosition(Vector3f(0.32f, -0.54f, 0.548f))
         globalLightHandler.addPointLight(turbineUR)
-
 
         enemyHandler = EnemyHandler()
     }
