@@ -61,7 +61,6 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
     }
 
     override fun render(shaderProgram : ShaderProgram) {
-        for(each in colliderList) each.render(shaderProgram)
         super.render(shaderProgram)
     }
 

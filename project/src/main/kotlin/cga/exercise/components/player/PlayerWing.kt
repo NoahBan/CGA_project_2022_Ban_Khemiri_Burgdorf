@@ -4,10 +4,13 @@ import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
+import cga.exercise.components.light.AttenuationType
+import cga.exercise.components.light.PointLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.utility.clampf
 import cga.exercise.components.utility.lerpf
 import cga.exercise.components.utility.setEuler
+import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -43,6 +46,8 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
 
     private var weapon : PlayerWeapon
 
+    var turbineLight : PointLight
+
     val collider1 : Collider
     val colliderWeapon : Collider
     val colliderList : List<Collider>
@@ -59,6 +64,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.rotate(0f, 0f, 180f)
                 weapon.setPosition(Vector3f(-2.22f, 0.9f, -0.69f))
                 weapon.rotate(0f, 0f, 180f)
+                turbineLight = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2f, Matrix4f(), this)
+                turbineLight.setPosition(Vector3f(-0.32f, 0.54f, 0.548f))
+                globalLightHandler.addPointLight(turbineLight)
             }
             WingType.OR -> {
                 weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
@@ -67,6 +75,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 wingGeo.parent = this
                 minRotation *= -1f
                 weapon.setPosition(Vector3f(2.22f,0.9f,-0.69f))
+                turbineLight = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2f, Matrix4f(), this)
+                turbineLight.setPosition(Vector3f(0.32f, 0.54f, 0.548f))
+                globalLightHandler.addPointLight(turbineLight)
             }
             WingType.UL -> {
                 weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
@@ -78,6 +89,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 minRotation *= -1f
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(-2.22f,-30f*0.03f,-0.69f))
+                turbineLight = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2f, Matrix4f(), this)
+                turbineLight.setPosition(Vector3f(-0.32f, -0.54f, 0.548f))
+                globalLightHandler.addPointLight(turbineLight)
             }
             WingType.UR -> {
                 rotationDir = -1f
@@ -90,6 +104,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.mirror(0f,1f,0f,0f,0f,0f)
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(2.22f,-0.9f,-0.69f))
+                turbineLight = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,0.1F,0.4F), 0.2f, Matrix4f(), this)
+                turbineLight.setPosition(Vector3f(0.32f, -0.54f, 0.548f))
+                globalLightHandler.addPointLight(turbineLight)
             }
         }
         wingSetRotation(0f)
@@ -103,7 +120,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
         colliderList = listOf(collider1,colliderWeapon)
     }
 
-    fun getShotPos() : Matrix4f = weapon.getShotPos()
+    fun getShotPos() : Vector3f = weapon.getShotPos()
 
     fun toggleWingMode(){
         moveWingOut = !moveWingOut
@@ -112,7 +129,6 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     override fun render(shaderProgram : ShaderProgram){
         wingGeo.render(shaderProgram)
         weapon.render(shaderProgram)
-        for (each in colliderList) each.render(shaderProgram)
     }
 
     fun wingSetRotation(t : Float){

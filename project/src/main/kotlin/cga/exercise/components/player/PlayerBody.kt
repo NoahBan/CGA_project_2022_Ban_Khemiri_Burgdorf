@@ -101,12 +101,10 @@ class PlayerBody (playerGeo : PlayerGeo, modelMatrix : Matrix4f, parent: Transfo
         for (hitbox in colliderList){
             globalCollisionHandler.addShipPart(hitbox)
         }
-
     }
 
     override fun render(shaderProgram : ShaderProgram){
         bodyGeo.render(shaderProgram)
-        for (each in colliderList) each.render(shaderProgram)
     }
     override fun update(deltaTime : Float, time : Float){
         for (each in colliderList) each.update()

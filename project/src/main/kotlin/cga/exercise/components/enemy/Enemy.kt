@@ -33,7 +33,7 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
         }
 
         fun render(shaderProgram: ShaderProgram){
-            for (each in colliderList) each.render(shaderProgram)
+//            for (each in colliderList) each.render(shaderProgram)
             thisGeo.render(shaderProgram)
         }
 

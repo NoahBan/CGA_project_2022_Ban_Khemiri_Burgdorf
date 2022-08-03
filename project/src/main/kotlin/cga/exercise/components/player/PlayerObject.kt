@@ -42,6 +42,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private val wingUR : PlayerWing
     private val wingUL : PlayerWing
 
+    private val weaponAlignTarget = Transformable(Matrix4f(), this)
+
     var moveUp = false
     var moveDown = false
     var moveLeft = false
@@ -66,19 +68,19 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             wingOL,wingUR,wingUL,wingOR
         )
 
+        weaponAlignTarget.translate(Vector3f(0f,0f,-500f))
     }
 
     fun setShoot(){shoot = true}
     fun shoot(){
-        val pos = wingList[nextWeaponToShoot].getShotPos()
+        val shot = wingList[nextWeaponToShoot].getShotPos()
 
-        val newProjectile = PlayerProjectile(time,playerGeo.schuss.renderList, pos)
-        when(wingList[nextWeaponToShoot].wingType){
-            WingType.OL -> newProjectile.setRotation(0f,0f,270f)
-            WingType.OR -> newProjectile.setRotation(0f,0f,180f)
-            WingType.UR -> newProjectile.setRotation(0f,0f,90f)
-            WingType.UL -> newProjectile.setRotation(0f,0f,0f)
-        }
+        var target = weaponAlignTarget.getWorldPosition()
+        var up = Vector3f(0f, 1f, 0f)
+        var newMatrix = Matrix4f()
+        newMatrix.lookAt(shot, target, up).invert().normalize3x3()
+
+        val newProjectile = PlayerProjectile(time,playerGeo.schuss.renderList, newMatrix)
 
         playerProjectileList.add(newProjectile)
         nextWeaponToShoot = (nextWeaponToShoot+1) % wingList.size

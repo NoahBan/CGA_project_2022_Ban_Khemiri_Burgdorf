@@ -89,7 +89,10 @@ class CollisionHandler {
     }
 
     fun render(shaderProgram : ShaderProgram){
+        for (each in enemyPartList) each.render(shaderProgram)
         for (each in playerPartList) each.render(shaderProgram)
+        for (each in enemyProjectileList) each.render(shaderProgram)
+        for (each in allyProjectileList) each.render(shaderProgram)
     }
 
     fun inRangeOf(coordinate1 : Vector3f, range1 : Float, coordinate2 : Vector3f, range2 : Float): Boolean {

@@ -42,7 +42,7 @@ class PlayerWeapon (rotationDir : Float, playerGeo : PlayerGeo, modelMatrix : Ma
         weaponInOut(0f)
     }
 
-    fun getShotPos() : Matrix4f = weaponEndGeo.getWorldModelMatrix()
+    fun getShotPos() : Vector3f = weaponEndGeo.getWorldPosition()
 
     fun weaponInOut(t : Float){
         var midMatrix = weaponMidGeo.getModelMatrix()
