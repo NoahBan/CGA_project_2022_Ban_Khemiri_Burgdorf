@@ -1,5 +1,9 @@
 #version 330 core
 
+#define MAXPOINTLIGHTS 26
+#define MAXSPOTLIGHTS 1
+#define MAXDIRECTIONALLIGHTS 1
+
 //Vertex Attributes
 layout(location = 0) in vec3 Vertex_Position;
 layout(location = 1) in vec2 TexCoord;
@@ -12,17 +16,16 @@ struct MaterialStruct {
     vec2 tcMultiplier;
     float shininess;
     vec3 emitMultiplier;
+    float opacityMultiplier;
+    int flatOpacity;
+    float opacity;
     int movingMat;
     float movingU;
     float movingV;
-    int skySphere;
+    vec3 scalingColor;
+    float colorScaling;
 };
 uniform MaterialStruct Material;
-
-
-#define MAXPOINTLIGHTS 26
-#define MAXSPOTLIGHTS 1
-#define MAXDIRECTIONALLIGHTS 1
 
 //vertex data to fragment shader
 out struct VertexDataStruct

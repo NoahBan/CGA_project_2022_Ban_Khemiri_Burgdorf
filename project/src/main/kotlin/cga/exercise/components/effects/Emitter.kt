@@ -3,7 +3,6 @@ package cga.exercise.components.effects
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.shader.ShaderProgram
-import cga.exercise.game.cameraHandler
 import cga.framework.OBJLoader
 import org.joml.Matrix4f
 import org.joml.Vector3f

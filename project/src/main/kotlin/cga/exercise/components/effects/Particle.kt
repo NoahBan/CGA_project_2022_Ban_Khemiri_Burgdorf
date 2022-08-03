@@ -2,7 +2,6 @@ package cga.exercise.components.effects
 
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.game.cameraHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import java.util.Vector
