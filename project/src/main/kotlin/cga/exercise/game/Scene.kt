@@ -21,7 +21,6 @@ import java.util.Vector
 
 val globalLightHandler = LightHandler()
 val cameraHandler = CameraHandler()
-val emitterHandler = EmitterHandler()
 
 /**
  * Created by Fabian on 16.09.2017.
@@ -39,6 +38,8 @@ class Scene(private val window: GameWindow) {
     private val importedLightSphere3 : Renderable
     private val importedSkySphere : Renderable
 
+
+    private val cameraHandler = CameraHandler()
     private val followCam : TargetCamera
     private val thirdPersonCam : Camera
     private val topCam : Camera
@@ -101,7 +102,7 @@ class Scene(private val window: GameWindow) {
         pureWhiteTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Ground Texture
-        val groundEmissionTex = Texture2D("assets/models/Ground/ground_emit2.png", true)
+        val groundEmissionTex = Texture2D("assets/models/Ground/ground_emit.png", true)
         groundEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
 
         //Sphere Texture
@@ -142,8 +143,8 @@ class Scene(private val window: GameWindow) {
 
         //Ground Geo
         val matGround = Material(
+            pureWhiteTex,
             groundEmissionTex,
-            pureBlackTex,
             pureWhiteTex,
             60.0f,
             Vector2f(64.0f,64.0f),
@@ -289,6 +290,7 @@ class Scene(private val window: GameWindow) {
 //        importedLightSphere2.render(staticShader)
 //        importedLightSphere3.render(staticShader)
         ground.render(staticShader)
+
         player.render(staticShader)
 
         emitterHandler.renderAllEmitter(staticShader)
