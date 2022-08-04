@@ -50,8 +50,7 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
     }
 
     var shouldIdie = false
-
-
+    
     fun update(deltaTime: Float, time: Float){
         translate(Vector3f(0f,0f, -speed))
         light.setPosition(this.getPosition())

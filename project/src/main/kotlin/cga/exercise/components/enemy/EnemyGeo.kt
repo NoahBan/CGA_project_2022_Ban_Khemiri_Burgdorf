@@ -24,18 +24,17 @@ class EnemyGeo {
             toRadians(0f),
             toRadians(0f)
         )!!
-
         asteroid2 = ModelLoader.loadModel("assets/models/Enemies/asteroids/Asteroid_2_LOW_MODEL_.obj",
             toRadians(0f),
             toRadians(0f),
             toRadians(0f)
         )!!
-
         asteroid3 = ModelLoader.loadModel("assets/models/Enemies/asteroids/Asteroid_3_LOW_MODEL_.obj",
             toRadians(0f),
             toRadians(0f),
             toRadians(0f)
         )!!
+
     }
 
 }

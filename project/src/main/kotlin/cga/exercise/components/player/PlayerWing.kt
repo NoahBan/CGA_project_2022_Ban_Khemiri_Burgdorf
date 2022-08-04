@@ -52,7 +52,22 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     val turbineLight : PointLight
     val turbineLightColor = Vector3f(76/255f,213/255f,253/255f)
 
+    var collided = false
+
     val collider1 : Collider
+    val collider2 : Collider
+    val collider3 : Collider
+    val collider4 : Collider
+    val collider5 : Collider
+    val collider6 : Collider
+    val collider7 : Collider
+    val collider8 : Collider
+    val collider9 : Collider
+    val collider10 : Collider
+    val collider11 : Collider
+    val collider12 : Collider
+    val collider13 : Collider
+
     val colliderWeapon : Collider
     val colliderList : List<Collider>
 
@@ -122,6 +137,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
             }
         }
         wingSetRotation(0f)
+
+        globalLightHandler.addPointLight(turbineLight)
+
         collider1 = Collider(ColliderType.PLAYERCOLLIDER,0.3f)
         collider1.parent = wingGeo
         collider1.setPosition(Vector3f(0.4f*rotationDir,0.5F,0f))
@@ -129,9 +147,48 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
         colliderWeapon = Collider(ColliderType.PLAYERCOLLIDER,0.1f)
         colliderWeapon.parent = weapon.weaponEndGeo
 
-        colliderList = listOf(collider1,colliderWeapon)
-        globalLightHandler.addPointLight(turbineLight)
+        collider2 = Collider(ColliderType.PLAYERCOLLIDER,0.4f)
+        collider2.parent = wingGeo
+        collider2.setPosition(Vector3f(0.4f*rotationDir,0.4F,-0.5f))
+        collider3 = Collider(ColliderType.PLAYERCOLLIDER,0.4f)
+        collider3.parent = wingGeo
+        collider3.setPosition(Vector3f(0.4f*rotationDir,0.4F,-1f))
+        collider4 = Collider(ColliderType.PLAYERCOLLIDER,0.3f)
+        collider4.parent = wingGeo
+        collider4.setPosition(Vector3f(0.9f*rotationDir,0.4F,-0.1f))
+        collider5 = Collider(ColliderType.PLAYERCOLLIDER,0.3f)
+        collider5.parent = wingGeo
+        collider5.setPosition(Vector3f(0.9f*rotationDir,0.4F,-0.5f))
+        collider6 = Collider(ColliderType.PLAYERCOLLIDER,0.3f)
+        collider6.parent = wingGeo
+        collider6.setPosition(Vector3f(0.9f*rotationDir,0.4F,-0.9f))
 
+        collider7 = Collider(ColliderType.PLAYERCOLLIDER,0.25f)
+        collider7.parent = wingGeo
+        collider7.setPosition(Vector3f(1.4f*rotationDir,0.55F,-0.1f))
+        collider8 = Collider(ColliderType.PLAYERCOLLIDER,0.25f)
+        collider8.parent = wingGeo
+        collider8.setPosition(Vector3f(1.4f*rotationDir,0.55F,-0.5f))
+        collider9 = Collider(ColliderType.PLAYERCOLLIDER,0.25f)
+        collider9.parent = wingGeo
+        collider9.setPosition(Vector3f(1.4f*rotationDir,0.55F,-0.9f))
+
+        collider10 = Collider(ColliderType.PLAYERCOLLIDER,0.25f)
+        collider10.parent = wingGeo
+        collider10.setPosition(Vector3f(1.9f*rotationDir,0.7F,-0.1f))
+        collider11 = Collider(ColliderType.PLAYERCOLLIDER,0.25f)
+        collider11.parent = wingGeo
+        collider11.setPosition(Vector3f(1.9f*rotationDir,0.7F,-0.5f))
+        collider12 = Collider(ColliderType.PLAYERCOLLIDER,0.25f)
+        collider12.parent = wingGeo
+        collider12.setPosition(Vector3f(1.9f*rotationDir,0.7F,-0.9f))
+
+        collider13 = Collider(ColliderType.PLAYERCOLLIDER,0.25f)
+        collider13.parent = wingGeo
+        collider13.setPosition(Vector3f(2.2f*rotationDir,0.85F,-1.3f))
+
+        colliderList = listOf(collider1, collider2, collider3, collider4, collider5, collider6, collider7, collider8,
+            collider9, collider10, collider11, collider12, collider13, colliderWeapon)
 
     }
 
@@ -174,18 +231,39 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     override fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
+            for (each in colliderList) {
+                each.update()
+                if(each.collided) collided = true
+            }
+        //if (collided && !wingDestroyed) {
+            //println("Mayday")
+            //toggleWingMode()
 
-        if (moveWingOut && wingOut == false){
-            wingRotationT = clampf( wingRotationT + deltaTime * wingRotationSpeed, 0f,1f)
-            wingSetRotation(wingRotationT)
-        }
+        //}
+
+
+            if (moveWingOut && wingOut == false ){ //&& !wingDestroyed
+                wingRotationT = clampf( wingRotationT + deltaTime * wingRotationSpeed, 0f,1f)
+                wingSetRotation(wingRotationT)
+            }
 
         if (!moveWingOut && wingIn == false){
             wingRotationT = clampf( wingRotationT - deltaTime * wingRotationSpeed, 0f,1f)
             wingSetRotation(wingRotationT)
         }
+
+        //weapon.update(deltaTime, time, wingOut)
+        //if (collided) {
+        //    //wingDestroyed = true
+        //   collided = false
+        //}
+
         turbineFireTransform.rotate(0f,0f, Random.nextInt(45,180).toFloat())
         weapon.update(deltaTime, time, wingOut)
+            if (!moveWingOut && wingIn == false ){ //&& !wingDestroyed
+                wingRotationT = clampf( wingRotationT - deltaTime * wingRotationSpeed, 0f,1f)
+                wingSetRotation(wingRotationT)
+            }
         for (each in colliderList) each.update()
     }
 

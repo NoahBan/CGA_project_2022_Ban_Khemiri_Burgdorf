@@ -25,29 +25,28 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
     val randomPitch : Float
     val randomRoll : Float
     val randomYaw : Float
-
+    var fadein = true
 
     init {
+        scale = Random.nextInt(8,20)/10f
         scale = Random.nextInt(30,100)/10f
-        println(scale)
-
+        alpha = 0f
         val asteroidType = Random.nextInt(0,3)
         scaleOffset.scale(Vector3f(scale,scale,scale))
 
         when(asteroidType){
             0 ->{
-                thisGeo = Renderable(enemyGeo.asteroid1.renderList,Matrix4f(),scaleOffset)
+                thisGeo = Renderable(enemyGeo.asteroid1.renderList,Matrix4f(), scaleOffset)
             }
             1 ->{
-                thisGeo = Renderable(enemyGeo.asteroid2.renderList,Matrix4f(),scaleOffset)
+                thisGeo = Renderable(enemyGeo.asteroid2.renderList,Matrix4f(), scaleOffset)
             }
             else ->{
-                thisGeo = Renderable(enemyGeo.asteroid3.renderList,Matrix4f(),scaleOffset)
+                thisGeo = Renderable(enemyGeo.asteroid3.renderList,Matrix4f(), scaleOffset)
             }
         }
         collider1 = Collider(ColliderType.ENEMYCOLLIDER, scale*2, Matrix4f(), rotationOffset)
         addCollider(collider1)
-
         var scaleRoot = Math.sqrt(Math.sqrt(scale.toDouble())).toFloat()
         thisGeo.scale(Vector3f(scaleRoot))
 
@@ -66,6 +65,19 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
     override fun update(deltaTime: Float, time: Float) {
         rotationOffset.rotate(randomPitch*deltaTime,randomRoll*deltaTime,randomYaw*deltaTime)
         translate(Vector3f(0f,0f,deltaTime*sphereSpeed))
+
+        if (fadein) {
+            alpha += 0.01f
+            if (alpha >= 1f) {
+                alpha = 1f
+                fadein = false
+            }
+        }
+
+        if (absturz) alpha -= 0.01f
+        //for (each in thisGeo.renderList) {
+          //  each.material?.opacityMultiplier = alpha
+        //}
         if(getPosition()[2] >= 2f){
             shouldIdie = true
             for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)

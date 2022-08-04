@@ -26,7 +26,8 @@ class EnemyHandler {
     }
 
     fun createEnemy(){
-        val randomType = Random.nextInt(0,2)
+        //val randomType = Random.nextInt(0,2)
+        val randomType = 0
         var pos = Matrix4f()
         when (randomType){
             0 -> {addEnemy(EnemyAsteroid(this, enemyGeo, pos))}
@@ -43,14 +44,12 @@ class EnemyHandler {
     }
 
     fun render(shaderProgram: ShaderProgram){
-        for (each in enemyList) each.render(shaderProgram)
+        for (each in enemyList.asReversed()) each.render(shaderProgram)
     }
 
 //    var test = true
 
     fun update(deltaTime : Float, time : Float){
-
-
 //         if (test) addEnemy(EnemyShuttle(this, enemyGeo, Matrix4f()))
 //        test = false
         //println(enemyList.size)
@@ -69,7 +68,4 @@ class EnemyHandler {
         }
         for (each in tmp.asReversed()) destroy(each)
     }
-
-
-
 }

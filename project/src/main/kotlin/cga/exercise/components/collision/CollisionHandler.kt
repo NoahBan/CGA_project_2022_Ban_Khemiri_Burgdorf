@@ -47,6 +47,7 @@ class CollisionHandler {
 
         checkListsWith(allyProjectileList,enemyPartList,"Radius","Ally Projectile hit Enemy Part")
         checkListsWith(enemyProjectileList,playerPartList,"Radius","Enemy Projectile hit Enemy Part")
+        checkListsWith(enemyPartList,playerPartList,"Radius","Enemy Part hit Ally Part")
     }
 
     fun addShipPart(shipPart: Collider){
