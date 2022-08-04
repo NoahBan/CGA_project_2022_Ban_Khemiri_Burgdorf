@@ -1,15 +1,22 @@
 package cga.exercise.components.player
 
+import cga.exercise.components.effects.EmiterType
+import cga.exercise.components.effects.Emitter
+import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.light.PointLight
 import cga.exercise.components.projectile.PlayerProjectile
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.texture.Texture2D
 import cga.exercise.components.utility.*
+import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalCollisionHandler
 import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector3f
+import org.lwjgl.opengl.GL30
 
 class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Transformable(modelMatrix, parent) {
 
@@ -53,6 +60,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     val playerProjectileList = mutableListOf<PlayerProjectile>()
 
+    val emitterBroken : Emitter
+
     init {
         playerGeo = PlayerGeo()
 
@@ -69,6 +78,46 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         )
 
         weaponAlignTarget.translate(Vector3f(0f,0f,-500f))
+
+        val pureWhiteTex = Texture2D("assets/textures/pureColor/pureWhite.png", true)
+        pureWhiteTex.setTexParams(GL30.GL_REPEAT, GL30.GL_REPEAT, GL30.GL_LINEAR_MIPMAP_LINEAR, GL30.GL_LINEAR_MIPMAP_LINEAR)
+
+        val pureGreyTex = Texture2D("assets/textures/pureColor/pureGrey.png", true)
+        pureGreyTex.setTexParams(GL30.GL_REPEAT, GL30.GL_REPEAT, GL30.GL_LINEAR_MIPMAP_LINEAR, GL30.GL_LINEAR_MIPMAP_LINEAR)
+
+        val explosiveMaterial = Material(
+            pureGreyTex,
+            pureGreyTex,
+            pureWhiteTex,
+            60.0f,
+            Vector2f(1f,1f),
+            Vector3f(1f),
+            0.7f)
+
+        emitterBroken = Emitter(
+            this.getWorldPosition().x,this.getWorldPosition().y,this.getWorldPosition().z,
+            explosiveMaterial,
+            1,
+            0.03f,
+            0.07f,
+            Vector3f(0.1f,0.1f,0.3f),
+            Vector3f(-0.1f,-0.1f,0.3f),
+            10f,
+            0.9f,
+            Vector3f(0f,0f,-1f),
+            0.3f,
+            0.5f,
+            1f,
+            0.98f,
+            Vector3f(1f,1f,1f),
+            1f,
+            0.03f,
+            -1,
+            1f,1f,1f)
+
+        emitterHandler.addEmitter(emitterBroken)
+        emitterBroken.maxCycles = 0
+        emitterBroken.updateAllowed = false
     }
 
     fun setShoot(){shoot = true}
@@ -200,5 +249,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             }
         }
         for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
+
+        emitterBroken.x = this.getWorldPosition().x
+        emitterBroken.y = this.getWorldPosition().y
+        emitterBroken.z = this.getWorldPosition().z
+        emitterBroken.maxCycles = -1
     }
 }

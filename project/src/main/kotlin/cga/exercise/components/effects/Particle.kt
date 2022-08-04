@@ -60,8 +60,6 @@ class Particle (
         spreadVec.rotateY(Math.toRadians(randomYInRange).toFloat())
         spreadVec.rotateZ(Math.toRadians(randomZInRange).toFloat())
 
-        //spreadVec = Vector3f(spreadVec.x*multXRadius,spreadVec.y*multYRadius,spreadVec.z*multZRadius)
-
         //Random Roll
         val randomRoll = randomBetween(0f,360f)
         val currentRota = this.getRotation()
@@ -87,23 +85,15 @@ class Particle (
 
     fun spreadTo(dt : Float){
         val dtMultiplier = dt*144.toDouble()
-
         //Spread To
-        val particleX = this.getWorldPosition().x
-        val particleY = this.getWorldPosition().y
-        val particleZ = this.getWorldPosition().z
-
         if (spreadAccelVec == Vector3f(0f,0f,0f)){
             this.setPosition(this.getWorldPosition().add(spreadVec.mul(accel.mul(dtMultiplier.toFloat()))))
-
-
-
             spreadVec.mul(acceleration)
         }else{
             this.setPosition(Vector3f(
-                particleX+(spreadVec.x+spreadAccelVec.x)/dtMultiplier.toFloat(),
-                particleY+(spreadVec.y+spreadAccelVec.y)/dtMultiplier.toFloat(),
-                particleZ+(spreadVec.z+spreadAccelVec.z)/dtMultiplier.toFloat()))
+                this.getWorldPosition().x+(spreadVec.x+spreadAccelVec.x)/dtMultiplier.toFloat(),
+                this.getWorldPosition().y+(spreadVec.y+spreadAccelVec.y)/dtMultiplier.toFloat(),
+                this.getWorldPosition().z+(spreadVec.z+spreadAccelVec.z)/dtMultiplier.toFloat()))
             spreadAccelVec = spreadAccelVec.mul(accel.div(dtMultiplier.toFloat()))
         }
     }
@@ -112,21 +102,21 @@ class Particle (
         val dtMultiplier = 144*dt
         setCorrectRotation(camera)
         spreadTo(dt)
-
+        //Set Scale
         this.scale(Vector3f(sizeOverLifeVec))
         sizeOverLifeVec.mul(Vector3f(sizeOverLife))
-
+        //Set DeathTime
         if (firstUpdate){
             firstUpdate = false
             var deathTime = minDeathTime + Math.random() * (maxDeathTime-minDeathTime)
             death = (deathTime+t).toFloat()
         }
-
+        //Set Alpha
         if (alphaOverLife != 1f){
             newAlpha = newAlpha * alphaOverLife / dtMultiplier
         }
-
-        if (alphaOverLife != 1f){
+        //Set Color
+        if (colorLife != 1f){
             newColorScaling = newColorScaling * colorLife / dtMultiplier
         }
     }

@@ -81,10 +81,8 @@ class Emitter (
         //Add new particles in delay interval
         if (updateAllowed == true){
             updateAllowed = false
-
             //Add cycle count if needed
             cycleCount++
-
             //Add new particles
             for (i in count downTo 1){
                 var newParticle = Particle(
