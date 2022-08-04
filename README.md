@@ -45,8 +45,8 @@ CGA-Wars
 - K: Collider ein-/ausblenden
 - P: Wechsel zwischen Deferred Shading und Forward Rendering
 - N/M: Kamerawechsel
-- I: Zoom in (Nur 3rd Person Kamera)
-- O: Zoom out (Nur 3rd Person Kamera)
+- I: Zoom in (nur 3rd Person Kamera)
+- O: Zoom out (nur 3rd Person Kamera)
 
 
 
