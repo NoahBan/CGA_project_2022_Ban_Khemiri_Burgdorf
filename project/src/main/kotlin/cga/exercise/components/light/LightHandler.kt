@@ -25,17 +25,17 @@ class LightHandler(val maxPointLights : Int, val maxSpotLights : Int, val maxDir
         directionalLights.add(newLight);
     }
 
-    fun bindLights (shaderProgram : ShaderProgram, camera : Camera, ambientLightCol : Vector3f) {
+    fun bindLights (shaderProgram : ShaderProgram, camera : Camera, ambientLightCol : Vector3f, deferred : Boolean) {
 
         //bind ambient "light" color
         shaderProgram.setUniform("AmbientColor", ambientLightCol)
 
-        bindPointlights(shaderProgram, camera)
-        bindSpotlights(shaderProgram, camera)
-        bindDirectionalLights(shaderProgram,camera)
+        bindPointlights(shaderProgram, camera, deferred)
+        bindSpotlights(shaderProgram, camera, deferred)
+        bindDirectionalLights(shaderProgram,camera, deferred)
     }
 
-    fun bindPointlights (shaderProgram : ShaderProgram, camera : Camera) {
+    fun bindPointlights (shaderProgram : ShaderProgram, camera : Camera, deferred : Boolean) {
         if (pointLights.size > maxPointLights) {
             println(pointLights.size)
             println("maximum of ${maxPointLights} Pointlights exceeded. Past ${maxPointLights} will be ignored")
@@ -45,7 +45,8 @@ class LightHandler(val maxPointLights : Int, val maxSpotLights : Int, val maxDir
         shaderProgram.setUniform("PointLightsLength", pointLights.size)
 
         pointLights.forEachIndexed { index, pointLight ->
-            shaderProgram.setUniform("PointLights[" + index +"].lightPos", pointLight.getPremultLightPos(camera.getCalculateViewMatrix()))
+            if(!deferred)shaderProgram.setUniform("PointLights[" + index +"].lightPos", pointLight.getPremultLightPos(camera.getCalculateViewMatrix()))
+            if(deferred)shaderProgram.setUniform("PointLights[" + index +"].lightPos", pointLight.getWorldPosition())
             shaderProgram.setUniform("PointLights[" + index +"].lightColor", pointLight.lightColor)
             shaderProgram.setUniform("PointLights[" + index +"].intensity", pointLight.intensity)
             shaderProgram.setUniform("PointLights[" + index +"].attenuationType", pointLight.attenuationType.ordinal)
@@ -53,7 +54,7 @@ class LightHandler(val maxPointLights : Int, val maxSpotLights : Int, val maxDir
         }
     }
 
-    fun bindSpotlights (shaderProgram : ShaderProgram, camera : Camera) {
+    fun bindSpotlights (shaderProgram : ShaderProgram, camera : Camera, deferred : Boolean) {
         if (spotLights.size > maxSpotLights) {
             println("maximum of ${maxSpotLights} Spotlights exceeded. Past ${maxSpotLights} will be ignored")
             return
@@ -62,7 +63,8 @@ class LightHandler(val maxPointLights : Int, val maxSpotLights : Int, val maxDir
         shaderProgram.setUniform("SpotLightsLength", spotLights.size)
 
         spotLights.forEachIndexed { index, spotLight ->
-            shaderProgram.setUniform("SpotLights[" + index + "].lightPos", spotLight.getPremultLightPos(camera.getCalculateViewMatrix()))
+            if(!deferred)shaderProgram.setUniform("SpotLights[" + index + "].lightPos", spotLight.getPremultLightPos(camera.getCalculateViewMatrix()))
+            if(deferred)shaderProgram.setUniform("SpotLights[" + index +"].lightPos", spotLight.getWorldPosition())
             shaderProgram.setUniform("SpotLights[" + index + "].lightColor", spotLight.lightColor)
             shaderProgram.setUniform("SpotLights[" + index + "].intensity", spotLight.intensity)
             shaderProgram.setUniform("SpotLights[" + index + "].attenuationType", spotLight.attenuationType.ordinal)
@@ -73,7 +75,7 @@ class LightHandler(val maxPointLights : Int, val maxSpotLights : Int, val maxDir
         }
     }
 
-    fun bindDirectionalLights(shaderProgram : ShaderProgram, camera : Camera){
+    fun bindDirectionalLights(shaderProgram : ShaderProgram, camera : Camera, deferred : Boolean){
         directionalLights.forEachIndexed{ index,directionalLight ->
             shaderProgram.setUniform("DirectionalLights[" + index +"].direction", directionalLight.direction) //
             shaderProgram.setUniform("DirectionalLights[" + index +"].lightColor", directionalLight.lightColor)

@@ -90,17 +90,6 @@ vec3 calcLightSpec(vec3 lightPos, int attenuationType, vec3 lightColor, float in
     return outSpec;
 }
 
-//vec3 calcLightSpec(vec3 lightPos, vec3 pointTolightDir, vec3 lightColor, float intensity, int attenuationType,vec3 vertexNormal, vec3 matSpecular){
-//    vec3 V = normalize(PointToCamDir);
-//    vec3 R = normalize(reflect(-pointTolightDir, vertexNormal));
-//
-//    float cosBeta = max(0.0,dot(R,V));
-//    float cosBetak = pow(cosBeta,Material.shininess);
-//    vec3 specularTerm = matSpecular * lightColor;
-//    float attenuation = getAttenuation(attenuationType, VertexData.position, lightPos);
-//    return specularTerm * cosBetak * intensity / attenuation;
-//}
-
 void main(){
     vec3 FragPos = texture(gPosition, vertexTexCoord).rgb;
     vec3 FragNormal = texture(gNormal, vertexTexCoord).rgb;

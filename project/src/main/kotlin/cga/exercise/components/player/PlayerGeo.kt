@@ -1,9 +1,11 @@
 package cga.exercise.components.player
 
+import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
 import cga.framework.ModelLoader
 import org.joml.Math
 import  org.joml.Math.*
+import org.lwjgl.opengl.GL30
 
 class PlayerGeo {
 
@@ -14,6 +16,7 @@ class PlayerGeo {
     val weaponMid : Renderable
     val weaponEnd : Renderable
     val schuss : Renderable
+    val fire : Renderable
 
     init {
 
@@ -55,5 +58,16 @@ class PlayerGeo {
             Math.toRadians(0f),
             Math.toRadians(0f),
             Math.toRadians(0f))!!
+
+        fire = ModelLoader.loadModel("assets/models/X_Wing/fire.obj",
+            Math.toRadians(0f),
+            Math.toRadians(0f),
+            Math.toRadians(0f))!!
+
+        for (each in fire.renderList) {
+            each.material?.diff?.setTexParams(GL30.GL_REPEAT, GL30.GL_REPEAT, GL30.GL_LINEAR_MIPMAP_LINEAR, GL30.GL_LINEAR_MIPMAP_LINEAR)
+            each.material?.emit?.setTexParams(GL30.GL_REPEAT, GL30.GL_REPEAT, GL30.GL_LINEAR_MIPMAP_LINEAR, GL30.GL_LINEAR_MIPMAP_LINEAR)
+            each.material?.opacity = 1f
+        }
     }
 }

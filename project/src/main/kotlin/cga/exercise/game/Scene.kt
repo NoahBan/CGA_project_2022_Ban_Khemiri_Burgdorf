@@ -367,7 +367,7 @@ class Scene(private val window: GameWindow) {
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
             baseShader.use()
             cameraHandler.getActiveCamera().bind(baseShader)
-            globalLightHandler.bindLights(baseShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+            globalLightHandler.bindLights(baseShader, cameraHandler.getActiveCamera(), Vector3f(0.5f), deferred)
             renderAllGeometry(baseShader)
         }
 
@@ -390,7 +390,7 @@ class Scene(private val window: GameWindow) {
                 GL30.glActiveTexture(GL30.GL_TEXTURE3)
                 GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
                 cameraHandler.getActiveCamera().bind(deferredLightingShader)
-                globalLightHandler.bindLights(deferredLightingShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+                globalLightHandler.bindLights(deferredLightingShader, cameraHandler.getActiveCamera(), Vector3f(0.5f), deferred)
                 renderQuad.render()
         }
         glfwSwapBuffers(gameWindow)
