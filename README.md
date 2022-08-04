@@ -59,3 +59,4 @@ CGA-Wars
 - https://www.cgtrader.com/free-3d-models/space/spaceship/star-wars-t-65
 - https://asd.gsfc.nasa.gov/blueshift/wp-content/uploads/2015/07/eso0932a.jpg
 - https://www.cgtrader.com/free-3d-models/space/other/3d-asteroids-pack-model
+- https://www.solarsystemscope.com/textures/
