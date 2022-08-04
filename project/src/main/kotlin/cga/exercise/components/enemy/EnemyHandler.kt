@@ -26,8 +26,7 @@ class EnemyHandler {
     }
 
     fun createEnemy(){
-        //val randomType = Random.nextInt(0,2)
-        val randomType = 0
+        val randomType = Random.nextInt(0,2)
         var pos = Matrix4f()
         when (randomType){
             0 -> {addEnemy(EnemyAsteroid(this, enemyGeo, pos))}
