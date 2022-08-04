@@ -28,26 +28,28 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
 
 
     init {
-        scale = Random.nextInt(8,20)/10f
+        scale = Random.nextInt(30,100)/10f
         println(scale)
 
         val asteroidType = Random.nextInt(0,3)
+        scaleOffset.scale(Vector3f(scale,scale,scale))
 
         when(asteroidType){
             0 ->{
-                thisGeo = Renderable(enemyGeo.asteroid1.renderList,Matrix4f(), scaleOffset)
+                thisGeo = Renderable(enemyGeo.asteroid1.renderList,Matrix4f(),scaleOffset)
             }
             1 ->{
-                thisGeo = Renderable(enemyGeo.asteroid2.renderList,Matrix4f(), scaleOffset)
+                thisGeo = Renderable(enemyGeo.asteroid2.renderList,Matrix4f(),scaleOffset)
             }
             else ->{
-                thisGeo = Renderable(enemyGeo.asteroid3.renderList,Matrix4f(), scaleOffset)
+                thisGeo = Renderable(enemyGeo.asteroid3.renderList,Matrix4f(),scaleOffset)
             }
         }
-        collider1 = Collider(ColliderType.ENEMYCOLLIDER, scale, Matrix4f(), rotationOffset)
+        collider1 = Collider(ColliderType.ENEMYCOLLIDER, scale*2, Matrix4f(), rotationOffset)
         addCollider(collider1)
 
-        scaleOffset.scale(Vector3f(scale,scale,scale))
+        var scaleRoot = Math.sqrt(Math.sqrt(scale.toDouble())).toFloat()
+        thisGeo.scale(Vector3f(scaleRoot))
 
         randomPitch = Math.toRadians(Random.nextInt(1,maxRotationSpeed).toDouble()).toFloat()
         randomRoll = Math.toRadians(Random.nextInt(1,maxRotationSpeed).toDouble()).toFloat()
@@ -70,6 +72,5 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
         }
         super.update(deltaTime, time)
     }
-
 
 }

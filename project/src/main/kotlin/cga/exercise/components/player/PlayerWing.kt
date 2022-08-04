@@ -2,18 +2,24 @@ package cga.exercise.components.player
 
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
+import cga.exercise.components.effects.Emitter
+import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.light.AttenuationType
 import cga.exercise.components.light.PointLight
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.texture.Texture2D
 import cga.exercise.components.utility.clampf
 import cga.exercise.components.utility.lerpf
 import cga.exercise.components.utility.setEuler
+import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector3f
+import org.lwjgl.opengl.GL30
 
 enum class WingType (val wingType: Int){
     OL(0),

@@ -2,10 +2,12 @@ package cga.exercise.components.enemy
 
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
+import cga.exercise.components.effects.EmiterType
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.utility.BezierCurve
 import cga.exercise.components.utility.QuadraticBezierCurve
 import cga.exercise.components.utility.clampf
+import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalCollisionHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -19,6 +21,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
 
     var posOnCurve = 0.005f
     val movementCurve : QuadraticBezierCurve
+    var explosion = false
 
     init {
         thisGeo.renderList = enemyGeo.shuttle.renderList
@@ -55,8 +58,14 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
         if(!absturz){
             this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))
             posOnCurve = clampf(posOnCurve + deltaTime * shuttleSpeed, 0f,1f)
+
         }
         if (absturz) translate(Vector3f(0f, 0f,-1f))
+
+        if (hp <= 0 && !explosion){
+            emitterHandler.addEmitterType(EmiterType.Supernova,this.getWorldPosition().x,this.getWorldPosition().y,this.getWorldPosition().z)
+            explosion = true
+        }
 
         if(posOnCurve == 1f){
             shouldIdie = true
