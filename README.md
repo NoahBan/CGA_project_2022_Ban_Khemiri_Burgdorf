@@ -15,16 +15,25 @@ Bspw.
 
 - Directional Light (Noah)
 - Raumschiff/Player Object (Jens)
-- Boden (Zylinder, bewegende u,v Koordinaten) (Jens)
+  - grundlegende Implementierung ( Jens)
+  - Schussmechanik (Jens)
+  - 
+- Dynamische Texturen (Boden, bewegende u,v Koordinaten, Triebwerk-Flammen)
+  - Bewegender Boden (Jens)
+  - dynamische Texturen (Jens)
+  - Abhängige Animationen (Jens und Karim)
+- Partikelsystem/Emitter
+  - grundlegende Implementierung (Karim)
+  - Anwendung im Spiel (Karim)
 - 1st Person View, “Verfolger”-Kamera (Jens)
-- Skybox/Skysphere (Noah)
+- Skybox / Skysphere (Noah)
 - Alpha-Texturing (Transparenz)
-  - Material-Alpha
-  - Texture-Alpha
-- Hitbox / Kollision
-- Animierte Texturen
-- Abhängige Animationen
-- Projektile/Schüsse
+  - Material-Alpha (Noah)
+  - Texture-Alpha (Karim)
+- dynamische Hitboxen / Kollision
+  - grundlegende Implementierung (Karim)
+  - Anwendung im Spiel (Jens)
+
 - Simple Gegner aka statische Kugeln/Models
 
 
