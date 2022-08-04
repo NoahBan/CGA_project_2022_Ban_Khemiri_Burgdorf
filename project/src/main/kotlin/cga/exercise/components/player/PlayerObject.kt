@@ -1,11 +1,9 @@
 package cga.exercise.components.player
 
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.light.PointLight
 import cga.exercise.components.projectile.PlayerProjectile
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.utility.*
-import cga.exercise.game.globalCollisionHandler
 import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f
@@ -15,6 +13,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     private var deltaTime = 0f
     private var time = 0f
+
 
     private val playerGeo : PlayerGeo
 
@@ -28,13 +27,14 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private val speed = 15f
     private val rotationUpDownSpeed = Math.toRadians(160f)
     private val rotationLeftRightSpeed = Math.toRadians(160f)
+    private var countFuntioningWings = 4
 
     var nextWeaponToShoot = 0
 
     var rollParent = Transformable(Matrix4f(), this)
 
     val playerPartsList : MutableList<PlayerPart>
-    val wingList : MutableList<PlayerWing>
+    var wingList : MutableList<PlayerWing>
 
     private val body : PlayerBody
     private val wingOL : PlayerWing
@@ -68,12 +68,25 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             wingOL,wingUR,wingUL,wingOR
         )
 
+
         weaponAlignTarget.translate(Vector3f(0f,0f,-500f))
     }
-
+    fun calculateNextWeaponToShoot(currentWeapon : Int): Int{
+        var found = false
+        if (countFuntioningWings == 0) return -1
+        var nextWeapon = (currentWeapon + 1) % wingList.size
+        while (!found){
+            if (wingList[nextWeapon].wingDestroyed){
+                nextWeapon = (nextWeapon + 1) % wingList.size
+            } else {
+                found = true
+            }
+        }
+        return nextWeapon
+    }
     fun setShoot(){shoot = true}
-    fun shoot(){
-        val shot = wingList[nextWeaponToShoot].getShotPos()
+    fun shoot(weapon : Int){
+        val shot = wingList[weapon].getShotPos()
 
         var target = weaponAlignTarget.getWorldPosition()
         var up = Vector3f(0f, 1f, 0f)
@@ -83,7 +96,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         val newProjectile = PlayerProjectile(time,playerGeo.schuss.renderList, newMatrix)
 
         playerProjectileList.add(newProjectile)
-        nextWeaponToShoot = (nextWeaponToShoot + 1) % wingList.size
 
 //        println(playerProjectileList.size)
     }
@@ -189,7 +201,17 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
         for (each in playerPartsList) each.update(deltaTime, time)
         for (each in playerProjectileList) each.update(deltaTime, time)
-        if (shoot && wingList[nextWeaponToShoot].wingOut) shoot()
+        countFuntioningWings = 4
+        for (each in wingList) if (each.wingDestroyed) countFuntioningWings--
+
+
+        //println("functioning wings  " + countFuntioningWings)
+        if (shoot && countFuntioningWings > 0){
+            nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
+            if (wingList[nextWeaponToShoot].wingOut){
+                shoot(nextWeaponToShoot)
+            }
+        }
         shoot = false
 
         val tmp = mutableListOf<Int>()

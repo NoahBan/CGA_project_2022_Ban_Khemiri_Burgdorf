@@ -226,6 +226,7 @@ class Scene(private val window: GameWindow) {
 
         importedSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),null)
         importedSkySphere.scale(Vector3f(1.0f))
+        importedSkySphere.rotate(25f,90f,-20f)
 
         light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0F), 20F, Matrix4f(), player.rollParent, true)
         light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,1F,1F), 20F, Matrix4f(), player.rollParent, true)
@@ -348,11 +349,12 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()
         }
-        if(window.getKeyState(GLFW_KEY_S)){
-            player.setMoveDown()
-        }
+
         if(window.getKeyState(GLFW_KEY_A)){
             player.setMoveLeft()
+        }
+        if(window.getKeyState(GLFW_KEY_S)){
+            player.setMoveDown()
         }
         if(window.getKeyState(GLFW_KEY_D)){
             player.setMoveRight()

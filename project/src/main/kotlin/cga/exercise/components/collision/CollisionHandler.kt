@@ -26,7 +26,7 @@ class CollisionHandler {
         for (objectInList1 in list1){
             for (objectInList2 in list2){
                 if (inRadiusOf(objectInList1.getWorldPosition(),objectInList1.radius,objectInList2.getWorldPosition(),objectInList2.radius)){
-                    println(message)
+                    //println(message)
                     allCollidedObjects.add(objectInList1)
                     objectInList1.collided = true
                     allCollidedObjects.add(objectInList2)

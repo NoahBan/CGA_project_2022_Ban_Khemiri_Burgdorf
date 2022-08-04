@@ -62,10 +62,8 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
         }
         if (absturz){
             translate(Vector3f(0f, 0f,-1f))
+            alpha -= 0.01f
 
-            for (each in thisGeo.renderList){
-                alpha -= 0.001f
-            }
         }
 
         if (hp <= 0 && !explosion){
