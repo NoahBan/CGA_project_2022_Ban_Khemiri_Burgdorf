@@ -66,7 +66,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
             translate(Vector3f(0f, 0f,-1f))
 
             for (each in thisGeo.renderList){
-                this.alpha -= 0.001f
+                alpha -= 0.001f
             }
         }
 

@@ -59,6 +59,7 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
                 deathTime = time + despawnTime
             }
             if (absturz){
+
                 fallSpeed += fallAcceleration * deltaTime
                 translate(Vector3f(0f,-fallSpeed,0f))
                 if (deathTime <= time) {

@@ -44,7 +44,7 @@ class EnemyHandler {
     }
 
     fun render(shaderProgram: ShaderProgram){
-        for (each in enemyList) each.render(shaderProgram)
+        for (each in enemyList.asReversed()) each.render(shaderProgram)
     }
 
 //    var test = true
