@@ -28,7 +28,10 @@ class Emitter (
     var colorOverLife : Vector3f = Vector3f(1f),
     var colorLife : Float = 1f,
     var delay : Float = 2f,
-    var maxCycles : Int = -1
+    var maxCycles : Int = -1,
+    var multXRadius : Float = 1.0f,
+    var multYRadius : Float = 1.0f,
+    var multZRadius : Float = 1.0f
     )
 {
     //Set variables
@@ -39,7 +42,7 @@ class Emitter (
     var allParticles = mutableListOf<Particle>()
     var startTime = 0f
     var delayTime = delay+startTime
-    var updateAllowed = false
+    var updateAllowed = true
     var cycleCount = 0
     var isDead = false
 
@@ -71,7 +74,7 @@ class Emitter (
         }else if (t >= delayTime && cycleCount < maxCycles){
             updateAllowed = true
             delayTime = t+delay
-        }else if (t >= delayTime){
+        }else if (t >= delayTime+maxDeathTime){
             isDead = true
         }
 
@@ -98,7 +101,11 @@ class Emitter (
                     maxDeathTime,
                     sizeOverLife,
                     alphaOverLife,
-                    colorLife)
+                    colorLife,
+                    multXRadius,
+                    multYRadius,
+                    multZRadius
+                )
                 allParticles.add(newParticle)
             }
         }
@@ -126,7 +133,6 @@ class Emitter (
             if (colorOverLife != Vector3f(1f,1f,1f)){
                 importedMesh.material?.scalingColor = colorOverLife
             }
-
             lonelyParticle.render(shaderProgram)
         }
     }

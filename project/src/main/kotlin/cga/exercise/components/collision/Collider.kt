@@ -53,7 +53,7 @@ class Collider (colliderType : ColliderType,var radius : Float = 1f, modelMatrix
             }
         }
         collisionObject = Renderable(mutableListOf(notCollidedMesh),Matrix4f(),this)
-        collisionObject.scaling(Vector3f(radius,radius,radius))
+        collisionObject.scale(Vector3f(radius,radius,radius))
     }
 
     fun showCollision(){

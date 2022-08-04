@@ -23,6 +23,9 @@ class Particle (
     var sizeOverLife : Float = 1.0f,
     var alphaOverLife : Float = 1.0f,
     var colorLife : Float = 1.0f,
+    var multXRadius : Float = 1.0f,
+    var multYRadius : Float = 1.0f,
+    var multZRadius : Float = 1.0f,
     parent: Transformable ?= null)
     : Transformable(modelMatrix, parent) {
 
@@ -35,6 +38,7 @@ class Particle (
     var firstUpdate = true
     var newAlpha = 1.0
     var newColorScaling = 1.0
+
 
     init {
         //Scale between min and max
@@ -49,12 +53,14 @@ class Particle (
         spreadVec = Vector3f(randomXLength.toFloat(),randomYLength.toFloat(),randomZLength.toFloat())
 
         //Generate New Vector within radius of spread vector
-        var randomXInRange = randomBetween(-spreadRadius,spreadRadius)
-        var randomYInRange = randomBetween(-spreadRadius,spreadRadius)
-        var randomZInRange = randomBetween(-spreadRadius,spreadRadius)
+        var randomXInRange = randomBetween(-spreadRadius*multXRadius,spreadRadius*multXRadius)
+        var randomYInRange = randomBetween(-spreadRadius*multYRadius,spreadRadius*multYRadius)
+        var randomZInRange = randomBetween(-spreadRadius*multZRadius,spreadRadius*multZRadius)
         spreadVec.rotateX(Math.toRadians(randomXInRange).toFloat())
         spreadVec.rotateY(Math.toRadians(randomYInRange).toFloat())
         spreadVec.rotateZ(Math.toRadians(randomZInRange).toFloat())
+
+        //spreadVec = Vector3f(spreadVec.x*multXRadius,spreadVec.y*multYRadius,spreadVec.z*multZRadius)
 
         //Random Roll
         val randomRoll = randomBetween(0f,360f)
@@ -88,7 +94,10 @@ class Particle (
         val particleZ = this.getWorldPosition().z
 
         if (spreadAccelVec == Vector3f(0f,0f,0f)){
-            this.setPosition(this.getWorldPosition().add(spreadVec.mul(accel)))
+            this.setPosition(this.getWorldPosition().add(spreadVec.mul(accel.mul(dtMultiplier.toFloat()))))
+
+
+
             spreadVec.mul(acceleration)
         }else{
             this.setPosition(Vector3f(

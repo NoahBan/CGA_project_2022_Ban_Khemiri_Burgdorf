@@ -2,10 +2,12 @@ package cga.exercise.components.enemy
 
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
+import cga.exercise.components.effects.EmiterType
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalCollisionHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f

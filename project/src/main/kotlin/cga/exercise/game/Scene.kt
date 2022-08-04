@@ -5,8 +5,8 @@ import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
 import cga.exercise.components.collision.CollisionHandler
-import cga.exercise.components.enemy.EnemyHandler
 import cga.exercise.components.effects.Emitter
+import cga.exercise.components.enemy.EnemyHandler
 import cga.exercise.components.effects.EmitterHandler
 import cga.exercise.components.geometry.*
 import cga.exercise.components.ground.Ground
@@ -21,7 +21,6 @@ import org.joml.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
-import org.lwjgl.opengl.GL46
 import java.nio.ByteBuffer
 
 val globalLightHandler = LightHandler(30,1,1)
@@ -87,8 +86,6 @@ class Scene(private val window: GameWindow) {
     var deferred = false
 
     var renderCollision = false
-
-    val emitter1 : Emitter
 
     var xposBefore : Double = 0.0
 
@@ -243,7 +240,7 @@ class Scene(private val window: GameWindow) {
 
         //Cameras
         followCam = TargetCamera(player,20f, 16f/9f, 0.1F, 1000.0F+35F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
-        followCam.translate(Vector3f(0F,2F,40.0F))
+        followCam.translate(Vector3f(0F,2F,60.0F))
         cameraHandler.addCamera(followCam)
 
         thirdPersonCam = Camera(60f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
@@ -261,63 +258,8 @@ class Scene(private val window: GameWindow) {
         botCam.rotate(90F,0F,0F)
 //        cameraHandler.addCamera(botCam)
 
-        val explosiveTex = Texture2D("assets/textures/explosive2.png",true)
-        skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
-
-        val explosiveMaterial = Material(
-            pureRedTex,
-            pureRedTex,
-            pureWhiteTex,
-            60.0f,
-            Vector2f(1f,1f),
-            Vector3f(1f),
-            0.7f
-        )
-
-        emitter1 = Emitter(
-            0f,0f,-10f,
-            explosiveMaterial,
-            1000,
-            1f,
-            0.3f,
-            Vector3f(0f,0.3f,0f),
-            Vector3f(0f,0.5f,0f),
-            180f,
-            0.96f,
-            Vector3f(0f,0f,0f),
-            0.7f,
-            1.3f,
-            0.993f,
-            0.98f,
-            Vector3f(0f,0f,1f),
-            0.98f,
-            1.5f,
-            1
-        )
-        emitterHandler.addEmitter(emitter1)
-
-        var emitter2 = Emitter(
-            -5f, 0f, -10f,
-            explosiveMaterial,
-            10,
-            0.1f,
-            0.3f,
-            Vector3f(0f, 0.3f, 0f),
-            Vector3f(0f, 0.35f, 0f),
-            10f,
-            0.98f,
-            Vector3f(0f, 0f, 0f),
-            0.7f,
-            1.3f,
-            0.993f,
-            0.97f,
-            Vector3f(0.1f, 0.1f, 0.1f),
-            0.9f,
-            0.05f
-        )
-        emitterHandler.addEmitter(emitter2)
-
         enemyHandler = EnemyHandler()
+
     }
 
     fun renderAllGeometry(shaderProgram: ShaderProgram){
