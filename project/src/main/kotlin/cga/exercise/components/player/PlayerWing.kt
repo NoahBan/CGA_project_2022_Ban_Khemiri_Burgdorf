@@ -46,6 +46,8 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
 
     private var weapon : PlayerWeapon
 
+    var collided = false
+
     var turbineLight : PointLight
 
     val collider1 : Collider
@@ -213,17 +215,33 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     override fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
+            for (each in colliderList) {
+                each.update()
+                if(each.collided) collided = true
+            }
+        //if (collided && !wingDestroyed) {
+            //println("Mayday")
+            //toggleWingMode()
 
-        if (moveWingOut && wingOut == false){
-            wingRotationT = clampf( wingRotationT + deltaTime * wingRotationSpeed, 0f,1f)
-            wingSetRotation(wingRotationT)
-        }
+        //}
 
-        if (!moveWingOut && wingIn == false){
-            wingRotationT = clampf( wingRotationT - deltaTime * wingRotationSpeed, 0f,1f)
-            wingSetRotation(wingRotationT)
-        }
-        weapon.update(deltaTime, time, wingOut)
+
+            if (moveWingOut && wingOut == false ){ //&& !wingDestroyed
+                wingRotationT = clampf( wingRotationT + deltaTime * wingRotationSpeed, 0f,1f)
+                wingSetRotation(wingRotationT)
+            }
+
+            if (!moveWingOut && wingIn == false ){ //&& !wingDestroyed
+                wingRotationT = clampf( wingRotationT - deltaTime * wingRotationSpeed, 0f,1f)
+                wingSetRotation(wingRotationT)
+            }
+
+
+        //weapon.update(deltaTime, time, wingOut)
+        //if (collided) {
+        //    //wingDestroyed = true
+         //   collided = false
+        //}
         for (each in colliderList) each.update()
     }
 
