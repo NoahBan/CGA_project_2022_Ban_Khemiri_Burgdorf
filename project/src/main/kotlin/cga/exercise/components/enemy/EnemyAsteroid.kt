@@ -28,7 +28,7 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
 
 
     init {
-        scale = Random.nextInt(8,20)/10f
+        scale = Random.nextInt(30,100)/10f
         println(scale)
 
         val asteroidType = Random.nextInt(0,3)
@@ -64,12 +64,11 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
     override fun update(deltaTime: Float, time: Float) {
         rotationOffset.rotate(randomPitch*deltaTime,randomRoll*deltaTime,randomYaw*deltaTime)
         translate(Vector3f(0f,0f,deltaTime*sphereSpeed))
+        if (absturz) alpha -= 0.001f
         if(getPosition()[2] >= 2f){
             shouldIdie = true
             for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
         }
         super.update(deltaTime, time)
     }
-
-
 }

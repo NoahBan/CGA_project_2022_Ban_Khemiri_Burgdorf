@@ -21,7 +21,7 @@ open class Renderable(var renderList : MutableList<Mesh>, modelMatrix : Matrix4f
 
     override fun render(shaderProgram : ShaderProgram) {
         shaderProgram.setUniform("Model_matrix", getWorldModelMatrix(), false)
-        for (each in renderList){
+        for (each in renderList) {
             each.render(shaderProgram)
         }
     }

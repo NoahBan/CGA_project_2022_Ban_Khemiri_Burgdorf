@@ -1,7 +1,6 @@
 package cga.exercise.components.enemy
 
 import cga.exercise.components.collision.Collider
-import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
@@ -13,6 +12,7 @@ import org.joml.Vector3f
 abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null) : Transformable(modelMatrix,parent) {
 
         var thisGeo = Renderable(mutableListOf<Mesh>(), Matrix4f(), this)
+        var destroyGeo = Renderable(mutableListOf<Mesh>(), Matrix4f(), this)
         val colliderList = mutableListOf<Collider>()
 
         var shouldIdie = false
@@ -27,14 +27,19 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
         var despawnTime = 1f
 
         var collided = false
+        var alpha = 1f
 
         init {
 
         }
 
         fun render(shaderProgram: ShaderProgram){
-//            for (each in colliderList) each.render(shaderProgram)
-            thisGeo.render(shaderProgram)
+
+                for (each in thisGeo.renderList){
+                    each.material?.opacityMultiplier = alpha
+                }
+                thisGeo.render(shaderProgram)
+
         }
 
         fun addCollider(newCollider : Collider) = colliderList.add(newCollider)

@@ -83,7 +83,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         val newProjectile = PlayerProjectile(time,playerGeo.schuss.renderList, newMatrix)
 
         playerProjectileList.add(newProjectile)
-        nextWeaponToShoot = (nextWeaponToShoot+1) % wingList.size
+        nextWeaponToShoot = (nextWeaponToShoot + 1) % wingList.size
 
 //        println(playerProjectileList.size)
     }
@@ -201,6 +201,4 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         }
         for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
     }
-
-
 }

@@ -3,8 +3,8 @@ package cga.exercise.components.enemy
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.geometry.Material
+import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.utility.BezierCurve
 import cga.exercise.components.utility.QuadraticBezierCurve
 import cga.exercise.components.utility.clampf
 import cga.exercise.game.globalCollisionHandler
@@ -17,19 +17,16 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
 
     val collider1 : Collider
     val shuttleSpeed = 0.1f
-
+    var newRenderlist : MutableList<Mesh>
     var posOnCurve = 0.005f
     val movementCurve : QuadraticBezierCurve
 
     init {
         thisGeo.renderList = enemyGeo.shuttle.renderList
-        var tmp : Material
-        for (each in thisGeo.renderList){
-            tmp = Material(each.material!!.diff,each.material!!.emit,each.material!!.specular,each.material!!.shininess,each.material!!.tcMultiplier,each.material!!.emitMultiplier,1.0f,1.0f)
-            each.material = tmp
-            each.material?.opacity = 1.0f
-            each.material?.opacityMultiplier = 1.0f
-        }
+
+        newRenderlist = enemyGeo.shuttle.renderList
+
+
         collider1 = Collider(ColliderType.ENEMYCOLLIDER, 3f, Matrix4f(), this)
         addCollider(collider1)
 
@@ -60,20 +57,22 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     }
 
     override fun update(deltaTime: Float, time: Float) {
-        println(thisGeo.renderList.size)
+
         if(!absturz){
             this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))
             posOnCurve = clampf(posOnCurve + deltaTime * shuttleSpeed, 0f,1f)
         }
         if (absturz){
             translate(Vector3f(0f, 0f,-1f))
+
             for (each in thisGeo.renderList){
-                each.material?.opacityMultiplier = each.material?.opacityMultiplier!! - 0.01f
+                this.alpha -= 0.001f
             }
         }
 
         if(posOnCurve == 1f){
             shouldIdie = true
+
             for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
         }
         super.update(deltaTime, time)
