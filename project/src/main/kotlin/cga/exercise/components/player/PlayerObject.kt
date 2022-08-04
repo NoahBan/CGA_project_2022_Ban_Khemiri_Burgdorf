@@ -27,7 +27,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private val speed = 15f
     private val rotationUpDownSpeed = Math.toRadians(160f)
     private val rotationLeftRightSpeed = Math.toRadians(160f)
-    private var countFuntioningWings = 4
+    private var countFunctioningWings = 4
+    private var allWingsDestroyed = false
 
     var nextWeaponToShoot = 0
 
@@ -73,7 +74,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     }
     fun calculateNextWeaponToShoot(currentWeapon : Int): Int{
         var found = false
-        if (countFuntioningWings == 0) return -1
+        if (countFunctioningWings == 0) return -1
         var nextWeapon = (currentWeapon + 1) % wingList.size
         while (!found){
             if (wingList[nextWeapon].wingDestroyed){
@@ -182,7 +183,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
-
+        if (!body.bodyDestroyed || !allWingsDestroyed) {
         if (moveUp && !moveDown) moveUpDown(deltaTime, 1f)
         moveUp = false
         if (moveDown && !moveUp) moveUpDown(deltaTime, -1f)
@@ -201,12 +202,12 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
         for (each in playerPartsList) each.update(deltaTime, time)
         for (each in playerProjectileList) each.update(deltaTime, time)
-        countFuntioningWings = 4
-        for (each in wingList) if (each.wingDestroyed) countFuntioningWings--
-
+        countFunctioningWings = 4
+        for (each in wingList) if (each.wingDestroyed) countFunctioningWings--
+        if (countFunctioningWings == 0) allWingsDestroyed = true
 
         //println("functioning wings  " + countFuntioningWings)
-        if (shoot && countFuntioningWings > 0){
+        if (shoot && !allWingsDestroyed){
             nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
             if (wingList[nextWeaponToShoot].wingOut){
                 shoot(nextWeaponToShoot)
@@ -222,5 +223,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             }
         }
         for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
+        }
+        else
+        {
+
+        }
     }
 }
