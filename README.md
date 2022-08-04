@@ -11,7 +11,6 @@ Listen Sie hier alle Teammitglieder auf.
 Listen Sie hier alle relevanten Features als Liste mit sinnvoller Reihenfolge auf mit Angabe wer das Feature implementiert hat.
 Bei starker Ungleicheit der Features behalten wir uns eine individuelle Notenvergabe vor.
 
-Bspw.
 
 - Directional Light (Noah)
 - Raumschiff/Player Object (Jens)
@@ -33,7 +32,7 @@ Bspw.
   - Texture-Alpha (Karim)
 - Dynamische Hitboxen / Kollision
   - grundlegende Implementierung (Karim)
-  - Anwendung im Spiel (Jens)
+  - Anwendung im Spiel (Jens und Noah)
 - Deferred Shading (Jens)
 - Gegner-System
   - Shuttle/Asteroiden Implementierung (Jens)
@@ -41,11 +40,18 @@ Bspw.
   - Alpha Fade In/Out (Noah)
 - Beziér Kurve (Jens)
 
+# Steuerung
 
-- Verschiedene Kameramodelle (Wechsel zwischen orthographischer und perspektivischer Kamera mittels "c") (Berta)
-- Dynamische Kamera (Steuerung mittels Maus und "WASD" auf der Tastatur) (Carola und Armin)
-- Verschiedene Shaderprogramme (Wechsel mittels "s") (Carola)
-- ...
+- WASD: Oben/Links/Unten/Rechts Bewegung
+- G: Aus-/Einfahren der Flügel/Waffen
+- SPACE: Schuss (nur mit ausgefahrenen Flügeln/Waffen)
+- K: Collider ein-/ausblenden
+- P: Wechsel zwischen Deferred Shading und Forward Rendering
+- N/M: Kamerawechsel
+- I: Zoom in (Nur 3rd Person Kamera)
+- O: Zoom out (Nur 3rd Person Kamera)
+
+
 
 # Quellenverzeichnis
 Listen Sie hier ALLE Quellen der genutzten Ressourcen auf.
