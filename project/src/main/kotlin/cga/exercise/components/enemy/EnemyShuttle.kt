@@ -7,6 +7,7 @@ import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.utility.QuadraticBezierCurve
+import cga.exercise.components.utility.BezierCurve
 import cga.exercise.components.utility.clampf
 import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalCollisionHandler
@@ -21,7 +22,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     val shuttleSpeed = 0.1f
 
     var posOnCurve = 0.005f
-    val movementCurve : QuadraticBezierCurve
+    val movementCurve : BezierCurve
     var explosion = false
 
     init {
@@ -47,10 +48,10 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
             Vector3f(40f, 0f, -250f),
             Vector3f(0f, 0f, 0f)
         )
-        movementCurve = QuadraticBezierCurve(Vector3f(
-            -20f, 0f, -500f),
-            Vector3f(40f, 0f, -250f),
-            Vector3f(0f, 0f, 0f)
+        movementCurve = BezierCurve(
+            mutableListOf(Vector3f(-20f, 0f, -500f),
+                Vector3f(40f, 0f, -250f),
+                Vector3f(0f, 0f, 0f))
         )
         this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))
     }

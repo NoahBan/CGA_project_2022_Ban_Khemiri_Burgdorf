@@ -216,7 +216,6 @@ class Scene(private val window: GameWindow) {
 
         //Geometry
 
-
         ground = Ground(GroundAniMode.ROTATION)
 
         //Skybox Geo
@@ -410,6 +409,9 @@ class Scene(private val window: GameWindow) {
         }
 
         player.update(dt,t)
+        if (player.isDead){
+            if (cameraHandler.getActiveCamera() != cameraHandler.cameraList[0]) cameraHandler.nextCam()
+        }
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
         enemyHandler.update(dt,t)
         globalCollisionHandler.update()

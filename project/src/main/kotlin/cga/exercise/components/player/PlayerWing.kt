@@ -44,6 +44,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     private val maxRotation = Math.toRadians(0f)
     private var minRotation = Math.toRadians(18f)
 
+
     public var wingDestroyed = false
 
     private var rotationDir = 1f

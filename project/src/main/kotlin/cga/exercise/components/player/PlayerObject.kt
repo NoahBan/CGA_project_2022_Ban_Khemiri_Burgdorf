@@ -29,6 +29,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private val rotationLeftRightSpeed = Math.toRadians(160f)
     private var countFunctioningWings = 4
     private var allWingsDestroyed = false
+    public  var isDead = false
+    private var driftOfSpeed = 0f
 
     var nextWeaponToShoot = 0
 
@@ -183,50 +185,58 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
-        if (!body.bodyDestroyed || !allWingsDestroyed) {
-        if (moveUp && !moveDown) moveUpDown(deltaTime, 1f)
-        moveUp = false
-        if (moveDown && !moveUp) moveUpDown(deltaTime, -1f)
-        moveDown = false
-        if (moveLeft && !moveRight) moveLeftRight(deltaTime, 1f)
-        moveLeft = false
-        if (moveRight && !moveLeft) moveLeftRight(deltaTime, -1f)
-        moveRight = false
+        if (!body.bodyDestroyed && !allWingsDestroyed) {
+            if (moveUp && !moveDown) moveUpDown(deltaTime, 1f)
+            moveUp = false
+            if (moveDown && !moveUp) moveUpDown(deltaTime, -1f)
+            moveDown = false
+            if (moveLeft && !moveRight) moveLeftRight(deltaTime, 1f)
+            moveLeft = false
+            if (moveRight && !moveLeft) moveLeftRight(deltaTime, -1f)
+            moveRight = false
 
-        if (!moveDown && !moveUp) {
-            vertRotationReset(deltaTime)
-        }
-        if (!moveLeft && !moveRight) {
-            horizRotationReset(deltaTime)
-        }
-
-        for (each in playerPartsList) each.update(deltaTime, time)
-        for (each in playerProjectileList) each.update(deltaTime, time)
-        countFunctioningWings = 4
-        for (each in wingList) if (each.wingDestroyed) countFunctioningWings--
-        if (countFunctioningWings == 0) allWingsDestroyed = true
-
-        //println("functioning wings  " + countFuntioningWings)
-        if (shoot && !allWingsDestroyed){
-            nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
-            if (wingList[nextWeaponToShoot].wingOut){
-                shoot(nextWeaponToShoot)
+            if (!moveDown && !moveUp) {
+                vertRotationReset(deltaTime)
             }
-        }
-        shoot = false
-
-        val tmp = mutableListOf<Int>()
-        playerProjectileList.forEachIndexed { index, element ->
-            if (element.shouldIdie){
-                tmp.add(index)
-                globalLightHandler.removePointLight(element.light)
+            if (!moveLeft && !moveRight) {
+                horizRotationReset(deltaTime)
             }
-        }
-        for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
-        }
+
+            for (each in playerPartsList) each.update(deltaTime, time)
+            for (each in playerProjectileList) each.update(deltaTime, time)
+            countFunctioningWings = 4
+            for (each in wingList) if (each.wingDestroyed) countFunctioningWings--
+            if (countFunctioningWings == 0) allWingsDestroyed = true
+                println("functioning wings  " + countFunctioningWings)
+                println(allWingsDestroyed)
+            if (shoot && !allWingsDestroyed){
+                nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
+                if (wingList[nextWeaponToShoot].wingOut){
+                    shoot(nextWeaponToShoot)
+                }
+            }
+            shoot = false
+
+            val tmp = mutableListOf<Int>()
+            playerProjectileList.forEachIndexed { index, element ->
+                if (element.shouldIdie){
+                    tmp.add(index)
+                    globalLightHandler.removePointLight(element.light)
+                }
+            }
+                for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
+            }
         else
-        {
+            {
+                for (each in playerPartsList) each.update(deltaTime, time)
+                for (each in playerProjectileList) each.update(deltaTime, time)
+                isDead = true
+                if (driftOfSpeed < 1.5f) {
+                    translate(Vector3f(driftOfSpeed/4,driftOfSpeed/2,driftOfSpeed))
+                    rotate(driftOfSpeed,driftOfSpeed,driftOfSpeed)
+                    driftOfSpeed += 0.014f
+                }
 
-        }
+            }
     }
 }
