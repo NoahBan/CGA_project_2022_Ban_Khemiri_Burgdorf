@@ -51,11 +51,11 @@ CGA-Wars
 
 
 # Quellenverzeichnis
-https://www.lighthouse3d.com/
-https://stackoverflow.com/questions
-https://learnopengl.com/
-https://www.youtube.com/watch?v=aVwxzDHniEw
-https://www.cgtrader.com/free-3d-models/space/spaceship/star-wars-imperial-shuttle
-https://www.cgtrader.com/free-3d-models/space/spaceship/star-wars-t-65
-https://asd.gsfc.nasa.gov/blueshift/wp-content/uploads/2015/07/eso0932a.jpg
-https://www.cgtrader.com/free-3d-models/space/other/3d-asteroids-pack-model
+- https://www.lighthouse3d.com/
+- https://stackoverflow.com/questions
+- https://learnopengl.com/
+- https://www.youtube.com/watch?v=aVwxzDHniEw
+- https://www.cgtrader.com/free-3d-models/space/spaceship/star-wars-imperial-shuttle
+- https://www.cgtrader.com/free-3d-models/space/spaceship/star-wars-t-65
+- https://asd.gsfc.nasa.gov/blueshift/wp-content/uploads/2015/07/eso0932a.jpg
+- https://www.cgtrader.com/free-3d-models/space/other/3d-asteroids-pack-model
