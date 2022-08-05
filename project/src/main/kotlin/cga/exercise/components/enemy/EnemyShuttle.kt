@@ -32,9 +32,9 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     var ende = Vector3f(0f)
 
     init {
-       // var scaleRoot = Math.sqrt(Math.sqrt(scalefactor.toDouble())).toFloat()
-       // thisGeo.scale(Vector3f(scaleRoot))
-       // collider1 = Collider(ColliderType.ENEMYCOLLIDER, 3f * scalefactor*2, Matrix4f(), this)
+        // var scaleRoot = Math.sqrt(Math.sqrt(scalefactor.toDouble())).toFloat()
+        // thisGeo.scale(Vector3f(scaleRoot))
+        // collider1 = Collider(ColliderType.ENEMYCOLLIDER, 3f * scalefactor*2, Matrix4f(), this)
         //addCollider(collider1)
 
         thisGeo.renderList = enemyGeo.shuttle.renderList

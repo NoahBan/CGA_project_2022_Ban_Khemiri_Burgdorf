@@ -33,7 +33,7 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
     var fadein = true
 
     init {
-        scale = Random.nextInt(8,20)/10f
+        scale = Random.nextInt(8,40)/10f
         //scale = Random.nextInt(30,100)/10f
         alpha = 0f
         val asteroidType = Random.nextInt(0,3)

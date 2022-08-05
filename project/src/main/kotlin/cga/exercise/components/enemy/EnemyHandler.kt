@@ -19,7 +19,7 @@ class EnemyHandler {
 //    val enemySphere : EnemySphere
 
     var nextSpawntime = 5f
-    val newSpawnMin = 3
+    val newSpawnMin = 2
     val newSpawnMax = 5
 
     init {
