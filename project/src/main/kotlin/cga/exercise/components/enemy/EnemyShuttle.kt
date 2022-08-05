@@ -67,11 +67,11 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
             2 -> startdirection = -1f
         }
         println(randomType)
-        start = Vector3f(startdirection * 200f, 0f, -500f)
+        start = Vector3f(startdirection * 200f, Random.nextInt(0,20).toFloat(), -500f)
         movementCurve = BezierCurve(
             mutableListOf(start,
-                Vector3f(Random.nextInt(-40,40).toFloat(), 0f, -450f),
-                Vector3f(Random.nextInt(-40,40).toFloat(), -1f, -330f),
+                Vector3f(Random.nextInt(-40,40).toFloat(), Random.nextInt(-5,15).toFloat(), -450f),
+                Vector3f(Random.nextInt(-40,40).toFloat(), Random.nextInt(0,10).toFloat(), -330f),
                 ende)
         )
 

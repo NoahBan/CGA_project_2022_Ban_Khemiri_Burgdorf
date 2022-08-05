@@ -61,7 +61,7 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
 
 
         var spawnpoint = Vector3f()
-        val randomX = Random.nextInt(-60,60).toFloat()
+        val randomX = Random.nextInt(-50,50).toFloat()
         val randomY = Random.nextInt(-10*10,10*10)/10f
         spawnpoint = Vector3f(randomX, randomY, -500f)
 
