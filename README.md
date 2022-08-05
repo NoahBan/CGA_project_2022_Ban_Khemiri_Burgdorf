@@ -27,6 +27,7 @@ CGA-Wars
 - Alpha-Texturing (Transparenz)
   - Material-Alpha (Noah)
   - Texture-Alpha (Karim)
+  - Sort Render by Depth (Jens)
 - Dynamische Hitboxen / Kollision
   - grundlegende Implementierung (Karim)
   - Anwendung im Spiel (Jens und Noah)
@@ -35,6 +36,7 @@ CGA-Wars
   - Shuttle/Asteroiden Implementierung (Jens)
   - Partikeleffekte als Treffer-Feedback und Explosion (Karim)
   - Alpha Fade In/Out (Noah)
+  - Gegner-Flugbahnen (Noah)
 - Beziér Kurve (Jens)
 
 # Steuerung
