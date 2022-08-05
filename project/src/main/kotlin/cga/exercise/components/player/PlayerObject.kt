@@ -1,21 +1,20 @@
 package cga.exercise.components.player
 
-import cga.exercise.components.effects.EmiterType
 import cga.exercise.components.effects.Emitter
 import cga.exercise.components.geometry.Material
+import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.light.PointLight
 import cga.exercise.components.projectile.PlayerProjectile
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.exercise.components.utility.*
 import cga.exercise.game.emitterHandler
-import cga.exercise.game.globalCollisionHandler
 import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 
 class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Transformable(modelMatrix, parent) {
@@ -44,6 +43,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     val wingList : MutableList<PlayerWing>
 
     private val body : PlayerBody
+    private val fadenkreuz : Renderable
     private val wingOL : PlayerWing
     private val wingOR : PlayerWing
     private val wingUR : PlayerWing
@@ -58,6 +58,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     var shoot = false
 
+    var fadenKreuzAn = false
+
     val playerProjectileList = mutableListOf<PlayerProjectile>()
 
     val emitterBroken : Emitter
@@ -66,6 +68,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         playerGeo = PlayerGeo()
 
         body = PlayerBody(playerGeo,Matrix4f(),rollParent)
+        fadenkreuz = Renderable(playerGeo.fadenkreuz.renderList,Matrix4f(),rollParent)
         wingOL = PlayerWing(playerGeo,WingType.OL,Matrix4f(),rollParent)
         wingOR = PlayerWing(playerGeo,WingType.OR,Matrix4f(),rollParent)
         wingUL = PlayerWing(playerGeo,WingType.UL,Matrix4f(),rollParent)
@@ -136,12 +139,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
 //        println(playerProjectileList.size)
     }
-
-    fun render(shaderProgram : ShaderProgram){
-        for (each in playerPartsList) each.render(shaderProgram)
-        for (each in playerProjectileList) each.render(shaderProgram)
-    }
-
     fun setDT (newDt : Float){
         deltaTime = newDt
     }
@@ -154,6 +151,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     }
     fun setMoveDown() {
         moveDown = true
+    }
+
+    fun toggleFadenkreuz() {
+        fadenKreuzAn = !fadenKreuzAn
     }
 
     fun moveUpDown(dt : Float, dir : Float){
@@ -216,6 +217,24 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         wingUR.toggleWingMode()
     }
 
+    fun renderAlphaStuff(shaderProgram : ShaderProgram, deferred : Boolean){
+        if(fadenKreuzAn)fadenkreuz.render(shaderProgram)
+        if(!deferred) {
+            GL11.glEnable(GL11.GL_BLEND)
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+            GL11.glDepthFunc(GL11.GL_ALWAYS)
+        }
+
+        for(each in wingList) each.turbineFireMesh.render(shaderProgram)
+        GL11.glDepthFunc(GL11.GL_LESS)
+    }
+
+    fun render(shaderProgram : ShaderProgram, deferred : Boolean){
+        for (each in playerProjectileList) each.render(shaderProgram)
+        for (each in playerPartsList) each.render(shaderProgram)
+        renderAlphaStuff(shaderProgram, deferred)
+    }
+
     fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
@@ -250,9 +269,9 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         }
         for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
 
-        emitterBroken.x = this.getWorldPosition().x
-        emitterBroken.y = this.getWorldPosition().y
-        emitterBroken.z = this.getWorldPosition().z
-        emitterBroken.maxCycles = -1
+//        emitterBroken.x = this.getWorldPosition().x
+//        emitterBroken.y = this.getWorldPosition().y
+//        emitterBroken.z = this.getWorldPosition().z
+//        emitterBroken.maxCycles = -1
     }
 }

@@ -38,6 +38,8 @@ void main(){
         texCoord[0] += Material.movingU;
         texCoord[1] += Material.movingV;
     };
+    float alpha = texture(Material.texDiff,texCoord).a;
+    if(alpha < 0.1) discard;
     gPosition = vec4(vertexPosition, 1.0);
     gNormal = vec4(normalize(vertexNormal), 1.0);
     gEmission = texture(Material.texEmit, texCoord);

@@ -164,6 +164,8 @@ void main(){
         texCoord[0] += Material.movingU;
         texCoord[1] += Material.movingV;
     };
+    float alpha = texture(Material.texDiff,texCoord).a;
+    if(alpha < 0.1) discard;
     vec3 matEmissive = texture(Material.texEmit, texCoord).xyz;
     vec3 matDiffuse = texture(Material.texDiff,texCoord).xyz;
     vec3 matSpecular = texture(Material.texSpec,texCoord).xyz;
@@ -179,7 +181,6 @@ void main(){
     vec3 emission = matEmissive * Material.emitMultiplier;
     vec3 ambient = AmbientColor * matDiffuse;
     vec4 colorAlpha;
-    float alpha = texture(Material.texDiff,texCoord).a;
     float alphaMultiplier = Material.opacityMultiplier;
 
     //add point lights

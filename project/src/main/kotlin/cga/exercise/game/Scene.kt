@@ -19,8 +19,10 @@ import cga.framework.GameWindow
 import cga.framework.OBJLoader
 import org.joml.*
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL46
 import java.nio.ByteBuffer
 
 val globalLightHandler = LightHandler(30,1,1)
@@ -51,6 +53,7 @@ class Scene(private val window: GameWindow) {
     private val player : PlayerObject
 
     private val importedSkySphere : Renderable
+    private val planet : Renderable
 
 
     private val cameraHandler = CameraHandler()
@@ -58,11 +61,6 @@ class Scene(private val window: GameWindow) {
     private val thirdPersonCam : Camera
     private val topCam : Camera
     private val botCam : Camera
-
-
-    private val light1 : PointLight
-    private val light2 : PointLight
-    private val spotLight1 : SpotLight
 
     private val dirLight1 : DirectionalLight
 
@@ -76,6 +74,7 @@ class Scene(private val window: GameWindow) {
     var waitForButtonPress_P = 0f
     var waitForButtonPress_I_O = 0.2f
     var waitForButtonPress_K = 0f
+    var waitForButtonPress_C = 0f
 
 
     val buttonPressDelay_Space = 0.125f
@@ -91,7 +90,6 @@ class Scene(private val window: GameWindow) {
 
     //scene setup
     init {
-
         baseShader = ShaderProgram("assets/shaders/baseVertexShdr.glsl", "assets/shaders/baseFragmentShdr.glsl")
         deferredBufferShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
         deferredLightingShader = ShaderProgram("assets/shaders/deferredVertShdrLight.glsl", "assets/shaders/defferedFragShdrLight.glsl")
@@ -108,7 +106,7 @@ class Scene(private val window: GameWindow) {
         gEmission = GL30.glGenTextures()
 
         GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
-        GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA32F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGBA, GL30.GL_FLOAT, null as ByteBuffer?)
+        GL46.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA32F, window.windowWidth, window.windowHeight, 0, GL30.GL_RGBA, GL30.GL_FLOAT, null as ByteBuffer?)
         GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST)
         GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL30.GL_TEXTURE_2D, gPosition, 0)
@@ -141,13 +139,6 @@ class Scene(private val window: GameWindow) {
         if(GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) print("Framebuffer not complete")
 
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
-
-
-
-        ///DEFF
-
-
-
 
 
         //define ibo
@@ -189,21 +180,10 @@ class Scene(private val window: GameWindow) {
         sphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
         val lightSphereEmissionTex = Texture2D("assets/textures/lightSphereEmissive.png", true)
         lightSphereEmissionTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
-        val skySphereTex = Texture2D("assets/textures/starmap_2020_4k_gal.png",true)
+
+
+        val skySphereTex = Texture2D("assets/textures/starmap_2020_8k_gal.png",true)
         skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
-
-        player = PlayerObject(Matrix4f())
-
-        val matSphere = Material(
-            pureWhiteTex,
-            pureBlackTex,
-            pureWhiteTex
-        )
-        val matLightSphere = Material(
-            pureWhiteTex,
-            pureWhiteTex,
-            pureWhiteTex
-        )
         val matSkySphere = Material(
             pureBlackTex,
             skySphereTex,
@@ -213,37 +193,48 @@ class Scene(private val window: GameWindow) {
             0f,
             0f
         )
+        //Skybox Geo
+        val importObjSkybox = OBJLoader.loadOBJ("assets/models/sky/SkySphere.obj", true)
+        val importObjSkyboxData  = importObjSkybox.objects[0].meshes[0]
+        val importedKSkyboxMesh = Mesh (importObjSkyboxData.vertexData, importObjSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
+        importedSkySphere = Renderable(mutableListOf(importedKSkyboxMesh), Matrix4f(),null)
+        importedSkySphere.scale(Vector3f(1.0f))
 
-        //Geometry
+        val planetTex = Texture2D("assets/models/sky/planetSurface.png",true)
+        skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
+        val matPlanet = Material(
+            pureBlackTex,
+            planetTex,
+            pureBlackTex,
+            0f,
+            Vector2f(1f,1f),Vector3f(1f,1f,1f),
+            0f,
+            0f
+        )
+        //PLANET
+        val importObjPlanet = OBJLoader.loadOBJ("assets/models/sky/planet.obj", true)
+        val importObjPlanetData  = importObjPlanet.objects[0].meshes[0]
+        val importedPlanetMesh = Mesh (importObjPlanetData.vertexData, importObjPlanetData.indexData, posAndTexcAndNormAttrArray,false, matPlanet)
+        planet = Renderable(mutableListOf(importedPlanetMesh), Matrix4f(),null)
+        planet.translate(Vector3f(0f,-2000f,-100000f))
+        val planetScale = 13000f
+        planet.scale(Vector3f(planetScale,planetScale,planetScale))
 
 
         ground = Ground(GroundAniMode.ROTATION)
 
-        //Skybox Geo
-        val importObjKarimSkybox = OBJLoader.loadOBJ("assets/models/sky/SkySphere.obj", true)
-        val importObjKarimSkyboxData  = importObjKarimSkybox.objects[0].meshes[0]
-        val importedKarimSkyboxMesh = Mesh (importObjKarimSkyboxData.vertexData, importObjKarimSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
+        player = PlayerObject(Matrix4f())
 
-        importedSkySphere = Renderable(mutableListOf(importedKarimSkyboxMesh), Matrix4f(),null)
-        importedSkySphere.scale(Vector3f(1.0f))
-
-        light1 = PointLight(AttenuationType.QUADRATIC,Vector3f(1F,1F,0F), 20F, Matrix4f(), player.rollParent, true)
-        light2 = PointLight(AttenuationType.QUADRATIC,Vector3f(0F,1F,1F), 20F, Matrix4f(), player.rollParent, true)
         dirLight1 = DirectionalLight(Vector3f(1f,1f,1f),0.5F, Vector3f(0f,-1f,0f))
-        spotLight1 = SpotLight(AttenuationType.QUADRATIC,Vector3f(1F,1F, 1F), 120F, Matrix4f(), 20f,70f, null)
-        spotLight1.setPosition(Vector3f(0f,10f,0f))
-
-        light1.translate(Vector3f(-5f,1f,0f))
-        light2.translate(Vector3f(5f,1f,0f))
 
         globalLightHandler.addDirectionalLight(dirLight1)
 
         //Cameras
-        followCam = TargetCamera(player,20f, 16f/9f, 0.1F, 1000.0F+35F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
+        followCam = TargetCamera(player,20f, 16f/9f, 0.1F, 200000F, Matrix4f(), null, Vector3f(0f,0f,0f), 0.8f)
         followCam.translate(Vector3f(0F,2F,60.0F))
         cameraHandler.addCamera(followCam)
 
-        thirdPersonCam = Camera(60f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
+        thirdPersonCam = Camera(60f, 16f/9f, 0.1F, 200000F, Matrix4f(), player.rollParent)
         thirdPersonCam.translate(Vector3f(0F,1.2F,3F))
         thirdPersonCam.rotate(-6F,0F,0F)
         cameraHandler.addCamera(thirdPersonCam)
@@ -260,70 +251,61 @@ class Scene(private val window: GameWindow) {
 
         enemyHandler = EnemyHandler()
 
+        importedSkySphere.rotate(25f,90f,-20f)
     }
 
     fun renderAllGeometry(shaderProgram: ShaderProgram){
+            if(!deferred) {
+                glDisable(GL_BLEND)
+            }
+            if(deferred){
+                glDisable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ZERO)
+                glDepthFunc(GL_LESS)
+            }
+            GL30.glDepthMask(false)
+            importedSkySphere.render(shaderProgram)
+            planet.render(shaderProgram)
+            GL30.glDepthMask(true)
 
-
+            if(!deferred){
+                glEnable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                glDepthFunc(GL_LESS)
+            }
+            ground.render(shaderProgram)
+            if (renderCollision) globalCollisionHandler.render(shaderProgram)
+            enemyHandler.render(shaderProgram)
+            emitterHandler.renderAllEmitter(shaderProgram)
+            player.render(shaderProgram, deferred)
     }
 
     fun render(dt: Float, t: Float, gameWindow : Long) {
-
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-
         glEnable(GL_DEPTH_TEST)
         glEnable ( GL_CULL_FACE )
         glFrontFace ( GL_CCW )
         glCullFace ( GL_BACK )
 
         if(!deferred) {
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
             baseShader.use()
             cameraHandler.getActiveCamera().bind(baseShader)
-            globalLightHandler.bindLights(baseShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
-
-
-            glDisable(GL_BLEND)
-
-            GL30.glDepthMask(false)
-            importedSkySphere.render(baseShader)
-            GL30.glDepthMask(true)
-
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            glDepthFunc(GL_LESS)
-
-            ground.render(baseShader)
-            player.render(baseShader)
-            if (renderCollision) globalCollisionHandler.render(baseShader)
-            enemyHandler.render(baseShader)
-            emitterHandler.renderAllEmitter(baseShader)
-
-
+            globalLightHandler.bindLights(baseShader, cameraHandler.getActiveCamera(), Vector3f(0.5f), deferred)
+            renderAllGeometry(baseShader)
         }
-
         if(deferred){
             //BUFFER PASS
-
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, gBuffer)
                 glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
                 deferredBufferShader.use()
                 cameraHandler.getActiveCamera().bind(deferredBufferShader)
-
-                glDisable(GL_BLEND)
-
-                GL30.glDepthMask(false)
-                importedSkySphere.render(baseShader)
-                GL30.glDepthMask(true)
-                ground.render(baseShader)
-
-                player.render(baseShader)
-                if (renderCollision) globalCollisionHandler.render(baseShader)
-                enemyHandler.render(baseShader)
-                emitterHandler.renderAllEmitter(baseShader)
-
+                renderAllGeometry(deferredBufferShader)
 
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0) //RGBA 32F
+                glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
                 deferredLightingShader.use()
                 GL30.glActiveTexture(GL30.GL_TEXTURE0)
                 GL30.glBindTexture(GL30.GL_TEXTURE_2D, gPosition)
@@ -334,7 +316,7 @@ class Scene(private val window: GameWindow) {
                 GL30.glActiveTexture(GL30.GL_TEXTURE3)
                 GL30.glBindTexture(GL30.GL_TEXTURE_2D, gEmission)
                 cameraHandler.getActiveCamera().bind(deferredLightingShader)
-                globalLightHandler.bindLights(deferredLightingShader, cameraHandler.getActiveCamera(), Vector3f(0.5f))
+                globalLightHandler.bindLights(deferredLightingShader, cameraHandler.getActiveCamera(), Vector3f(0.5f), deferred)
                 renderQuad.render()
         }
         glfwSwapBuffers(gameWindow)
@@ -342,6 +324,7 @@ class Scene(private val window: GameWindow) {
 
 
     fun update(dt: Float, t: Float) {
+        planet.rotate(0f,dt/2,dt/6)
         ground.update(dt,t)
 
         //Move
@@ -362,6 +345,12 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Space){
             waitForButtonPress_Space = t + buttonPressDelay_Space
             player.setShoot()
+        }
+
+        //FADENKREUTZ
+        if(window.getKeyState(GLFW_KEY_C) && t >= waitForButtonPress_C){
+            waitForButtonPress_C = t + buttonPressDelay
+            player.toggleFadenkreuz()
         }
 
         //WingsOut

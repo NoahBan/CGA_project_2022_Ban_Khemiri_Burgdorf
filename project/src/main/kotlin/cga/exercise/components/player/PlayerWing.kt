@@ -84,7 +84,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.setPosition(Vector3f(-2.22f, 0.9f, -0.69f))
                 weapon.rotate(0f, 0f, 180f)
                 turbineFireTransform = Transformable(Matrix4f(), this)
-                turbineFireTransform.setPosition(Vector3f(-0.32f, 0.54f, 0.648f))
+                turbineFireTransform.setPosition(Vector3f(-0.32f, 0.54f, 0.5f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
                 turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), turbineFireTransform)
 
@@ -97,9 +97,8 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 minRotation *= -1f
                 weapon.setPosition(Vector3f(2.22f,0.9f,-0.69f))
                 turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), this)
-                turbineLight.setPosition(Vector3f(0.32f, 0.54f, 0.548f))
                 turbineFireTransform = Transformable(Matrix4f(), this)
-//                turbineFireTransform.setPosition(Vector3f(-0.311812f, 0.551516f, -0.606068f))
+                turbineFireTransform.setPosition(Vector3f(0.32f, 0.54f, 0.5f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
             }
             WingType.UL -> {
@@ -112,11 +111,10 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 minRotation *= -1f
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(-2.22f,-30f*0.03f,-0.69f))
-                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), this)
-                turbineLight.setPosition(Vector3f(-0.32f, -0.54f, 0.548f))
                 turbineFireTransform = Transformable(Matrix4f(), this)
-//                turbineFireTransform.setPosition(Vector3f(-0.311812f, 0.551516f, -0.606068f))
+                turbineFireTransform.setPosition(Vector3f(-0.32f, -0.54f, 0.5f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), turbineFireTransform)
             }
             WingType.UR -> {
                 rotationDir = -1f
@@ -129,11 +127,10 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.mirror(0f,1f,0f,0f,0f,0f)
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(2.22f,-0.9f,-0.69f))
-                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), this)
-                turbineLight.setPosition(Vector3f(0.32f, -0.54f, 0.548f))
                 turbineFireTransform = Transformable(Matrix4f(), this)
-//                turbineFireTransform.setPosition(Vector3f(-0.311812f, 0.551516f, -0.606068f))
+                turbineFireTransform.setPosition(Vector3f(0.32f, -0.54f, 0.5f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), turbineFireTransform)
             }
         }
         wingSetRotation(0f)
@@ -201,7 +198,6 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     override fun render(shaderProgram : ShaderProgram){
         wingGeo.render(shaderProgram)
         weapon.render(shaderProgram)
-        turbineFireMesh.render(shaderProgram)
     }
 
     fun wingSetRotation(t : Float){
@@ -258,7 +254,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
         //   collided = false
         //}
 
-        turbineFireTransform.rotate(0f,0f, Random.nextInt(45,180).toFloat())
+        turbineFireMesh.renderList[0].material?.movingV = Random.nextInt(30,70)/10f
         weapon.update(deltaTime, time, wingOut)
             if (!moveWingOut && wingIn == false ){ //&& !wingDestroyed
                 wingRotationT = clampf( wingRotationT - deltaTime * wingRotationSpeed, 0f,1f)
