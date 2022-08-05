@@ -71,7 +71,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
         movementCurve = BezierCurve(
             mutableListOf(start,
                 Vector3f(Random.nextInt(-40,40).toFloat(), 0f, -450f),
-                Vector3f(Random.nextInt(-40,40).toFloat(), -1f, -130f),
+                Vector3f(Random.nextInt(-40,40).toFloat(), -1f, -330f),
                 ende)
         )
 
