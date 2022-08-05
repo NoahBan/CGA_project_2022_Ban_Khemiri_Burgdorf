@@ -37,16 +37,14 @@ class BezierCurve (val pointList: MutableList<Vector3f>) {
         var pos = calcPos(list,newT - offset)
         var target = calcPos(list,newT)
         var newMatrix = Matrix4f()
-        newMatrix.m30(pos[0])
-        newMatrix.m31(pos[1])
-        newMatrix.m32(pos[2])
-        newMatrix.m33(0f)
+
         var eye = pos
         var center = target.negate()
         var up = Vector3f(0f, 1f, 0f)
-        newMatrix.lookAt(eye, center, up)
-        return newMatrix
+        newMatrix.lookAt(eye, center, up).invert()
 
+        newMatrix.normalize3x3()
+        return newMatrix
 
     }
 }

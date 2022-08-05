@@ -45,7 +45,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     private val maxRotation = Math.toRadians(0f)
     private var minRotation = Math.toRadians(18f)
 
-    private var wingDestroyed = false
+
+    public var wingDestroyed = false
+
     private var rotationDir = 1f
 
     private var weapon : PlayerWeapon
@@ -235,30 +237,23 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
         turbineLight.intensity = Random.nextInt(turbineLightIntensityMin,turbineLightIntensityMax)/100f
             for (each in colliderList) {
                 each.update()
-                if(each.collided) collided = true
+                if(each.collided) wingDestroyed = true
             }
-        //if (collided && !wingDestroyed) {
-            //println("Mayday")
-            //toggleWingMode()
+        if (wingDestroyed){
+            moveWingOut = false
+        }
 
-        //}
-
-
-            if (moveWingOut && wingOut == false ){ //&& !wingDestroyed
-                wingRotationT = clampf( wingRotationT + deltaTime * wingRotationSpeed, 0f,1f)
-                wingSetRotation(wingRotationT)
-            }
+        if (moveWingOut && wingOut == false ){ //&& !wingDestroyed
+            wingRotationT = clampf( wingRotationT + deltaTime * wingRotationSpeed, 0f,1f)
+            wingSetRotation(wingRotationT)
+        }
 
         if (!moveWingOut && wingIn == false){
             wingRotationT = clampf( wingRotationT - deltaTime * wingRotationSpeed, 0f,1f)
             wingSetRotation(wingRotationT)
         }
 
-        //weapon.update(deltaTime, time, wingOut)
-        //if (collided) {
-        //    //wingDestroyed = true
-        //   collided = false
-        //}
+
 
         turbineFireMesh.renderList[0].material?.movingV = Random.nextInt(30,70)/10f
         weapon.update(deltaTime, time, wingOut)

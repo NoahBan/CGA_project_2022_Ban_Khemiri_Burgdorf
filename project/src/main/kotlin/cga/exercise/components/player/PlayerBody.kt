@@ -2,23 +2,20 @@ package cga.exercise.components.player
 
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
-import cga.exercise.components.effects.EmiterType
-import cga.exercise.components.effects.Emitter
-import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
-import cga.exercise.components.texture.Texture2D
-import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalCollisionHandler
 import org.joml.Matrix4f
-import org.joml.Vector2f
 import org.joml.Vector3f
-import org.lwjgl.opengl.GL30
 
 class PlayerBody (playerGeo : PlayerGeo, modelMatrix : Matrix4f, parent: Transformable? = null) : PlayerPart(modelMatrix, parent) {
 
     var bodyGeo = Renderable(playerGeo.body.renderList, Matrix4f() )
+    var hp = 8
+    var bodyDestroyed = false
+    var immortalframes = 1.5f
+    var collided = false
 
     var collider1 = Collider(ColliderType.PLAYERCOLLIDER,0.6f)
     var collider2 = Collider(ColliderType.PLAYERCOLLIDER,0.6f)
@@ -115,6 +112,18 @@ class PlayerBody (playerGeo : PlayerGeo, modelMatrix : Matrix4f, parent: Transfo
         bodyGeo.render(shaderProgram)
     }
     override fun update(deltaTime : Float, time : Float){
-        for (each in colliderList) each.update()
+
+        for (each in colliderList) {
+            each.update()
+            if(each.collided) collided = true
+        }
+        if (collided) immortalframes -= 0.01f
+        if (immortalframes <= 0f){
+            collided = false
+            immortalframes = 2f
+            hp--
+            println("New Life total: " + hp)
+        }
+        if (hp == 0) bodyDestroyed = true
     }
 }

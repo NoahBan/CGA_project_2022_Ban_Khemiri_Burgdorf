@@ -1,5 +1,6 @@
 package cga.exercise.components.enemy
 
+import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -48,7 +49,7 @@ class EnemyHandler {
 
 //    var test = true
 
-    fun update(deltaTime : Float, time : Float){
+    fun update(deltaTime : Float, time : Float, playerposition: Vector3f){
 //         if (test) addEnemy(EnemyShuttle(this, enemyGeo, Matrix4f()))
 //        test = false
         //println(enemyList.size)
@@ -59,6 +60,7 @@ class EnemyHandler {
 
         for (each in enemyList) {
             each.update(deltaTime, time)
+            each.playerposition = playerposition
         }
 
         val tmp = mutableListOf<Int>()

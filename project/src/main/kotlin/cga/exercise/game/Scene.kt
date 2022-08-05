@@ -199,6 +199,7 @@ class Scene(private val window: GameWindow) {
         val importedKSkyboxMesh = Mesh (importObjSkyboxData.vertexData, importObjSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
         importedSkySphere = Renderable(mutableListOf(importedKSkyboxMesh), Matrix4f(),null)
         importedSkySphere.scale(Vector3f(1.0f))
+        importedSkySphere.rotate(25f,90f,-20f)
 
         val planetTex = Texture2D("assets/models/sky/planetSurface.png",true)
         skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
@@ -250,8 +251,6 @@ class Scene(private val window: GameWindow) {
 //        cameraHandler.addCamera(botCam)
 
         enemyHandler = EnemyHandler()
-
-        importedSkySphere.rotate(25f,90f,-20f)
     }
 
     fun renderAllGeometry(shaderProgram: ShaderProgram){
@@ -331,11 +330,11 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_W)){
             player.setMoveUp()
         }
-        if(window.getKeyState(GLFW_KEY_S)){
-            player.setMoveDown()
-        }
         if(window.getKeyState(GLFW_KEY_A)){
             player.setMoveLeft()
+        }
+        if(window.getKeyState(GLFW_KEY_S)){
+            player.setMoveDown()
         }
         if(window.getKeyState(GLFW_KEY_D)){
             player.setMoveRight()
@@ -397,8 +396,11 @@ class Scene(private val window: GameWindow) {
         }
 
         player.update(dt,t)
+        if (player.isDead){
+            if (cameraHandler.getActiveCamera() != cameraHandler.cameraList[0]) cameraHandler.nextCam()
+        }
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
-        enemyHandler.update(dt,t)
+        enemyHandler.update(dt,t, player.getWorldPosition())
         globalCollisionHandler.update()
         emitterHandler.updateAllEmitter(t,dt,cameraHandler.getActiveCamera())
     }

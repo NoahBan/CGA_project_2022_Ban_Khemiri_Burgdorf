@@ -34,6 +34,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     private val speed = 15f
     private val rotationUpDownSpeed = Math.toRadians(160f)
     private val rotationLeftRightSpeed = Math.toRadians(160f)
+    private var countFunctioningWings = 4
+    private var allWingsDestroyed = false
+    public  var isDead = false
+    private var driftOfSpeed = 0f
 
     var nextWeaponToShoot = 0
 
@@ -122,10 +126,22 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         emitterBroken.maxCycles = 0
         emitterBroken.updateAllowed = false
     }
-
+    fun calculateNextWeaponToShoot(currentWeapon : Int): Int{
+        var found = false
+        if (countFunctioningWings == 0) return -1
+        var nextWeapon = (currentWeapon + 1) % wingList.size
+        while (!found){
+            if (wingList[nextWeapon].wingDestroyed){
+                nextWeapon = (nextWeapon + 1) % wingList.size
+            } else {
+                found = true
+            }
+        }
+        return nextWeapon
+    }
     fun setShoot(){shoot = true}
-    fun shoot(){
-        val shot = wingList[nextWeaponToShoot].getShotPos()
+    fun shoot(weapon : Int){
+        val shot = wingList[weapon].getShotPos()
 
         var target = weaponAlignTarget.getWorldPosition()
         var up = Vector3f(0f, 1f, 0f)
@@ -135,7 +151,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         val newProjectile = PlayerProjectile(time,playerGeo.schuss.renderList, newMatrix)
 
         playerProjectileList.add(newProjectile)
-        nextWeaponToShoot = (nextWeaponToShoot + 1) % wingList.size
 
 //        println(playerProjectileList.size)
     }
@@ -188,7 +203,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     fun moveLeftRight(dt : Float, dir: Float){
         var matrix = getModelMatrix()
-        val newVal = clampf(matrix.m30()-speed*dt* dir, maxLeft,maxRight)
+        val newVal = clampf(matrix.m30() - speed * dt * dir, maxLeft,maxRight)
         matrix.m30(newVal)
         setModelMatrix(matrix)
 
@@ -238,27 +253,37 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
+        if (!body.bodyDestroyed && !allWingsDestroyed) {
+            if (moveUp && !moveDown) moveUpDown(deltaTime, 1f)
+            moveUp = false
+            if (moveDown && !moveUp) moveUpDown(deltaTime, -1f)
+            moveDown = false
+            if (moveLeft && !moveRight) moveLeftRight(deltaTime, 1f)
+            moveLeft = false
+            if (moveRight && !moveLeft) moveLeftRight(deltaTime, -1f)
+            moveRight = false
 
-        if (moveUp && !moveDown) moveUpDown(deltaTime, 1f)
-        moveUp = false
-        if (moveDown && !moveUp) moveUpDown(deltaTime, -1f)
-        moveDown = false
-        if (moveLeft && !moveRight) moveLeftRight(deltaTime, 1f)
-        moveLeft = false
-        if (moveRight && !moveLeft) moveLeftRight(deltaTime, -1f)
-        moveRight = false
+            if (!moveDown && !moveUp) {
+                vertRotationReset(deltaTime)
+            }
+            if (!moveLeft && !moveRight) {
+                horizRotationReset(deltaTime)
+            }
 
-        if (!moveDown && !moveUp) {
-            vertRotationReset(deltaTime)
-        }
-        if (!moveLeft && !moveRight) {
-            horizRotationReset(deltaTime)
-        }
-
-        for (each in playerPartsList) each.update(deltaTime, time)
-        for (each in playerProjectileList) each.update(deltaTime, time)
-        if (shoot && wingList[nextWeaponToShoot].wingOut) shoot()
-        shoot = false
+            for (each in playerPartsList) each.update(deltaTime, time)
+            for (each in playerProjectileList) each.update(deltaTime, time)
+            countFunctioningWings = 4
+            for (each in wingList) if (each.wingDestroyed) countFunctioningWings--
+            if (countFunctioningWings == 0) allWingsDestroyed = true
+                //println("functioning wings  " + countFunctioningWings)
+                //println(allWingsDestroyed)
+            if (shoot && !allWingsDestroyed){
+                nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
+                if (wingList[nextWeaponToShoot].weapon.weaponOut){
+                    shoot(nextWeaponToShoot)
+                }
+            }
+            shoot = false
 
         val tmp = mutableListOf<Int>()
         playerProjectileList.forEachIndexed { index, element ->
@@ -269,9 +294,27 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         }
         for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
 
-//        emitterBroken.x = this.getWorldPosition().x
-//        emitterBroken.y = this.getWorldPosition().y
-//        emitterBroken.z = this.getWorldPosition().z
-//        emitterBroken.maxCycles = -1
+            val tmp = mutableListOf<Int>()
+            playerProjectileList.forEachIndexed { index, element ->
+                if (element.shouldIdie){
+                    tmp.add(index)
+                    globalLightHandler.removePointLight(element.light)
+                }
+            }
+                for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
+            }
+        else
+            {
+                for (each in playerPartsList) each.update(deltaTime, time)
+                for (each in playerProjectileList) each.update(deltaTime, time)
+                isDead = true
+                var flightDirection = 1
+                if (getWorldPosition().x < 0) flightDirection = -1
+                if (driftOfSpeed < 1.5f) {
+                    translate(Vector3f(flightDirection * driftOfSpeed / 4,driftOfSpeed / 2, driftOfSpeed))
+                    rotate(flightDirection * driftOfSpeed,driftOfSpeed * flightDirection, driftOfSpeed)
+                    driftOfSpeed += 0.014f
+                }
+            }
     }
 }
