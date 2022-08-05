@@ -1,5 +1,5 @@
 # Projektname
-CGA-Wars
+CGAwars
 
 # Teammitglieder
 
