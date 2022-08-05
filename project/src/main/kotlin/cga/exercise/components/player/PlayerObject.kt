@@ -69,6 +69,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     val emitterBroken : Emitter
 
+    var printDeathTime = true
+
     init {
         playerGeo = PlayerGeo()
 
@@ -327,6 +329,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
                 for (each in playerPartsList) each.update(deltaTime, time)
                 for (each in playerProjectileList) each.update(deltaTime, time)
                 isDead = true
+                if(printDeathTime){
+                    println("You survived ${time} Seconds.")
+                    printDeathTime = !printDeathTime
+                }
                 var flightDirection = 1
                 if (getWorldPosition().x < 0) flightDirection = -1
                 if (driftOfSpeed < 1.5f) {
