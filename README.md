@@ -36,7 +36,7 @@ CGA-Wars
   - Shuttle/Asteroiden Implementierung (Jens)
   - Partikeleffekte als Treffer-Feedback und Explosion (Karim)
   - Alpha Fade In/Out (Noah)
-  - Gegner-Flugbahnen (Noah)
+  - Flugbahnenberechnung (Noah)
 - Beziér Kurve (Jens)
 
 # Steuerung
