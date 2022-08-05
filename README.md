@@ -47,6 +47,7 @@ CGA-Wars
 - N/M: Kamerawechsel
 - I: Zoom in (nur 3rd Person Kamera)
 - O: Zoom out (nur 3rd Person Kamera)
+- STRG: Fadenkreuz an/aus
 
 
 
