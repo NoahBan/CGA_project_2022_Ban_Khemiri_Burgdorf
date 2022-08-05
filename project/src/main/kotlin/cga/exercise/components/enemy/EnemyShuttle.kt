@@ -3,14 +3,10 @@ package cga.exercise.components.enemy
 import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.effects.EmiterType
-import cga.exercise.components.geometry.Material
-import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.player.PlayerObject
-import cga.exercise.components.utility.QuadraticBezierCurve
 import cga.exercise.components.utility.BezierCurve
 import cga.exercise.components.utility.clampf
-import cga.exercise.game.emitterHandler
+import cga.exercise.game.globalEmitterHandler
 import cga.exercise.game.globalCollisionHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -95,7 +91,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
         }
 
         if (hp <= 0 && !explosion){
-            emitterHandler.addEmitterType(EmiterType.Supernova,this.getWorldPosition().x,this.getWorldPosition().y,this.getWorldPosition().z)
+            globalEmitterHandler.addEmitterType(EmiterType.Supernova,this.getWorldPosition().x,this.getWorldPosition().y,this.getWorldPosition().z)
             explosion = true
         }
 

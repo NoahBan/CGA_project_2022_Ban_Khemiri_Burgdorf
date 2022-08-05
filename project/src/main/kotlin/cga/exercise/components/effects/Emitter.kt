@@ -3,6 +3,7 @@ package cga.exercise.components.effects
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.geometry.*
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.game.globalDepthSortRenderer
 import cga.framework.OBJLoader
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -131,7 +132,11 @@ class Emitter (
             if (colorOverLife != Vector3f(1f,1f,1f)){
                 importedMesh.material?.scalingColor = colorOverLife
             }
-            lonelyParticle.render(shaderProgram)
+//            lonelyParticle.render(shaderProgram)
+
+            val cloneParticle = Renderable(lonelyParticle.renderList, Matrix4f())
+            cloneParticle.setModelMatrix(lonelyParticle.getWorldModelMatrix())
+            globalDepthSortRenderer.addRenderable(cloneParticle)
         }
     }
 

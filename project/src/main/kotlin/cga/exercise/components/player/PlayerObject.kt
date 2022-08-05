@@ -8,7 +8,8 @@ import cga.exercise.components.projectile.PlayerProjectile
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.exercise.components.utility.*
-import cga.exercise.game.emitterHandler
+import cga.exercise.game.globalDepthSortRenderer
+import cga.exercise.game.globalEmitterHandler
 import cga.exercise.game.globalLightHandler
 import org.joml.Math
 import org.joml.Matrix4f
@@ -122,7 +123,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             -1,
             1f,1f,1f)
 
-        emitterHandler.addEmitter(emitterBroken)
+        globalEmitterHandler.addEmitter(emitterBroken)
         emitterBroken.maxCycles = 0
         emitterBroken.updateAllowed = false
     }
@@ -233,19 +234,19 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     }
 
     fun renderAlphaStuff(shaderProgram : ShaderProgram, deferred : Boolean){
-        if(fadenKreuzAn)fadenkreuz.render(shaderProgram)
-        if(!deferred) {
-            GL11.glEnable(GL11.GL_BLEND)
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-            GL11.glDepthFunc(GL11.GL_ALWAYS)
-        }
+        if(fadenKreuzAn) globalDepthSortRenderer.addRenderable(fadenkreuz)
+//        if(!deferred) {
+//            GL11.glEnable(GL11.GL_BLEND)
+//            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+//            GL11.glDepthFunc(GL11.GL_ALWAYS)
+//        }
 
-        for(each in wingList) each.turbineFireMesh.render(shaderProgram)
-        GL11.glDepthFunc(GL11.GL_LESS)
+        for(each in wingList) globalDepthSortRenderer.addRenderable(each.turbineFireMesh)
+//        GL11.glDepthFunc(GL11.GL_LESS)
     }
 
     fun render(shaderProgram : ShaderProgram, deferred : Boolean){
-        for (each in playerProjectileList) each.render(shaderProgram)
+        for (each in playerProjectileList) globalDepthSortRenderer.addRenderable(each)
         for (each in playerPartsList) each.render(shaderProgram)
         renderAlphaStuff(shaderProgram, deferred)
     }

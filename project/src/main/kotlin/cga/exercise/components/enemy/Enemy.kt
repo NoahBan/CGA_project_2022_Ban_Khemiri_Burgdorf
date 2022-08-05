@@ -1,14 +1,15 @@
 package cga.exercise.components.enemy
 
 import cga.exercise.components.collision.Collider
+import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
-import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.shader.ShaderProgram
-import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalCollisionHandler
+import cga.exercise.game.globalDepthSortRenderer
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector3f
 
 abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null) : Transformable(modelMatrix,parent) {
@@ -39,7 +40,15 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
                 for (each in thisGeo.renderList){
                     each.material?.opacityMultiplier = alpha
                 }
-                thisGeo.render(shaderProgram)
+
+                val cloneEnemy = Renderable(mutableListOf<Mesh>(), Matrix4f())
+                cloneEnemy.setModelMatrix(thisGeo.getWorldModelMatrix())
+
+                for (each in thisGeo.renderList){
+                    cloneEnemy.renderList.add(each.getMeshCopyMaterial())
+                }
+
+                globalDepthSortRenderer.addRenderable(cloneEnemy)
 
         }
 

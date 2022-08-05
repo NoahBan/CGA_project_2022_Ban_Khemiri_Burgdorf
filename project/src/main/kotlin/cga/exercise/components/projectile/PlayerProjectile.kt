@@ -8,9 +8,8 @@ import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.light.AttenuationType
 import cga.exercise.components.light.PointLight
-import cga.exercise.components.player.WingType
 import cga.exercise.components.shader.ShaderProgram
-import cga.exercise.game.emitterHandler
+import cga.exercise.game.globalEmitterHandler
 import cga.exercise.game.globalCollisionHandler
 import cga.exercise.game.globalLightHandler
 import org.joml.Matrix4f
@@ -58,16 +57,12 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
         if (deathTime <= time) shouldIdie = true
         for (each in colliderList) {
             if (each.collided) shouldIdie = true
-            if (each.collided) emitterHandler.addEmitterType(EmiterType.Explosion,this.getPosition().x,this.getPosition().y,this.getPosition().z)
+            if (each.collided) globalEmitterHandler.addEmitterType(EmiterType.Explosion,this.getPosition().x,this.getPosition().y,this.getPosition().z)
         }
 //        if (getPosition()[1] < -7f) shouldIdie = true
         if (shouldIdie) for (each in colliderList) {
             globalCollisionHandler.removeAllyProjectile(each)
         }
-    }
-
-    override fun render(shaderProgram : ShaderProgram) {
-        super.render(shaderProgram)
     }
 
 }

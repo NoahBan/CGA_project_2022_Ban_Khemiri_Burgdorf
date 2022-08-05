@@ -2,6 +2,7 @@ package cga.exercise.components.geometry
 
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
@@ -14,7 +15,8 @@ class Mesh(
     attributes: Array<VertexAttribute>,
     private val normalized: Boolean = false,
     var material : Material? = null,
-    var drawPrimitivesAs : Int = GL30.GL_TRIANGLES
+    var drawPrimitivesAs : Int = GL30.GL_TRIANGLES,
+    init : Boolean = true
     ) {
 
     //private data
@@ -24,30 +26,33 @@ class Mesh(
     private var indexcount = indexdata.size
 
     init {
-        // todo: place your code here
+        if (init) {
+            // todo: place your code here
 
-        // todo: generate IDs
-        vao = GL30.glGenVertexArrays()
-        vbo = GL30.glGenBuffers()
-        ibo = GL30.glGenBuffers()
-        // todo: bind your objects
-        GL30.glBindVertexArray(vao)
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
-        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, ibo)
+            // todo: generate IDs
+            vao = GL30.glGenVertexArrays()
+            vbo = GL30.glGenBuffers()
+            ibo = GL30.glGenBuffers()
+            // todo: bind your objects
+            GL30.glBindVertexArray(vao)
+            GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
+            GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, ibo)
 
-        // todo: upload your mesh data
-        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, vertexdata, GL30.GL_STATIC_DRAW)
-        GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, indexdata, GL30.GL_STATIC_DRAW)
+            // todo: upload your mesh data
+            GL30.glBufferData(GL30.GL_ARRAY_BUFFER, vertexdata, GL30.GL_STATIC_DRAW)
+            GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, indexdata, GL30.GL_STATIC_DRAW)
 
-        attributes.forEachIndexed { index, vertAttr ->
-            GL30.glEnableVertexAttribArray(index)
-            GL30.glVertexAttribPointer(index, vertAttr.n, vertAttr.type, normalized, vertAttr.stride, vertAttr.offset.toLong()
-            )
+            attributes.forEachIndexed { index, vertAttr ->
+                GL30.glEnableVertexAttribArray(index)
+                GL30.glVertexAttribPointer(
+                    index, vertAttr.n, vertAttr.type, normalized, vertAttr.stride, vertAttr.offset.toLong()
+                )
+            }
+
+            GL30.glBindVertexArray(0)
+            GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, 0)
+            GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, 0)
         }
-
-        GL30.glBindVertexArray(0)
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, 0)
-        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
     fun render() {
@@ -66,6 +71,48 @@ class Mesh(
 
     fun setMaterialEmitMul(mult : Vector3f){
         this.material?.emitMultiplier = mult
+    }
+
+    fun getMeshCopyMaterial() : Mesh{
+
+        val newdShininess = this.material!!.shininess + 0f
+        val newdTcMultiplier = Vector2f(this.material!!.tcMultiplier)
+        val newdEmitMultiplier = Vector3f(this.material!!.emitMultiplier)
+        val newdOpacityMultiplier = this.material!!.opacityMultiplier + 0f
+        val newdOpacity = this.material!!.opacity + 0f
+        val newdMovingU = this.material!!.movingU + 0f
+        val newdMovingV = this.material!!.movingV + 0f
+
+        val newMaterial = Material(
+            this.material!!.diff,
+            this.material!!.emit,
+            this.material!!.specular,
+            newdShininess,
+            newdTcMultiplier,
+            newdEmitMultiplier,
+            newdOpacityMultiplier,
+            newdOpacity,
+            newdMovingU,
+            newdMovingV
+        )
+
+        var returnMesh = Mesh(
+            floatArrayOf(),
+            intArrayOf(),
+            arrayOf(),
+            this.normalized,
+            this.material,
+            this.drawPrimitivesAs,
+            false
+        )
+
+        returnMesh.ibo = this.ibo
+        returnMesh.vao = this.vao
+        returnMesh.vbo = this.vbo
+        returnMesh.indexcount = this.indexcount
+        returnMesh.material = newMaterial
+
+        return returnMesh
     }
 
     fun cleanup() {

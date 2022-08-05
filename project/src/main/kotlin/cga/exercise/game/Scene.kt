@@ -5,7 +5,6 @@ import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.CameraHandler
 import cga.exercise.components.camera.TargetCamera
 import cga.exercise.components.collision.CollisionHandler
-import cga.exercise.components.effects.Emitter
 import cga.exercise.components.enemy.EnemyHandler
 import cga.exercise.components.effects.EmitterHandler
 import cga.exercise.components.geometry.*
@@ -14,12 +13,10 @@ import cga.exercise.components.ground.GroundAniMode
 import cga.exercise.components.light.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
-import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.OBJLoader
 import org.joml.*
 import org.lwjgl.glfw.GLFW.*
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL46
@@ -27,7 +24,8 @@ import java.nio.ByteBuffer
 
 val globalLightHandler = LightHandler(30,1,1)
 val globalCollisionHandler = CollisionHandler()
-val emitterHandler = EmitterHandler()
+val globalEmitterHandler = EmitterHandler()
+val globalDepthSortRenderer = DepthSortRenderer()
 
 
         /**
@@ -267,16 +265,18 @@ class Scene(private val window: GameWindow) {
             planet.render(shaderProgram)
             GL30.glDepthMask(true)
 
+            ground.render(shaderProgram)
+            if (renderCollision) globalCollisionHandler.render(shaderProgram)
+            enemyHandler.render(shaderProgram)
+            player.render(shaderProgram, deferred)
+            globalEmitterHandler.renderAllEmitter(shaderProgram)
+
             if(!deferred){
                 glEnable(GL_BLEND)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 glDepthFunc(GL_LESS)
             }
-            ground.render(shaderProgram)
-            if (renderCollision) globalCollisionHandler.render(shaderProgram)
-            enemyHandler.render(shaderProgram)
-            emitterHandler.renderAllEmitter(shaderProgram)
-            player.render(shaderProgram, deferred)
+            globalDepthSortRenderer.render(shaderProgram)
     }
 
     fun render(dt: Float, t: Float, gameWindow : Long) {
@@ -402,7 +402,7 @@ class Scene(private val window: GameWindow) {
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
         enemyHandler.update(dt,t, player.getWorldPosition())
         globalCollisionHandler.update()
-        emitterHandler.updateAllEmitter(t,dt,cameraHandler.getActiveCamera())
+        globalEmitterHandler.updateAllEmitter(t,dt,cameraHandler.getActiveCamera())
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
