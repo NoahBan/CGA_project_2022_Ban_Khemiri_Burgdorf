@@ -285,15 +285,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             }
             shoot = false
 
-        val tmp = mutableListOf<Int>()
-        playerProjectileList.forEachIndexed { index, element ->
-            if (element.shouldIdie){
-                tmp.add(index)
-                globalLightHandler.removePointLight(element.light)
-            }
-        }
-        for (each in tmp.asReversed()) playerProjectileList.removeAt(each)
-
             val tmp = mutableListOf<Int>()
             playerProjectileList.forEachIndexed { index, element ->
                 if (element.shouldIdie){

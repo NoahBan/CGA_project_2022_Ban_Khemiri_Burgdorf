@@ -50,7 +50,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
 
     private var rotationDir = 1f
 
-    private var weapon : PlayerWeapon
+    var weapon : PlayerWeapon
 
     val turbineLight : PointLight
     val turbineLightColor = Vector3f(76/255f,213/255f,253/255f)
