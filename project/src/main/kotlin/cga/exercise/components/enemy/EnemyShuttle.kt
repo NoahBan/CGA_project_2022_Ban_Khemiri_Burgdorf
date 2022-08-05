@@ -16,7 +16,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
 ) : Enemy(myCreator, enemyGeo,modelMatrix,parent) {
 
     val collider1 : Collider
-    val shuttleSpeed = 0.1f
+    val shuttleSpeed = 0.05f
 
     var scalefactor = 1f
     var posOnCurve = 0.005f
@@ -28,9 +28,9 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     var ende = Vector3f(0f)
 
     init {
-       // var scaleRoot = Math.sqrt(Math.sqrt(scalefactor.toDouble())).toFloat()
-       // thisGeo.scale(Vector3f(scaleRoot))
-       // collider1 = Collider(ColliderType.ENEMYCOLLIDER, 3f * scalefactor*2, Matrix4f(), this)
+        // var scaleRoot = Math.sqrt(Math.sqrt(scalefactor.toDouble())).toFloat()
+        // thisGeo.scale(Vector3f(scaleRoot))
+        // collider1 = Collider(ColliderType.ENEMYCOLLIDER, 3f * scalefactor*2, Matrix4f(), this)
         //addCollider(collider1)
 
         thisGeo.renderList = enemyGeo.shuttle.renderList
@@ -63,11 +63,11 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
             2 -> startdirection = -1f
         }
         println(randomType)
-        start = Vector3f(startdirection * 200f, 0f, -500f)
+        start = Vector3f(startdirection * 200f, Random.nextInt(0,20).toFloat(), -500f)
         movementCurve = BezierCurve(
             mutableListOf(start,
-                Vector3f(Random.nextInt(-40,40).toFloat(), 0f, -450f),
-                Vector3f(Random.nextInt(-40,40).toFloat(), -1f, -330f),
+                Vector3f(Random.nextInt(-40,40).toFloat(), Random.nextInt(-5,15).toFloat(), -450f),
+                Vector3f(Random.nextInt(-40,40).toFloat(), Random.nextInt(0,10).toFloat(), -330f),
                 ende)
         )
 
@@ -78,7 +78,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     override fun update(deltaTime: Float, time: Float) {
         movementCurve.pointList[movementCurve.pointList.lastIndex] = playerposition
         playerposition.z = 0f
-        println("Endpos "+ ende)
+        //println("Endpos "+ ende)
 
         if(!absturz){
             this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))
