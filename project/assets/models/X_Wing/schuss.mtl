@@ -1,8 +1,8 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'schuss.blend'
 # Material Count: 1
 
 newmtl Schuss_Mat
-Ns 224.999983
+Ns 225.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.500000 0.500000 0.500000

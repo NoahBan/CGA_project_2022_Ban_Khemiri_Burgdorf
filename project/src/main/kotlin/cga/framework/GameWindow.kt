@@ -103,7 +103,7 @@ abstract class GameWindow(
         }
 
         GLFW.glfwDefaultWindowHints()
-        if (m_msaasamples > 0) GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, m_msaasamples)
+        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, 6)
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, m_cvmaj)
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, m_cvmin)
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE)

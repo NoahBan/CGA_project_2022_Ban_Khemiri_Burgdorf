@@ -32,6 +32,7 @@ class Ground(var mode : GroundAniMode) {
             GL30.GL_LINEAR_MIPMAP_LINEAR
         )
         groundGeo.setPosition(groundPos)
+        groundGeo.renderList[0].material?.tcMultiplier = Vector2f(64f*10,64f*10)
 
         groundWireframe = ModelLoader.loadModel(
             "assets/models/Ground/Ground_Wireframe.obj",0f,0f,0f
