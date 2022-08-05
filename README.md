@@ -50,6 +50,11 @@ CGA-Wars
 - I: Zoom in (nur 3rd Person Kamera)
 - O: Zoom out (nur 3rd Person Kamera)
 - C: Fadenkreuz an/aus
+- UP: Zielen nach oben
+- DOWN: Zielen nach unten
+- LEFT: Zielen nach links
+- RIGHT: Zielen nach rechts
+- R: Zielen nach vorne (Zurücksetzen)
 
 
 
