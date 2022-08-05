@@ -10,6 +10,7 @@ import cga.exercise.game.globalCollisionHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : Matrix4f = Matrix4f(), parent: Transformable? = null
 ) : Enemy(myCreator, enemyGeo,modelMatrix,parent) {
@@ -22,19 +23,20 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
     var posOnLine = 0.005f
     var newMatrix = Matrix4f()
 
-    val sphereSpeed = 40f
+    var asteroidSpeed = 0f
 
     var scale = 1f
 
-    val maxRotationSpeed = 360*2
+    val maxRotationSpeed = 360*4
     val randomPitch : Float
     val randomRoll : Float
     val randomYaw : Float
     var fadein = true
 
     init {
-        scale = Random.nextInt(8,40)/10f
-        //scale = Random.nextInt(30,100)/10f
+        asteroidSpeed = Random.nextInt(10,30)/100f
+        scale = Random.nextInt(10,150)/10f
+        this.hp = scale.toInt() * 3
         alpha = 0f
         val asteroidType = Random.nextInt(0,3)
         scaleOffset.scale(Vector3f(scale,scale,scale))
@@ -52,17 +54,14 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
         }
         collider1 = Collider(ColliderType.ENEMYCOLLIDER, scale, Matrix4f(), rotationOffset)
         addCollider(collider1)
-        var scaleRoot = Math.sqrt(Math.sqrt(scale.toDouble())).toFloat()
-        thisGeo.scale(Vector3f(scaleRoot))
-
         randomPitch = Math.toRadians(Random.nextInt(1,maxRotationSpeed).toDouble()).toFloat()
         randomRoll = Math.toRadians(Random.nextInt(1,maxRotationSpeed).toDouble()).toFloat()
         randomYaw = Math.toRadians(Random.nextInt(1,maxRotationSpeed).toDouble()).toFloat()
 
 
         var spawnpoint = Vector3f()
-        val randomX = Random.nextInt(-50,50).toFloat()
-        val randomY = Random.nextInt(-10*10,10*10)/10f
+        val randomX = Random.nextInt(-60,60).toFloat()
+        val randomY = Random.nextInt(-10*10,20*10)/10f
         spawnpoint = Vector3f(randomX, randomY, -500f)
 
         movementLine = BezierCurve(
@@ -80,7 +79,7 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
         if (posOnLine <= 0.10f) movementLine.pointList[movementLine.pointList.lastIndex] = playerposition
         this.setPosition(movementLine.getPos(posOnLine))
 
-        posOnLine = clampf(posOnLine + deltaTime * 0.1f, 0f,1f)
+        posOnLine = clampf(posOnLine + deltaTime * asteroidSpeed, 0f,1f)
         if (fadein) {
             alpha += 0.01f
             if (alpha >= 1f) {
