@@ -15,6 +15,7 @@ import org.joml.Math
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 enum class WingType (val wingType: Int){
     OL(0),
@@ -51,6 +52,8 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
 
     val turbineLight : PointLight
     val turbineLightColor = Vector3f(76/255f,213/255f,253/255f)
+    val turbineLightIntensityMax = 32
+    val turbineLightIntensityMin = 28
 
     var collided = false
 
@@ -84,9 +87,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.setPosition(Vector3f(-2.22f, 0.9f, -0.69f))
                 weapon.rotate(0f, 0f, 180f)
                 turbineFireTransform = Transformable(Matrix4f(), this)
-                turbineFireTransform.setPosition(Vector3f(-0.32f, 0.54f, 0.5f))
+                turbineFireTransform.setPosition(Vector3f(-0.32f, 0.54f, 0.6f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
-                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), turbineFireTransform)
+                turbineLight = PointLight(AttenuationType.QUADRATIC,turbineLightColor, 0.3f, Matrix4f(), turbineFireTransform)
 
             }
             WingType.OR -> {
@@ -96,10 +99,10 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 wingGeo.parent = this
                 minRotation *= -1f
                 weapon.setPosition(Vector3f(2.22f,0.9f,-0.69f))
-                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), this)
                 turbineFireTransform = Transformable(Matrix4f(), this)
-                turbineFireTransform.setPosition(Vector3f(0.32f, 0.54f, 0.5f))
+                turbineFireTransform.setPosition(Vector3f(0.32f, 0.54f, 0.6f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
+                turbineLight = PointLight(AttenuationType.QUADRATIC,turbineLightColor, 0.3f, Matrix4f(), turbineFireTransform)
             }
             WingType.UL -> {
                 weapon = PlayerWeapon(rotationDir, playerGeo, Matrix4f(), this)
@@ -112,9 +115,9 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(-2.22f,-30f*0.03f,-0.69f))
                 turbineFireTransform = Transformable(Matrix4f(), this)
-                turbineFireTransform.setPosition(Vector3f(-0.32f, -0.54f, 0.5f))
+                turbineFireTransform.setPosition(Vector3f(-0.32f, -0.54f, 0.6f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
-                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), turbineFireTransform)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.3f, Matrix4f(), turbineFireTransform)
             }
             WingType.UR -> {
                 rotationDir = -1f
@@ -128,11 +131,13 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
                 weapon.rotate(0f,0f,180f)
                 weapon.setPosition(Vector3f(2.22f,-0.9f,-0.69f))
                 turbineFireTransform = Transformable(Matrix4f(), this)
-                turbineFireTransform.setPosition(Vector3f(0.32f, -0.54f, 0.5f))
+                turbineFireTransform.setPosition(Vector3f(0.32f, -0.54f, 0.6f))
                 turbineFireMesh = Renderable(playerGeo.fire.renderList, Matrix4f(), turbineFireTransform)
-                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.2f, Matrix4f(), turbineFireTransform)
+                turbineLight = PointLight(AttenuationType.LINEAR,turbineLightColor, 0.3f, Matrix4f(), turbineFireTransform)
             }
         }
+        turbineLight.translate(Vector3f(0f,0f,0.3f))
+
         wingSetRotation(0f)
 
         globalLightHandler.addPointLight(turbineLight)
@@ -227,6 +232,7 @@ class PlayerWing(playerGeo : PlayerGeo, wingType : WingType, modelMatrix : Matri
     override fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
+        turbineLight.intensity = Random.nextInt(turbineLightIntensityMin,turbineLightIntensityMax)/100f
             for (each in colliderList) {
                 each.update()
                 if(each.collided) collided = true
