@@ -19,8 +19,8 @@ class PlayerWeapon (rotationDir : Float, playerGeo : PlayerGeo, modelMatrix : Ma
     private var deltaTime = 0f
     private var time = 0f
 
-    private var weaponIn = true
-    private var weaponOut = false
+    public var weaponIn = true
+    public var weaponOut = false
 
     private var midMinPos = -0.8f
     private var midMaxPos = -1.5f

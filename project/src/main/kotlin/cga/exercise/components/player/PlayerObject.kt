@@ -211,7 +211,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
                 println(allWingsDestroyed)
             if (shoot && !allWingsDestroyed){
                 nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
-                if (wingList[nextWeaponToShoot].wingOut){
+                if (wingList[nextWeaponToShoot].weapon.weaponOut){
                     shoot(nextWeaponToShoot)
                 }
             }
@@ -231,12 +231,13 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
                 for (each in playerPartsList) each.update(deltaTime, time)
                 for (each in playerProjectileList) each.update(deltaTime, time)
                 isDead = true
+                var flightDirection = 1
+                if (getWorldPosition().x < 0) flightDirection = -1
                 if (driftOfSpeed < 1.5f) {
-                    translate(Vector3f(driftOfSpeed/4,driftOfSpeed/2,driftOfSpeed))
-                    rotate(driftOfSpeed,driftOfSpeed,driftOfSpeed)
+                    translate(Vector3f(flightDirection * driftOfSpeed / 4,driftOfSpeed / 2, driftOfSpeed))
+                    rotate(flightDirection * driftOfSpeed,driftOfSpeed * flightDirection, driftOfSpeed)
                     driftOfSpeed += 0.014f
                 }
-
             }
     }
 }
