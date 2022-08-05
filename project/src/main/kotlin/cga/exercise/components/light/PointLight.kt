@@ -6,14 +6,7 @@ import cga.framework.OBJLoader
 import org.joml.*
 import org.lwjgl.opengl.GL30
 
-// 4.1.1
-// A - Emissive Material
-// B - Ambient Light Color
-// C - Diffuse Reflection
-// D - Specular Reflection //Sharpens highlight, makes it more intense
 
-//4.1.2
-// Skalarprodukt könnte negativ sein, wenn wir das Objekt von hinten betrachten.
 open class PointLight (
          val attenuationType : AttenuationType,
          var lightColor : Vector3f = Vector3f(1F,1F,1F),
@@ -22,8 +15,6 @@ open class PointLight (
         parent: Transformable? = null,
         var lightVisible : Boolean = false)
         : Transformable(modelMatrix, parent) {
-
-//        val lightSphere : Renderable
 
         init {
                 val posAndTexcAndNormPos = VertexAttribute (3, GL30.GL_FLOAT,8 * 4, 0)
@@ -41,11 +32,6 @@ open class PointLight (
                         pureWhiteTex,
                         pureBlackTex
                 )
-//                val importObjSphere = OBJLoader.loadOBJ("assets/models/sphere.obj", true)
-//                val importedSphereData  = importObjSphere.objects[0].meshes[0]
-//                val importedLightSphereMesh = Mesh (importedSphereData.vertexData, importedSphereData.indexData, posAndTexcAndNormAttrArray,false, matLightSphere)
-//                lightSphere = Renderable(mutableListOf(importedLightSphereMesh), Matrix4f(), null)
-//                lightSphere.scale(Vector3f(0.05F))
         }
 
 fun getPremultLightPos(viewMatrix : Matrix4f) : Vector3f {

@@ -75,7 +75,6 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
                 if (deathTime <= time) {
                     shouldIdie = true
                     println("Tschaui!")
-                    //for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
                 }
             }
         }

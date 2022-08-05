@@ -16,10 +16,9 @@ class SpotLight(
         parent: Transformable? = null,
         lightVisible : Boolean = false,
         var target : Transformable = Transformable(Matrix4f()))
-        // postion vom
+
         : PointLight(attenuationType, lightColor, intensity, modelMatrix, parent, lightVisible)
 {
-        //target ist als Position angegeben. "Richtung" des Spotlights ergibt sich aus Neigung aus Positionsvektor zu Target-Vektor
         init {
                 var tempInner = cutOff
                 var tempOuter = outerCutOff
@@ -63,5 +62,3 @@ class SpotLight(
                 return direction
         }
 }
-
-// SpotLightTargetDirectionTest = (View_matrix * vec4(SpotLightArrayTest.direction, 0)).xyz;

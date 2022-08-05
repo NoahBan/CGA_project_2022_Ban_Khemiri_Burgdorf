@@ -23,8 +23,6 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
     private val speed = 4f
 
     val colliderFront : Collider
-//    val colliderMid : Collider
-//    val colliderBack : Collider
 
     val colliderList : MutableList<Collider>
 
@@ -37,15 +35,7 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
         colliderFront.parent = this
         colliderFront.setPosition(Vector3f(0f,0f,-1.8f))
 
-//        colliderMid = Collider(ColliderType.PLAYERPROJICTILECOLLIDER, 0.15f)
-//        colliderMid.parent = this
-//        colliderMid.setPosition(Vector3f(0f,0f,-1.8f-2))
-//
-//        colliderBack = Collider(ColliderType.PLAYERPROJICTILECOLLIDER, 0.15f)
-//        colliderBack.parent = this
-//        colliderBack.setPosition(Vector3f(0f,0f,-1.8f+2))
-
-        colliderList = mutableListOf(colliderFront)//,colliderMid,colliderBack)
+        colliderList = mutableListOf(colliderFront)
     }
 
     var shouldIdie = false
@@ -59,7 +49,6 @@ class PlayerProjectile(val creationTime : Float, renderList : MutableList<Mesh>,
             if (each.collided) shouldIdie = true
             if (each.collided) globalEmitterHandler.addEmitterType(EmiterType.Explosion,this.getPosition().x,this.getPosition().y,this.getPosition().z)
         }
-//        if (getPosition()[1] < -7f) shouldIdie = true
         if (shouldIdie) for (each in colliderList) {
             globalCollisionHandler.removeAllyProjectile(each)
         }

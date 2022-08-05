@@ -49,7 +49,6 @@ class Ground(var mode : GroundAniMode) {
 
     fun render(shaderProgram : ShaderProgram){
         groundGeo.render(shaderProgram)
-//        groundWireframe.render(shaderProgram)
     }
 
 }

@@ -28,10 +28,6 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     var ende = Vector3f(0f)
 
     init {
-        // var scaleRoot = Math.sqrt(Math.sqrt(scalefactor.toDouble())).toFloat()
-        // thisGeo.scale(Vector3f(scaleRoot))
-        // collider1 = Collider(ColliderType.ENEMYCOLLIDER, 3f * scalefactor*2, Matrix4f(), this)
-        //addCollider(collider1)
 
         thisGeo.renderList = enemyGeo.shuttle.renderList
         var scaleRoot = Math.sqrt(Math.sqrt(scalefactor.toDouble())).toFloat()
@@ -39,24 +35,6 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
         collider1 = Collider(ColliderType.ENEMYCOLLIDER, 4.5f * scaleRoot, Matrix4f(), this)
         addCollider(collider1)
 
-        var pos = Matrix4f()
-        val randomStartX = Random.nextInt(-15,15).toFloat()
-        val randomStartY = Random.nextInt(-7,10).toFloat()
-
-        val randomMidY = Random.nextInt(-7,10).toFloat()
-
-        val randomEndX = Random.nextInt(-12,125).toFloat()
-        val randomEndY = Random.nextInt(-7,8).toFloat()
-
-//        private val maxUp = 8f
-//        private val maxRight = 12.5f
-//        private val maxDown = -7f
-
-        var pList = mutableListOf<Vector3f>(
-            Vector3f(-20f, 0f, -500f),
-            Vector3f(Random.nextInt(-30,30).toFloat(), 0f, -250f),
-            Vector3f(0f, 0f, 100f)
-        )
         var randomType = Random.nextInt(1,3)
         when (randomType){
             1 -> startdirection = 1f
@@ -71,14 +49,12 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
                 ende)
         )
 
-
         this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))
 
     }
     override fun update(deltaTime: Float, time: Float) {
         movementCurve.pointList[movementCurve.pointList.lastIndex] = playerposition
         playerposition.z = 0f
-        //println("Endpos "+ ende)
 
         if(!absturz){
             this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))

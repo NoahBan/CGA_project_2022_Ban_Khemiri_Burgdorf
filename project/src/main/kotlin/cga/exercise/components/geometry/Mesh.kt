@@ -27,18 +27,16 @@ class Mesh(
 
     init {
         if (init) {
-            // todo: place your code here
-
-            // todo: generate IDs
+            // generate IDs
             vao = GL30.glGenVertexArrays()
             vbo = GL30.glGenBuffers()
             ibo = GL30.glGenBuffers()
-            // todo: bind your objects
+            // bind objects
             GL30.glBindVertexArray(vao)
             GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
             GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, ibo)
 
-            // todo: upload your mesh data
+            // upload mesh data
             GL30.glBufferData(GL30.GL_ARRAY_BUFFER, vertexdata, GL30.GL_STATIC_DRAW)
             GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, indexdata, GL30.GL_STATIC_DRAW)
 
@@ -56,15 +54,15 @@ class Mesh(
     }
 
     fun render() {
-        // todo: place your code here
+
         GL30.glBindVertexArray(vao)
         GL30.glDrawElements(drawPrimitivesAs, indexcount, GL30.GL_UNSIGNED_INT, 0)
         GL30.glBindVertexArray(0)
-        // call the rendering method every frame
+
     }
 
     fun render(shaderProgram: ShaderProgram) {
-        // todo: place your code here
+
         material?.bind(shaderProgram)
         render()
     }
