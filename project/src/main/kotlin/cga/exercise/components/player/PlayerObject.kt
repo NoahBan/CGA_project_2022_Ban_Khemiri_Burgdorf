@@ -153,7 +153,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     fun moveLeftRight(dt : Float, dir: Float){
         var matrix = getModelMatrix()
-        val newVal = clampf(matrix.m30()-speed*dt* dir, maxLeft,maxRight)
+        val newVal = clampf(matrix.m30() - speed * dt * dir, maxLeft,maxRight)
         matrix.m30(newVal)
         setModelMatrix(matrix)
 
@@ -207,8 +207,8 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             countFunctioningWings = 4
             for (each in wingList) if (each.wingDestroyed) countFunctioningWings--
             if (countFunctioningWings == 0) allWingsDestroyed = true
-                println("functioning wings  " + countFunctioningWings)
-                println(allWingsDestroyed)
+                //println("functioning wings  " + countFunctioningWings)
+                //println(allWingsDestroyed)
             if (shoot && !allWingsDestroyed){
                 nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
                 if (wingList[nextWeaponToShoot].weapon.weaponOut){

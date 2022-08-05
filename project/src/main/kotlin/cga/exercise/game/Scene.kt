@@ -413,7 +413,7 @@ class Scene(private val window: GameWindow) {
             if (cameraHandler.getActiveCamera() != cameraHandler.cameraList[0]) cameraHandler.nextCam()
         }
         importedSkySphere.setPosition(cameraHandler.getActiveCamera().getWorldPosition())
-        enemyHandler.update(dt,t)
+        enemyHandler.update(dt,t, player.getWorldPosition())
         globalCollisionHandler.update()
         emitterHandler.updateAllEmitter(t,dt,cameraHandler.getActiveCamera())
     }

@@ -4,6 +4,7 @@ import cga.exercise.components.collision.Collider
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
+import cga.exercise.components.player.PlayerObject
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.game.emitterHandler
 import cga.exercise.game.globalCollisionHandler
@@ -14,7 +15,7 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
 
         var thisGeo = Renderable(mutableListOf<Mesh>(), Matrix4f(), this)
         val colliderList = mutableListOf<Collider>()
-
+        var playerposition = Vector3f(0f)
         var shouldIdie = false
 
         var hp = 6
@@ -57,6 +58,7 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
             if (hp <= 0 && !absturz){
                 absturz = true
                 deathTime = time + despawnTime
+                for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
             }
             if (absturz){
                 fallSpeed += fallAcceleration * deltaTime
@@ -64,7 +66,7 @@ abstract class Enemy (val myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMa
                 if (deathTime <= time) {
                     shouldIdie = true
                     println("Tschaui!")
-                    for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
+                    //for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
                 }
             }
         }

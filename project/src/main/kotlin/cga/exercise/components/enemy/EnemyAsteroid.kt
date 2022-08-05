@@ -74,13 +74,16 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
             }
         }
 
-        if (absturz) alpha -= 0.01f
+        if (absturz) {
+            alpha -= 0.01f
+            for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
+        }
         //for (each in thisGeo.renderList) {
           //  each.material?.opacityMultiplier = alpha
         //}
         if(getPosition()[2] >= 2f){
             shouldIdie = true
-            for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
+            //for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
         }
         super.update(deltaTime, time)
     }
