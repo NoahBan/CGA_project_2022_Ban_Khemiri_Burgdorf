@@ -19,15 +19,15 @@ class EnemyHandler {
 //    val enemySphere : EnemySphere
 
     var nextSpawntime = 5f
-    val newSpawnMin = 1
-    val newSpawnMax = 3
+    val newSpawnMin = 3
+    val newSpawnMax = 5
 
     init {
         enemyGeo = EnemyGeo()
     }
 
     fun createEnemy(){
-        val randomType = Random.nextInt(0,2)
+        var randomType = Random.nextInt(0,2)
         var pos = Matrix4f()
         when (randomType){
             0 -> {addEnemy(EnemyAsteroid(this, enemyGeo, pos))}

@@ -20,7 +20,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
 ) : Enemy(myCreator, enemyGeo,modelMatrix,parent) {
 
     val collider1 : Collider
-    val shuttleSpeed = 0.1f
+    val shuttleSpeed = 0.05f
 
     var scalefactor = 1f
     var posOnCurve = 0.005f
@@ -82,7 +82,7 @@ class EnemyShuttle(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix : 
     override fun update(deltaTime: Float, time: Float) {
         movementCurve.pointList[movementCurve.pointList.lastIndex] = playerposition
         playerposition.z = 0f
-        println("Endpos "+ ende)
+        //println("Endpos "+ ende)
 
         if(!absturz){
             this.setModelMatrix(movementCurve.getPosAndRota(posOnCurve))

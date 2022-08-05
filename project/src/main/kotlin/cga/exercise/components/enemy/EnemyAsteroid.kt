@@ -4,6 +4,8 @@ import cga.exercise.components.collision.Collider
 import cga.exercise.components.collision.ColliderType
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.Transformable
+import cga.exercise.components.utility.BezierCurve
+import cga.exercise.components.utility.clampf
 import cga.exercise.game.globalCollisionHandler
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -16,6 +18,9 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
 
     val rotationOffset = Transformable(Matrix4f(),this)
     val scaleOffset = Transformable(Matrix4f(),rotationOffset)
+    val movementLine : BezierCurve
+    var posOnLine = 0.005f
+    var newMatrix = Matrix4f()
 
     val sphereSpeed = 40f
 
@@ -29,7 +34,7 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
 
     init {
         scale = Random.nextInt(8,20)/10f
-        scale = Random.nextInt(30,100)/10f
+        //scale = Random.nextInt(30,100)/10f
         alpha = 0f
         val asteroidType = Random.nextInt(0,3)
         scaleOffset.scale(Vector3f(scale,scale,scale))
@@ -45,7 +50,7 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
                 thisGeo = Renderable(enemyGeo.asteroid3.renderList,Matrix4f(), scaleOffset)
             }
         }
-        collider1 = Collider(ColliderType.ENEMYCOLLIDER, scale*2, Matrix4f(), rotationOffset)
+        collider1 = Collider(ColliderType.ENEMYCOLLIDER, scale, Matrix4f(), rotationOffset)
         addCollider(collider1)
         var scaleRoot = Math.sqrt(Math.sqrt(scale.toDouble())).toFloat()
         thisGeo.scale(Vector3f(scaleRoot))
@@ -55,17 +60,27 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
         randomYaw = Math.toRadians(Random.nextInt(1,maxRotationSpeed).toDouble()).toFloat()
 
 
-        var pos = Matrix4f()
-        val randomX = Random.nextInt(-10*10,10*10)/10f
+        var spawnpoint = Vector3f()
+        val randomX = Random.nextInt(-60,60).toFloat()
         val randomY = Random.nextInt(-10*10,10*10)/10f
-        pos.setTranslation(Vector3f(randomX, randomY, -500f))
-        modelMatrix.set(pos)
+        spawnpoint = Vector3f(randomX, randomY, -500f)
+
+        movementLine = BezierCurve(
+            mutableListOf(
+                spawnpoint,
+                Vector3f(0f)
+            )
+        )
+        this.setPosition(movementLine.getPos(posOnLine))
     }
 
     override fun update(deltaTime: Float, time: Float) {
-        rotationOffset.rotate(randomPitch*deltaTime,randomRoll*deltaTime,randomYaw*deltaTime)
-        translate(Vector3f(0f,0f,deltaTime*sphereSpeed))
+        rotationOffset.rotate(randomPitch * deltaTime,randomRoll * deltaTime,randomYaw * deltaTime)
+        //translate(Vector3f(0f,0f,deltaTime*sphereSpeed))
+        if (posOnLine <= 0.10f) movementLine.pointList[movementLine.pointList.lastIndex] = playerposition
+        this.setPosition(movementLine.getPos(posOnLine))
 
+        posOnLine = clampf(posOnLine + deltaTime * 0.1f, 0f,1f)
         if (fadein) {
             alpha += 0.01f
             if (alpha >= 1f) {
@@ -81,9 +96,9 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
         //for (each in thisGeo.renderList) {
           //  each.material?.opacityMultiplier = alpha
         //}
-        if(getPosition()[2] >= 2f){
+        if(getPosition()[2] >= 2f || posOnLine == 1f){
             shouldIdie = true
-            //for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
+            for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
         }
         super.update(deltaTime, time)
     }
