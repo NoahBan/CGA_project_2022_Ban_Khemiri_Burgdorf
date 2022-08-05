@@ -340,6 +340,23 @@ class Scene(private val window: GameWindow) {
             player.setMoveRight()
         }
 
+        //AIM
+        if(window.getKeyState(GLFW_KEY_UP)){
+            player.targetUpDown(false, dt)
+        }
+        if(window.getKeyState(GLFW_KEY_DOWN)){
+            player.targetUpDown(true, dt)
+        }
+        if(window.getKeyState(GLFW_KEY_LEFT)){
+            player.targetLeftRight(true, dt)
+        }
+        if(window.getKeyState(GLFW_KEY_RIGHT)){
+            player.targetLeftRight(false, dt)
+        }
+        if(window.getKeyState(GLFW_KEY_R)){
+            player.targetReset()
+        }
+
         //Shoot
         if(window.getKeyState(GLFW_KEY_SPACE) && t >= waitForButtonPress_Space){
             waitForButtonPress_Space = t + buttonPressDelay_Space

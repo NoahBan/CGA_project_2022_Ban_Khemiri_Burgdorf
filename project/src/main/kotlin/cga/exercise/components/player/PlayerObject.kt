@@ -63,7 +63,7 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     var shoot = false
 
-    var fadenKreuzAn = false
+    var fadenKreuzAn = true
 
     val playerProjectileList = mutableListOf<PlayerProjectile>()
 
@@ -226,6 +226,22 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
         rollParent.setModelMatrix(matrix)
     }
 
+    fun targetUpDown(down : Boolean, deltaTime: Float){
+        var dir = 1f
+        if(down) dir = -1f
+        val speed = dir * deltaTime * 100f
+        weaponAlignTarget.translate(Vector3f(0f,speed,0f))
+    }
+    fun targetLeftRight(left : Boolean, deltaTime: Float){
+        var dir = 1f
+        if(left) dir = -1f
+        val speed = dir * deltaTime * 100f
+        weaponAlignTarget.translate(Vector3f(speed,0f,0f))
+    }
+    fun targetReset(){
+        weaponAlignTarget.setPosition(Vector3f(0f,0f,-500f))
+    }
+
     fun toggleWingMode(){
         wingOL.toggleWingMode()
         wingOR.toggleWingMode()
@@ -254,6 +270,17 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
     fun update(deltaTime: Float, time: Float){
         setDT(deltaTime)
         setT(time)
+        var pos = fadenkreuz.getPosition()
+        var target = weaponAlignTarget.getPosition()
+        var newMatrix = Matrix4f()
+        var eye = pos
+        var center = target
+        var up = Vector3f(0f, 1f, 0f)
+        newMatrix.lookAt(eye, center, up).invert()
+        newMatrix.normalize3x3()
+        fadenkreuz.setModelMatrix(newMatrix)
+
+
         if (!body.bodyDestroyed && !allWingsDestroyed) {
             if (moveUp && !moveDown) moveUpDown(deltaTime, 1f)
             moveUp = false
