@@ -132,7 +132,6 @@ class Emitter (
             if (colorOverLife != Vector3f(1f,1f,1f)){
                 importedMesh.material?.scalingColor = colorOverLife
             }
-//            lonelyParticle.render(shaderProgram)
 
             val cloneParticle = Renderable(lonelyParticle.renderList, Matrix4f())
             cloneParticle.setModelMatrix(lonelyParticle.getWorldModelMatrix())

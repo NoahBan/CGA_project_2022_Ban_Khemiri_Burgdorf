@@ -155,7 +155,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
         playerProjectileList.add(newProjectile)
 
-//        println(playerProjectileList.size)
     }
     fun setDT (newDt : Float){
         deltaTime = newDt
@@ -253,14 +252,10 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
 
     fun renderAlphaStuff(shaderProgram : ShaderProgram, deferred : Boolean){
         if(fadenKreuzAn) globalDepthSortRenderer.addRenderable(fadenkreuz)
-//        if(!deferred) {
-//            GL11.glEnable(GL11.GL_BLEND)
-//            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-//            GL11.glDepthFunc(GL11.GL_ALWAYS)
 //        }
 
         for(each in wingList) globalDepthSortRenderer.addRenderable(each.turbineFireMesh)
-//        GL11.glDepthFunc(GL11.GL_LESS)
+
     }
 
     fun render(shaderProgram : ShaderProgram, deferred : Boolean){
@@ -305,8 +300,6 @@ class PlayerObject(modelMatrix : Matrix4f, parent: Transformable? = null) : Tran
             countFunctioningWings = 4
             for (each in wingList) if (each.wingDestroyed) countFunctioningWings--
             if (countFunctioningWings == 0) allWingsDestroyed = true
-                //println("functioning wings  " + countFunctioningWings)
-                //println(allWingsDestroyed)
             if (shoot && !allWingsDestroyed){
                 nextWeaponToShoot = calculateNextWeaponToShoot(nextWeaponToShoot)
                 if (wingList[nextWeaponToShoot].weapon.weaponOut){

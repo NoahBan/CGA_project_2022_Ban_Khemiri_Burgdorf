@@ -37,7 +37,7 @@ class Scene(private val window: GameWindow) {
 
     private val deferredBufferShader : ShaderProgram
     private val deferredLightingShader : ShaderProgram
-//    private val last : ShaderProgram
+
     var gBuffer : Int
     var gPosition : Int
     var gNormal : Int
@@ -91,7 +91,6 @@ class Scene(private val window: GameWindow) {
         baseShader = ShaderProgram("assets/shaders/baseVertexShdr.glsl", "assets/shaders/baseFragmentShdr.glsl")
         deferredBufferShader = ShaderProgram("assets/shaders/deferredVertShdrBuff.glsl", "assets/shaders/defferedFragShdrBuff.glsl")
         deferredLightingShader = ShaderProgram("assets/shaders/deferredVertShdrLight.glsl", "assets/shaders/defferedFragShdrLight.glsl")
-//        last = ShaderProgram("assets/shaders/hoffnungV.glsl", "assets/shaders/hoffnungF.glsl")
 
         ///Deff
         gBuffer = GL30.glGenFramebuffers()
@@ -241,12 +240,10 @@ class Scene(private val window: GameWindow) {
         topCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f(), player.rollParent)
         topCam.translate(Vector3f(0F,5F,0F))
         topCam.rotate(-90F,0F,0F)
-//        cameraHandler.addCamera(topCam)
 
         botCam = Camera(90f, 16f/9f, 0.1F, 1000.0F+2.2F, Matrix4f())
         botCam.translate(Vector3f(0F,-5F,0F))
         botCam.rotate(90F,0F,0F)
-//        cameraHandler.addCamera(botCam)
 
         enemyHandler = EnemyHandler()
     }

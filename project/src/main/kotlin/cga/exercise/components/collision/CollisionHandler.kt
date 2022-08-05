@@ -26,7 +26,7 @@ class CollisionHandler {
         for (objectInList1 in list1){
             for (objectInList2 in list2){
                 if (inRadiusOf(objectInList1.getWorldPosition(),objectInList1.radius,objectInList2.getWorldPosition(),objectInList2.radius)){
-                    //println(message)
+                    println(message)
                     allCollidedObjects.add(objectInList1)
                     objectInList1.collided = true
                     allCollidedObjects.add(objectInList2)
@@ -96,23 +96,8 @@ class CollisionHandler {
         for (each in allyProjectileList) each.render(shaderProgram)
     }
 
-    fun inRangeOf(coordinate1 : Vector3f, range1 : Float, coordinate2 : Vector3f, range2 : Float): Boolean {
-
-        if ((coordinate1.x-range1 <= coordinate2.x+range2 && coordinate1.x-range1 >= coordinate2.x-range2) ||
-            (coordinate1.x+range1 >= coordinate2.x-range2 && coordinate1.x+range1 <= coordinate2.x+range2)) {
-            if ((coordinate1.y-range1 <= coordinate2.y+range2 && coordinate1.y-range1 >= coordinate2.y-range2) ||
-                (coordinate1.y+range1 >= coordinate2.y-range2 && coordinate1.y+range1 <= coordinate2.y+range2)){
-                if ((coordinate1.z-range1 <= coordinate2.z+range2 && coordinate1.z-range1 >= coordinate2.z-range2) ||
-                    (coordinate1.z+range1 >= coordinate2.z-range2 && coordinate1.z+range1 <= coordinate2.z+range2)){
-                    return true
-                }
-            }
-        }
-        return false
-    }
 
     fun update(){
-        //println("AllyProjectile List:  " + allyProjectileList.size)
         checkCollision()
     }
 }

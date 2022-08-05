@@ -5,17 +5,11 @@ import org.joml.Matrix4f
 import org.joml.Vector3f
 import kotlin.random.Random
 
-//enum class ENEMIES(val enemy : Enemy){
-//    SPHERE(EnemySphere(this, EnemyGeo())),
-//    SHUTTLE(1)
-//}
-
 class EnemyHandler {
 
     val enemyGeo : EnemyGeo
 
     val enemyList = mutableListOf<Enemy>()
-//    val enemySphere : EnemySphere
 
     var nextSpawntimeShuttle = 5f
     var newSpawnMinShuttle = 8
@@ -61,8 +55,6 @@ class EnemyHandler {
     fun render(shaderProgram: ShaderProgram){
         for (each in enemyList.asReversed()) each.render(shaderProgram)
     }
-
-//    var test = true
 
     fun update(deltaTime : Float, time : Float, playerposition: Vector3f){
         if (!hardMode && time >= 30f){

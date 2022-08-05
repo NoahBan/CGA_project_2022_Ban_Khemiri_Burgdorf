@@ -75,10 +75,8 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
 
     override fun update(deltaTime: Float, time: Float) {
         rotationOffset.rotate(randomPitch * deltaTime,randomRoll * deltaTime,randomYaw * deltaTime)
-        //translate(Vector3f(0f,0f,deltaTime*sphereSpeed))
         if (posOnLine <= 0.10f) movementLine.pointList[movementLine.pointList.lastIndex] = playerposition
         this.setPosition(movementLine.getPos(posOnLine))
-
         posOnLine = clampf(posOnLine + deltaTime * asteroidSpeed, 0f,1f)
         if (fadein) {
             alpha += 0.01f
@@ -87,19 +85,14 @@ class EnemyAsteroid(myCreator : EnemyHandler, enemyGeo : EnemyGeo, modelMatrix :
                 fadein = false
             }
         }
-
         if (absturz) {
             alpha -= 0.01f
             for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
         }
-        //for (each in thisGeo.renderList) {
-          //  each.material?.opacityMultiplier = alpha
-        //}
         if(getPosition()[2] >= 2f || posOnLine == 1f){
             shouldIdie = true
             for (each in colliderList) globalCollisionHandler.removeEnemyPart(each)
         }
         super.update(deltaTime, time)
     }
-
 }
