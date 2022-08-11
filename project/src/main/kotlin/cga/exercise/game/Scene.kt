@@ -182,7 +182,7 @@ class Scene(private val window: GameWindow) {
         val skySphereTex = Texture2D("assets/textures/starmap_2020_8k_gal.png",true)
         skySphereTex.setTexParams(GL30.GL_REPEAT,GL30.GL_REPEAT,GL30.GL_LINEAR_MIPMAP_LINEAR,GL30.GL_LINEAR_MIPMAP_LINEAR)
         val matSkySphere = Material(
-            pureBlackTex,
+            pureWhiteTex,
             skySphereTex,
             pureBlackTex,
             0f,
@@ -194,6 +194,7 @@ class Scene(private val window: GameWindow) {
         val importObjSkybox = OBJLoader.loadOBJ("assets/models/sky/SkySphere.obj", true)
         val importObjSkyboxData  = importObjSkybox.objects[0].meshes[0]
         val importedKSkyboxMesh = Mesh (importObjSkyboxData.vertexData, importObjSkyboxData.indexData, posAndTexcAndNormAttrArray,false, matSkySphere)
+
         importedSkySphere = Renderable(mutableListOf(importedKSkyboxMesh), Matrix4f(),null)
         importedSkySphere.scale(Vector3f(1.0f))
         importedSkySphere.rotate(25f,90f,-20f)
@@ -263,6 +264,7 @@ class Scene(private val window: GameWindow) {
             GL30.glDepthMask(true)
 
             ground.render(shaderProgram)
+        print(ground.groundGeo.getWorldModelMatrix())
             if (renderCollision) globalCollisionHandler.render(shaderProgram)
             enemyHandler.render(shaderProgram)
             player.render(shaderProgram, deferred)

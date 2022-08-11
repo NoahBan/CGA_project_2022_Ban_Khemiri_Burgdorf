@@ -28,6 +28,7 @@ class EnemyHandler {
 
     fun createEnemyRandom(){
         var randomType = Random.nextInt(0,2)
+        randomType = 5 //!!
         var pos = Matrix4f()
         when (randomType){
             0 -> {addEnemy(EnemyAsteroid(this, enemyGeo, pos))}
@@ -64,18 +65,18 @@ class EnemyHandler {
             newSpawnMinAsteroid = 3
             newSpawnMaxAsteroid = 5
         }
-        if (nextSpawntimeShuttle <= time){
-            nextSpawntimeShuttle = time + Random.nextInt(newSpawnMinShuttle,newSpawnMaxShuttle).toFloat()
-            createEnemyShuttle()
-        }
-        if (nextSpawntimeAsteroid <= time){
-            nextSpawntimeAsteroid = time + Random.nextInt(newSpawnMinAsteroid,newSpawnMaxAsteroid).toFloat()
-            createEnemyAsteroid()
-        }
-        if (nextSpawntimeAsteroid2 <= time){
-            nextSpawntimeAsteroid2 = time + Random.nextInt(newSpawnMinAsteroid,newSpawnMaxAsteroid).toFloat()
-            createEnemyAsteroid()
-        }
+//        if (nextSpawntimeShuttle <= time){
+//            nextSpawntimeShuttle = time + Random.nextInt(newSpawnMinShuttle,newSpawnMaxShuttle).toFloat()
+//            createEnemyShuttle()
+//        }
+//        if (nextSpawntimeAsteroid <= time){
+//            nextSpawntimeAsteroid = time + Random.nextInt(newSpawnMinAsteroid,newSpawnMaxAsteroid).toFloat()
+//            createEnemyAsteroid()
+//        }
+//        if (nextSpawntimeAsteroid2 <= time){
+//            nextSpawntimeAsteroid2 = time + Random.nextInt(newSpawnMinAsteroid,newSpawnMaxAsteroid).toFloat()
+//            createEnemyAsteroid()
+//        }
 
         for (each in enemyList) {
             each.update(deltaTime, time)
